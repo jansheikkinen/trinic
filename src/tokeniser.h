@@ -121,6 +121,8 @@ enum TokenType {
   UNDEFINED,
   MUT,
 
+  RETURN,
+
   // Delete the following
   PRINT,
 };

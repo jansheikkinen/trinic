@@ -21,4 +21,5 @@ uc: $(OBJ)
 	$(CC) $(CFLAGS) $(INCLUDE) -o $@ -c $<
 
 clean:
-	rm -Rf $(BUILD)/* $(OBJ)
+	find build/ -type f ! -name '*.uc' -delete
+	rm -Rf $(OBJ)

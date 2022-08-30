@@ -91,6 +91,7 @@ char* tokenTypeStrings[] = {
   "NOT",
   "UNDEFINED",
   "MUT",
+  "RETURN",
   "PRINT",
 };
 
@@ -264,10 +265,10 @@ static void parseLiteral(struct TokeniserData* td) {
 static void parseKeyword(struct TokeniserData* td) {
   if(!isalnum(get(td))) return;
 
-  do {
+  while(peek(td) && isalnum(peek(td))) {
     td->index += 1;
     td->col += 1;
-  } while(peek(td) && isalnum(peek(td)));
+  }
 
 
   char* keyword =
