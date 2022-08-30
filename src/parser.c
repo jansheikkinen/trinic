@@ -4,18 +4,29 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <ctype.h>
-
 #include <string.h>
 
 // bc there's a man page entry for this but no definition >:(
 // this is not up to standard
-void* reallocarray(void* ptr, size_t nmemb, size_t size) {
+static void* reallocarray(void* ptr, size_t nmemb, size_t size) {
   return realloc(ptr, nmemb * size);
 }
 
-char* substring(const char* __restrict__ string, size_t start, size_t offset) {
+static char* substring(const char* __restrict__ string, size_t start, size_t offset) {
   char* str = calloc(offset + 1, sizeof(*str));
   return strncpy(str, string + start, offset);
+}
+
+static int streq(const char* s1, const char* s2) {
+  return strcmp(s1, s2) == 0;
+}
+
+static char* strlower(char* str) {
+  for(size_t i = 0; i < strlen(str); i++) {
+    str[i] = tolower(str[i]);
+  }
+
+  return str;
 }
 
 enum TokenType {
@@ -80,17 +91,18 @@ enum TokenType {
   BIT_XOR_ASSIGN,   // ^
 
   // Literals
-  STRING_LITERAL,  // "xyz"
-  CHAR_LITERAL,    // 'x'
-  INTEGER_LITERAL, // 69
-  FLOAT_LITERAL,   // 420.69
-  BOOLEAN_LITERAL, // true or false
+  STRING_LITERAL,     // "xyz"
+  CHAR_LITERAL,       // 'x'
+  INTEGER_LITERAL,    // 69
+  FLOAT_LITERAL,      // 420.69
+  BOOLEAN_LITERAL,    // true or false
+  IDENTIFIER_LITERAL, // user-defined names: variables n functions
 
   // Keywords
-  SINT8,   // i8
-  SINT16,  // i16
-  SINT32,  // i32
-  SINT64,  // i64
+  INT8,   // i8
+  INT16,  // i16
+  INT32,  // i32
+  INT64,  // i64
   ISIZE,   // isize
   UINT8,   // u8
   UINT16,  // u16
@@ -187,10 +199,11 @@ const char* tokenTypeStrings[] = {
   "INTEGER_LITERAL",
   "FLOAT_LITERAL",
   "BOOLEAN_LITERAL",
-  "SINT8",
-  "SINT16",
-  "SINT32",
-  "SINT64",
+  "IDENTIFIER_LITERAL",
+  "INT8",
+  "INT16",
+  "INT32",
+  "INT64",
   "ISIZE",
   "UINT8",
   "UINT16",
@@ -234,12 +247,12 @@ const char* tokenTypeStrings[] = {
 
 struct Token {
   enum TokenType type;
-  const char* literal;
+  char* literal;
   size_t row;
   size_t col;
 };
 
-struct Token newToken(enum TokenType type, const char* literal,
+static struct Token newToken(enum TokenType type, char* literal,
     size_t row, size_t col) {
   struct Token token;
 
@@ -251,8 +264,9 @@ struct Token newToken(enum TokenType type, const char* literal,
   return token;
 }
 
-void freeToken(struct Token* token) {
-  free(token);
+static void freeToken(struct Token* token) {
+  free(token->literal);
+  // free(token);
 }
 
 
@@ -263,7 +277,7 @@ struct TokenArray {
 };
 
 #define START_CAP 4
-struct TokenArray* initialiseTokenArray(void) {
+static struct TokenArray* initialiseTokenArray(void) {
   struct TokenArray* tokenArray = malloc(sizeof(*tokenArray));
 
   tokenArray->capacity = START_CAP;
@@ -274,7 +288,7 @@ struct TokenArray* initialiseTokenArray(void) {
   return tokenArray;
 }
 
-void appendToTokenArray(struct TokenArray* array, struct Token token) {
+static void appendToTokenArray(struct TokenArray* array, struct Token token) {
   if(array->length >= array->capacity) {
     array->capacity *= 2;
     array->tokens =
@@ -283,8 +297,10 @@ void appendToTokenArray(struct TokenArray* array, struct Token token) {
   array->tokens[array->length++] = token;
 }
 
-void freeTokenArray(struct TokenArray* array) {
-  free(array->tokens);
+static void freeTokenArray(struct TokenArray* array) {
+  for(size_t i = 0; i < array->length; i++) {
+    freeToken(array->tokens + i);
+  }
   free(array);
 }
 
@@ -298,7 +314,7 @@ struct TokeniserData {
   size_t tokenStart;
 };
 
-void newTokeniser(struct TokeniserData* td, const char* __restrict__ program) {
+static void newTokeniser(struct TokeniserData* td, const char* __restrict__ program) {
   td->tokens = initialiseTokenArray();
   td->program = program;
   td->index = 0;
@@ -313,12 +329,12 @@ void newTokeniser(struct TokeniserData* td, const char* __restrict__ program) {
 
 // TODO: consume(), as well
 
-void nextToken(struct TokeniserData* td) {
+static void nextToken(struct TokeniserData* td) {
   td->col += 1; td->index += 1; td->tokenStart = td->index;
 }
 
 // Whitespace and newline
-void parseNonTokens(struct TokeniserData* td) {
+static void parseNonTokens(struct TokeniserData* td) {
   switch(td->program[td->index]) {
     case '\n': td->row += 1; td->index += 1;
                td->tokenStart = td->index; td->col = 1; break;
@@ -327,7 +343,7 @@ void parseNonTokens(struct TokeniserData* td) {
 }
 
 // The tokens that don't have any alphanumeric characters.
-void newOperator(struct TokeniserData* td, enum TokenType tt) {
+static void newNonLiteral(struct TokeniserData* td, enum TokenType tt) {
   appendToTokenArray(td->tokens, newToken(tt, NULL, td->row, td->col));
   nextToken(td);
 }
@@ -335,56 +351,56 @@ void newOperator(struct TokeniserData* td, enum TokenType tt) {
 // Tokens that correspond to a single-character operator that cannot
 // be mistaken for any other token. I.e. '#' is unambiguous; it can
 // *only* be just '#', but '+' is ambiguous because it could be '+' or '+='.
-void parseUnambiguousOperator(struct TokeniserData* td) {
+static void parseUnambiguousOperator(struct TokeniserData* td) {
   switch(td->program[td->index]) {
-    case '(': newOperator(td, LEFT_PAREN);     break;
-    case ')': newOperator(td, RIGHT_PAREN);    break;
-    case '[': newOperator(td, LEFT_BRACKET);   break;
-    case ']': newOperator(td, RIGHT_BRACKET);  break;
-    case ',': newOperator(td, COMMA);          break;
-    case '.': newOperator(td, DOT);            break;
-    case '?': newOperator(td, QUESTION);       break;
-    case '@': newOperator(td, AT);             break;
-    case '#': newOperator(td, HASHTAG);        break;
-    case '~': newOperator(td, TILDE);          break;
-    case ':': newOperator(td, COLON);          break;
+    case '(': newNonLiteral(td, LEFT_PAREN);     break;
+    case ')': newNonLiteral(td, RIGHT_PAREN);    break;
+    case '[': newNonLiteral(td, LEFT_BRACKET);   break;
+    case ']': newNonLiteral(td, RIGHT_BRACKET);  break;
+    case ',': newNonLiteral(td, COMMA);          break;
+    case '.': newNonLiteral(td, DOT);            break;
+    case '?': newNonLiteral(td, QUESTION);       break;
+    case '@': newNonLiteral(td, AT);             break;
+    case '#': newNonLiteral(td, HASHTAG);        break;
+    case '~': newNonLiteral(td, TILDE);          break;
+    case ':': newNonLiteral(td, COLON);          break;
   }
 }
 
 // THIS DEPENDS ON THE ENUM ORDERING THE TWO TOKEN TYPES AS:
 // OP, OP_ASSIGN,
 // DO NOT FUCK THAT UP
-void newAmbiguousArithOp(struct TokeniserData* td, enum TokenType tokenType) {
-  if(peek(td) == '=') { newOperator(td, tokenType + 1); td->index += 1; }
-  else newOperator(td, tokenType);
+static void newAmbiguousArithOp(struct TokeniserData* td, enum TokenType tokenType) {
+  if(peek(td) == '=') { newNonLiteral(td, tokenType + 1); td->index += 1; }
+  else newNonLiteral(td, tokenType);
 }
 
 // Tokens that correspond to operators that *are* ambiguous just from
 // looking at the first character. Using the example from above, this
 // is where '+' and '+=' would go.
-void parseAmbiguousOperator(struct TokeniserData* td) {
+static void parseAmbiguousOperator(struct TokeniserData* td) {
   switch(td->program[td->index]) {
     case '<':
       if(peek(td) == '<') {
         if(over(td) == '=') {
-          newOperator(td, BIT_LEFT_ASSIGN); td->index += 2;
-        } else { newOperator(td, BIT_LEFT); td->index += 1; }
-      } else if(peek(td) == '=') { newOperator(td, LESS_EQ); td->index += 1; }
-      else newOperator(td, LEFT_DIAMOND);
+          newNonLiteral(td, BIT_LEFT_ASSIGN); td->index += 2;
+        } else { newNonLiteral(td, BIT_LEFT); td->index += 1; }
+      } else if(peek(td) == '=') { newNonLiteral(td, LESS_EQ); td->index += 1; }
+      else newNonLiteral(td, LEFT_DIAMOND);
       break;
     case '>':
       if(peek(td) == '>') {
         if(over(td) == '=') {
-          newOperator(td, BIT_RIGHT_ASSIGN); td->index += 2;
-        } else { newOperator(td, BIT_RIGHT); td->index += 1; }
-      } else if(peek(td) == '=') newOperator(td, GREATER_EQ);
-      else newOperator(td, RIGHT_DIAMOND);
+          newNonLiteral(td, BIT_RIGHT_ASSIGN); td->index += 2;
+        } else { newNonLiteral(td, BIT_RIGHT); td->index += 1; }
+      } else if(peek(td) == '=') newNonLiteral(td, GREATER_EQ);
+      else newNonLiteral(td, RIGHT_DIAMOND);
       break;
 
     case '=':
-      if(peek(td) == '=') newOperator(td, EQUAL);
-      else if(peek(td) == '>') newOperator(td, MATCH_ARROW);
-      else newOperator(td, ASSIGN);
+      if(peek(td) == '=') newNonLiteral(td, EQUAL);
+      else if(peek(td) == '>') newNonLiteral(td, MATCH_ARROW);
+      else newNonLiteral(td, ASSIGN);
       break;
 
     case '/':
@@ -427,8 +443,8 @@ void parseAmbiguousOperator(struct TokeniserData* td) {
 }
 
 
-void newLiteralToken(struct TokeniserData* td,
-    enum TokenType tt, const char* literal) {
+static void newLiteralToken(struct TokeniserData* td,
+    enum TokenType tt, char* literal) {
   appendToTokenArray(td->tokens, newToken(tt, literal, td->row, td->col));
   nextToken(td);
 }
@@ -440,7 +456,7 @@ void newLiteralToken(struct TokeniserData* td,
 // TODO: This part can fail, actually. Right now, I just have it set to
 // ignore the errors entirely, but ideally they'd be thrown to the calling
 // function and handled properly.
-void parseLiteral(struct TokeniserData* td) {
+static void parseLiteral(struct TokeniserData* td) {
   if(get(td) == '\"') {
     nextToken(td);
     while(td->program[td->index++]) {
@@ -483,6 +499,35 @@ void parseLiteral(struct TokeniserData* td) {
   }
 }
 
+
+// The ones like "int32" or "if" that are alphanumeric
+static void parseKeyword(struct TokeniserData* td) {
+  if(!isalnum(get(td))) return;
+
+  do {
+    td->index += 1;
+    td->col += 1;
+  } while(peek(td) && isalnum(peek(td)));
+
+
+  char* keyword =
+    substring(td->program, td->tokenStart, td->index - td->tokenStart + 1);
+
+  for(enum TokenType tt = INT8; tt < PRINT + 1; tt++) { // cursed
+    const char* c = getTokenName(tt);
+    char* cmpToken = calloc(strlen(c), 1);
+    strncpy(cmpToken, c, strlen(c));
+
+    if(streq(keyword, strlower(cmpToken))) {
+      newNonLiteral(td, tt);
+      free(keyword); free(cmpToken);
+      return;
+    } else free(cmpToken);
+  }
+
+  newLiteralToken(td, IDENTIFIER_LITERAL, keyword);
+}
+
 // I could have definitely written the tokeniser more efficiently;
 // I could have written the tokeniser as one massive switch statement,
 // but, quite frankly, that's ugly and I'd rather modularise it for readability
@@ -498,6 +543,8 @@ struct TokenArray* tokenise(const char* __restrict__ program) {
     parseAmbiguousOperator(td);
 
     parseLiteral(td);
+
+    parseKeyword(td);
     if(i == td->index) td->index += 1;
   }
 
@@ -507,7 +554,7 @@ struct TokenArray* tokenise(const char* __restrict__ program) {
 }
 
 int main(void) {
-  const char* str = "69+42.0";
+  const char* str = "isize a = 69";
   struct TokenArray* tokens = tokenise(str);
 
   printf("\n");
