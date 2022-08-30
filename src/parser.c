@@ -1,158 +1,9 @@
 /* parser.c */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <ctype.h>
-#include <string.h>
+#include "strutil.h"
+#include "parser.h"
 
-// bc there's a man page entry for this but no definition >:(
-// this is not up to standard
-static void* reallocarray(void* ptr, size_t nmemb, size_t size) {
-  return realloc(ptr, nmemb * size);
-}
-
-static char* substring(const char* __restrict__ string, size_t start, size_t offset) {
-  char* str = calloc(offset + 1, sizeof(*str));
-  return strncpy(str, string + start, offset);
-}
-
-static int streq(const char* s1, const char* s2) {
-  return strcmp(s1, s2) == 0;
-}
-
-static char* strlower(char* str) {
-  for(size_t i = 0; i < strlen(str); i++) {
-    str[i] = tolower(str[i]);
-  }
-
-  return str;
-}
-
-enum TokenType {
-  UNDEFINED_TOKEN, // Just so null tokens don't think they're the token below
-
-  // Unambiguous single character tokens
-  LEFT_PAREN,    // (
-  RIGHT_PAREN,   // )
-  LEFT_BRACKET,  // [
-  RIGHT_BRACKET, // ]
-  COMMA,    // ,
-  DOT,      // .
-  QUESTION, // ?
-  AT,       // @
-  HASHTAG,  // #
-  TILDE,    // ~
-  COLON,    // :
-
-  // Ambiguous single and multi-character tokens
-  LEFT_DIAMOND,     // <
-  BIT_LEFT,         // <<
-  BIT_LEFT_ASSIGN,  // <<=
-  LESS_EQ,          // <=
-
-  RIGHT_DIAMOND,    // >
-  BIT_RIGHT,        // >>
-  BIT_RIGHT_ASSIGN, // >>=
-  GREATER_EQ,       // >=
-
-  EQUAL,            // ==
-  ASSIGN,           // =
-  MATCH_ARROW,      // =>
-
-  ADD,              // +
-  ADD_ASSIGN,       // +=
-
-  MINUS,            // -
-  MINUS_ASSIGN,     // -=
-
-  STAR,             // *
-  STAR_ASSIGN,      // *=
-
-  SLASH,            // /
-  SLASH_ASSIGN,     // /=
-
-  // Comment,       // //
-  // Long comment,  // /* */
-
-  MOD,              // %
-  MOD_ASSIGN,       // %=
-
-  BANG,             // !
-  NOT_EQ,           // !=
-
-  BIT_AND,          // &=
-  BIT_AND_ASSIGN,   // &
-
-  BIT_OR,           // |=
-  BIT_OR_ASSIGN,    // |
-
-  BIT_XOR,          // ^=
-  BIT_XOR_ASSIGN,   // ^
-
-  // Literals
-  STRING_LITERAL,     // "xyz"
-  CHAR_LITERAL,       // 'x'
-  INTEGER_LITERAL,    // 69
-  FLOAT_LITERAL,      // 420.69
-  BOOLEAN_LITERAL,    // true or false
-  IDENTIFIER_LITERAL, // user-defined names: variables n functions
-
-  // Keywords
-  INT8,   // i8
-  INT16,  // i16
-  INT32,  // i32
-  INT64,  // i64
-  ISIZE,   // isize
-  UINT8,   // u8
-  UINT16,  // u16
-  UINT32,  // u32
-  UINT64,  // u64
-  USIZE,   // usize
-  FLOAT16, // f16
-  FLOAT32, // f32
-  FLOAT64, // f64
-  CHAR,
-  VOID,
-  BOOL,
-
-  ENUM,
-  STRUCT,
-  // Not entirely sure about union
-
-  FUNCTION,
-  INLINE,
-
-  FOR,
-  IN,
-  IF,
-  ELSEIF,
-  ELSE,
-  WHILE,
-  LOOP,
-  CONTINUE,
-  PASS,
-  BREAK,
-  MATCH,
-  DO,
-  END,
-
-  INCLUDE,
-  PUB,
-
-  AND,
-  OR,
-  NOT,
-
-  UNDEFINED,
-  MUT,
-
-  // Delete the following
-  PRINT,
-};
-
-
-const char* tokenTypeStrings[] = {
+char* tokenTypeStrings[] = {
   "UNDEFINED",
   "LEFT_PAREN",
   "RIGHT_PAREN",
@@ -242,96 +93,6 @@ const char* tokenTypeStrings[] = {
   "MUT",
   "PRINT",
 };
-
-#define getTokenName(tokentype) tokenTypeStrings[tokentype]
-
-struct Token {
-  enum TokenType type;
-  char* literal;
-  size_t row;
-  size_t col;
-};
-
-static struct Token newToken(enum TokenType type, char* literal,
-    size_t row, size_t col) {
-  struct Token token;
-
-  token.type = type;
-  token.literal = literal;
-  token.row = row;
-  token.col = col;
-
-  return token;
-}
-
-static void freeToken(struct Token* token) {
-  free(token->literal);
-  // free(token);
-}
-
-
-struct TokenArray {
-  struct Token* tokens;
-  size_t capacity;
-  size_t length;
-};
-
-#define START_CAP 4
-static struct TokenArray* initialiseTokenArray(void) {
-  struct TokenArray* tokenArray = malloc(sizeof(*tokenArray));
-
-  tokenArray->capacity = START_CAP;
-  tokenArray->length   = 0;
-  struct Token* tokens = calloc(tokenArray->capacity, sizeof(*tokens));
-  tokenArray->tokens   = tokens;
-
-  return tokenArray;
-}
-
-static void appendToTokenArray(struct TokenArray* array, struct Token token) {
-  if(array->length >= array->capacity) {
-    array->capacity *= 2;
-    array->tokens =
-      reallocarray(array->tokens, array->capacity, sizeof(struct Token));
-  }
-  array->tokens[array->length++] = token;
-}
-
-static void freeTokenArray(struct TokenArray* array) {
-  for(size_t i = 0; i < array->length; i++) {
-    freeToken(array->tokens + i);
-  }
-  free(array);
-}
-
-
-struct TokeniserData {
-  struct TokenArray* tokens;
-  const char* program;
-  size_t index;
-  size_t row;
-  size_t col;
-  size_t tokenStart;
-};
-
-static void newTokeniser(struct TokeniserData* td, const char* __restrict__ program) {
-  td->tokens = initialiseTokenArray();
-  td->program = program;
-  td->index = 0;
-  td->row = 1;
-  td->col = 1;
-  td->tokenStart = 0;
-}
-
-#define get(td)  td->program[td->index]
-#define peek(td) td->program[td->index + 1]
-#define over(td) td->program[td->index + 2]
-
-// TODO: consume(), as well
-
-static void nextToken(struct TokeniserData* td) {
-  td->col += 1; td->index += 1; td->tokenStart = td->index;
-}
 
 // Whitespace and newline
 static void parseNonTokens(struct TokeniserData* td) {
@@ -499,7 +260,6 @@ static void parseLiteral(struct TokeniserData* td) {
   }
 }
 
-
 // The ones like "int32" or "if" that are alphanumeric
 static void parseKeyword(struct TokeniserData* td) {
   if(!isalnum(get(td))) return;
@@ -551,22 +311,4 @@ struct TokenArray* tokenise(const char* __restrict__ program) {
   struct TokenArray* tokens = td->tokens;
   free(td); // Isn't this beautiful?
   return tokens;
-}
-
-int main(void) {
-  const char* str = "isize a = 69";
-  struct TokenArray* tokens = tokenise(str);
-
-  printf("\n");
-  printf("%02ld / %02ld\n", tokens->length, tokens->capacity);
-  for(size_t i = 0; i < tokens->capacity; i++) {
-    printf("%02ld: %20s, %s, (%02ld, %02ld)\n", i,
-        getTokenName(tokens->tokens[i].type),
-        tokens->tokens[i].literal,
-        tokens->tokens[i].row,
-        tokens->tokens[i].col);
-  }
-
-  freeTokenArray(tokens);
-  return 0;
 }
