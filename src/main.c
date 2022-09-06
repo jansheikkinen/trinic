@@ -3,32 +3,26 @@
 #include <stdio.h>
 #include <errno.h>
 
-#include <sys/stat.h>
-
-#include "parser.h"
+#include "parser/token.h"
+#include "parser/parser.h"
 
 void panic(int err, const char* msg) {
   perror(msg);
   exit(err);
 }
 
-size_t getFileSize(const char* filename) {
-  struct stat* stbuf = malloc(sizeof(*stbuf));
-  int err = stat(filename, stbuf);
-
-  if(err) panic(-1, "Failed to get filesize");
-
-  size_t size = stbuf->st_size;
-  free(stbuf);
-
-  return size;
+size_t getFileSize(FILE* file) {
+  fseek(file, 0, SEEK_END);
+  size_t filesize = ftell(file);
+  fseek(file, 0, SEEK_SET);
+  return filesize;
 }
 
 const char* readFile(const char* filename) {
   FILE* file = fopen(filename, "r");
   if(!file) panic(1, "Failed to open file");
 
-  size_t filesize = getFileSize(filename);
+  size_t filesize = getFileSize(file);
   char* program = calloc(filesize, sizeof(char));
 
   fread(program, filesize, sizeof(char), file);

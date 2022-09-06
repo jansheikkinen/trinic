@@ -1,6 +1,7 @@
 /* parser.c */
 
-#include "strutil.h"
+#include "../util/strutil.h"
+#include "tokeniser.h"
 #include "parser.h"
 
 char* tokenTypeStrings[] = {
@@ -115,17 +116,17 @@ static void newNonLiteral(struct TokeniserData* td, enum TokenType tt) {
 // *only* be just '#', but '+' is ambiguous because it could be '+' or '+='.
 static void parseUnambiguousOperator(struct TokeniserData* td) {
   switch(td->program[td->index]) {
-    case '(': newNonLiteral(td, LEFT_PAREN);     break;
-    case ')': newNonLiteral(td, RIGHT_PAREN);    break;
-    case '[': newNonLiteral(td, LEFT_BRACKET);   break;
-    case ']': newNonLiteral(td, RIGHT_BRACKET);  break;
-    case ',': newNonLiteral(td, COMMA);          break;
-    case '.': newNonLiteral(td, DOT);            break;
-    case '?': newNonLiteral(td, QUESTION);       break;
-    case '@': newNonLiteral(td, AT);             break;
-    case '#': newNonLiteral(td, HASHTAG);        break;
-    case '~': newNonLiteral(td, TILDE);          break;
-    case ':': newNonLiteral(td, COLON);          break;
+    case '(': newNonLiteral(td, TOKEN_LEFT_PAREN);     break;
+    case ')': newNonLiteral(td, TOKEN_RIGHT_PAREN);    break;
+    case '[': newNonLiteral(td, TOKEN_LEFT_BRACKET);   break;
+    case ']': newNonLiteral(td, TOKEN_RIGHT_BRACKET);  break;
+    case ',': newNonLiteral(td, TOKEN_COMMA);          break;
+    case '.': newNonLiteral(td, TOKEN_DOT);            break;
+    case '?': newNonLiteral(td, TOKEN_QUESTION);       break;
+    case '@': newNonLiteral(td, TOKEN_AT);             break;
+    case '#': newNonLiteral(td, TOKEN_HASHTAG);        break;
+    case '~': newNonLiteral(td, TOKEN_TILDE);          break;
+    case ':': newNonLiteral(td, TOKEN_COLON);          break;
   }
 }
 
@@ -145,24 +146,24 @@ static void parseAmbiguousOperator(struct TokeniserData* td) {
     case '<':
       if(peek(td) == '<') {
         if(over(td) == '=') {
-          newNonLiteral(td, BIT_LEFT_ASSIGN); td->index += 2;
-        } else { newNonLiteral(td, BIT_LEFT); td->index += 1; }
-      } else if(peek(td) == '=') { newNonLiteral(td, LESS_EQ); td->index += 1; }
-      else newNonLiteral(td, LEFT_DIAMOND);
+          newNonLiteral(td, TOKEN_BIT_LEFT_ASSIGN); td->index += 2;
+        } else { newNonLiteral(td, TOKEN_BIT_LEFT); td->index += 1; }
+      } else if(peek(td) == '=') { newNonLiteral(td, TOKEN_LESS_EQ); td->index += 1; }
+      else newNonLiteral(td, TOKEN_LEFT_DIAMOND);
       break;
     case '>':
       if(peek(td) == '>') {
         if(over(td) == '=') {
-          newNonLiteral(td, BIT_RIGHT_ASSIGN); td->index += 2;
-        } else { newNonLiteral(td, BIT_RIGHT); td->index += 1; }
-      } else if(peek(td) == '=') newNonLiteral(td, GREATER_EQ);
-      else newNonLiteral(td, RIGHT_DIAMOND);
+          newNonLiteral(td, TOKEN_BIT_RIGHT_ASSIGN); td->index += 2;
+        } else { newNonLiteral(td, TOKEN_BIT_RIGHT); td->index += 1; }
+      } else if(peek(td) == '=') newNonLiteral(td, TOKEN_GREATER_EQ);
+      else newNonLiteral(td, TOKEN_RIGHT_DIAMOND);
       break;
 
     case '=':
-      if(peek(td) == '=') newNonLiteral(td, EQUAL);
-      else if(peek(td) == '>') newNonLiteral(td, MATCH_ARROW);
-      else newNonLiteral(td, ASSIGN);
+      if(peek(td) == '=') newNonLiteral(td, TOKEN_EQUAL);
+      else if(peek(td) == '>') newNonLiteral(td, TOKEN_MATCH_ARROW);
+      else newNonLiteral(td, TOKEN_ASSIGN);
       break;
 
     case '/':
@@ -190,17 +191,17 @@ static void parseAmbiguousOperator(struct TokeniserData* td) {
 
         td->index += 1;
         nextToken(td);
-      } else newAmbiguousArithOp(td, SLASH);
+      } else newAmbiguousArithOp(td, TOKEN_SLASH);
       break;
 
-    case '+': newAmbiguousArithOp(td, ADD);     break;
-    case '-': newAmbiguousArithOp(td, MINUS);   break;
-    case '*': newAmbiguousArithOp(td, STAR);    break;
-    case '%': newAmbiguousArithOp(td, MOD);     break;
-    case '!': newAmbiguousArithOp(td, BANG);    break;
-    case '&': newAmbiguousArithOp(td, BIT_AND); break;
-    case '|': newAmbiguousArithOp(td, BIT_OR);  break;
-    case '^': newAmbiguousArithOp(td, BIT_XOR); break;
+    case '+': newAmbiguousArithOp(td, TOKEN_ADD);     break;
+    case '-': newAmbiguousArithOp(td, TOKEN_MINUS);   break;
+    case '*': newAmbiguousArithOp(td, TOKEN_STAR);    break;
+    case '%': newAmbiguousArithOp(td, TOKEN_MOD);     break;
+    case '!': newAmbiguousArithOp(td, TOKEN_BANG);    break;
+    case '&': newAmbiguousArithOp(td, TOKEN_BIT_AND); break;
+    case '|': newAmbiguousArithOp(td, TOKEN_BIT_OR);  break;
+    case '^': newAmbiguousArithOp(td, TOKEN_BIT_XOR); break;
   }
 }
 
@@ -223,7 +224,7 @@ static void parseLiteral(struct TokeniserData* td) {
     nextToken(td);
     while(td->program[td->index++]) {
       if(get(td) == '\"') {
-        newLiteralToken(td, STRING_LITERAL,
+        newLiteralToken(td, TOKEN_STRING_LITERAL,
           substring(td->program, td->tokenStart, td->index - td->tokenStart));
         return;
       } else if(get(td) == '\n') {
@@ -238,7 +239,7 @@ static void parseLiteral(struct TokeniserData* td) {
     if(peek(td) == '\'') {
       char* literal = calloc(2, 1); // bc null-terminated
       *literal = get(td);
-      newLiteralToken(td, CHAR_LITERAL, literal);
+      newLiteralToken(td, TOKEN_CHAR_LITERAL, literal);
     }
 
   // TODO: add support for any radix 1-60
@@ -252,7 +253,7 @@ static void parseLiteral(struct TokeniserData* td) {
       else {
         td->col += 1;
         appendToTokenArray(td->tokens,
-            newToken(isFloat ? FLOAT_LITERAL : INTEGER_LITERAL,
+            newToken(isFloat ? TOKEN_FLOAT_LITERAL : TOKEN_INTEGER_LITERAL,
               substring(td->program, td->tokenStart, td->index - td->tokenStart),
               td->row, td->col));
         return;
@@ -274,7 +275,7 @@ static void parseKeyword(struct TokeniserData* td) {
   char* keyword =
     substring(td->program, td->tokenStart, td->index - td->tokenStart + 1);
 
-  for(enum TokenType tt = INT8; tt < PRINT + 1; tt++) { // cursed
+  for(enum TokenType tt = TOKEN_INT8; tt < TOKEN_PRINT + 1; tt++) { // cursed
     const char* c = getTokenName(tt);
     char* cmpToken = calloc(strlen(c), 1);
     strncpy(cmpToken, c, strlen(c));
@@ -286,7 +287,7 @@ static void parseKeyword(struct TokeniserData* td) {
     } else free(cmpToken);
   }
 
-  newLiteralToken(td, IDENTIFIER_LITERAL, keyword);
+  newLiteralToken(td, TOKEN_IDENTIFIER_LITERAL, keyword);
 }
 
 // I could have definitely written the tokeniser more efficiently;

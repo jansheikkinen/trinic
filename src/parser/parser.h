@@ -3,8 +3,6 @@
 
 #include <stdlib.h>
 
-#include "tokeniser.h"
-
 extern char* tokenTypeStrings[];
 #define getTokenName(tokentype) tokenTypeStrings[tokentype]
 

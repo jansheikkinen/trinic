@@ -1,6 +1,6 @@
 /* token.c */
 
-#include "reallocarray.h"
+#include "../util/reallocarray.h"
 #include "token.h"
 
 struct Token newToken(enum TokenType type, char* literal,
@@ -17,7 +17,6 @@ struct Token newToken(enum TokenType type, char* literal,
 
 void freeToken(struct Token* token) {
   free(token->literal);
-  // free(token);
 }
 
 
