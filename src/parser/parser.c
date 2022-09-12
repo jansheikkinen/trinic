@@ -4,98 +4,6 @@
 #include "tokeniser.h"
 #include "parser.h"
 
-char* tokenTypeStrings[] = {
-  "UNDEFINED",
-  "LEFT_PAREN",
-  "RIGHT_PAREN",
-  "LEFT_BRACKET",
-  "RIGHT_BRACKET",
-  "COMMA",
-  "DOT",
-  "QUESTION",
-  "AT",
-  "HASHTAG",
-  "TILDE",
-  "COLON",
-  "LEFT_DIAMOND",
-  "BIT_LEFT",
-  "BIT_LEFT_ASSIGN",
-  "LESS_EQ",
-  "RIGHT_DIAMOND",
-  "BIT_RIGHT",
-  "BIT_RIGHT_ASSIGN",
-  "GREATER_EQ",
-  "EQUAL",
-  "ASSIGN",
-  "MATCH_ARROW",
-  "ADD",
-  "ADD_ASSIGN",
-  "MINUS",
-  "MINUS_ASSIGN",
-  "STAR",
-  "STAR_ASSIGN",
-  "SLASH",
-  "SLASH_ASSIGN",
-  "MOD",
-  "MOD_ASSIGN",
-  "BANG",
-  "NOT_EQ",
-  "BIT_AND",
-  "BIT_AND_ASSIGN",
-  "BIT_OR",
-  "BIT_OR_ASSIGN",
-  "BIT_XOR",
-  "BIT_XOR_ASSIGN",
-  "STRING_LITERAL",
-  "CHAR_LITERAL",
-  "INTEGER_LITERAL",
-  "FLOAT_LITERAL",
-  "BOOLEAN_LITERAL",
-  "IDENTIFIER_LITERAL",
-  "INT8",
-  "INT16",
-  "INT32",
-  "INT64",
-  "ISIZE",
-  "UINT8",
-  "UINT16",
-  "UINT32",
-  "UINT64",
-  "USIZE",
-  "FLOAT16",
-  "FLOAT32",
-  "FLOAT64",
-  "CHAR",
-  "VOID",
-  "BOOL",
-  "ENUM",
-  "STRUCT",
-  "FUNCTION",
-  "INLINE",
-  "FOR",
-  "IN",
-  "IF",
-  "ELSEIF",
-  "ELSE",
-  "WHILE",
-  "LOOP",
-  "CONTINUE",
-  "PASS",
-  "BREAK",
-  "MATCH",
-  "DO",
-  "END",
-  "INCLUDE",
-  "PUB",
-  "AND",
-  "OR",
-  "NOT",
-  "UNDEFINED",
-  "MUT",
-  "RETURN",
-  "PRINT",
-};
-
 // Whitespace and newline
 static void parseNonTokens(struct TokeniserData* td) {
   switch(td->program[td->index]) {
@@ -161,9 +69,13 @@ static void parseAmbiguousOperator(struct TokeniserData* td) {
       break;
 
     case '=':
-      if(peek(td) == '=') newNonLiteral(td, TOKEN_EQUAL);
-      else if(peek(td) == '>') newNonLiteral(td, TOKEN_MATCH_ARROW);
-      else newNonLiteral(td, TOKEN_ASSIGN);
+      if(peek(td) == '=') {
+        newNonLiteral(td, TOKEN_EQUAL);
+        td->index += 1;
+      } else if(peek(td) == '>') {
+        newNonLiteral(td, TOKEN_MATCH_ARROW);
+        td->index += 1;
+      } else newNonLiteral(td, TOKEN_ASSIGN);
       break;
 
     case '/':
@@ -275,7 +187,7 @@ static void parseKeyword(struct TokeniserData* td) {
   char* keyword =
     substring(td->program, td->tokenStart, td->index - td->tokenStart + 1);
 
-  for(enum TokenType tt = TOKEN_INT8; tt < TOKEN_PRINT + 1; tt++) { // cursed
+  for(enum TokenType tt = TOKEN_TRUE; tt < TOKEN_PRINT + 1; tt++) { // cursed
     const char* c = getTokenName(tt);
     char* cmpToken = calloc(strlen(c), 1);
     strncpy(cmpToken, c, strlen(c));

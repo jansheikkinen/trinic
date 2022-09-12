@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror -pedantic -std=c17 -O0
+CFLAGS = -Wall -Wextra -Werror -pedantic -std=c17
 INCLUDE = -Iinclude
 
 SRC = $(wildcard src/*.c) $(wildcard src/**/*.c)
@@ -9,7 +9,7 @@ BUILD = build
 all: dirs uc
 
 dirs:
-	mkdir -p $(BUILD) src include tests
+	mkdir -p $(BUILD) src tests
 
 run: uc
 	$(BUILD)/uc

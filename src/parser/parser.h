@@ -3,9 +3,6 @@
 
 #include <stdlib.h>
 
-extern char* tokenTypeStrings[];
-#define getTokenName(tokentype) tokenTypeStrings[tokentype]
-
 struct TokenArray* tokenise(const char* __restrict__);
 
 #endif

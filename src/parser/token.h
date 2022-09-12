@@ -69,10 +69,12 @@ enum TokenType {
   TOKEN_CHAR_LITERAL,       // 'x'
   TOKEN_INTEGER_LITERAL,    // 69
   TOKEN_FLOAT_LITERAL,      // 420.69
-  TOKEN_BOOLEAN_LITERAL,    // true or false
   TOKEN_IDENTIFIER_LITERAL, // user-defined names: variables n functions
 
   // Keywords
+  TOKEN_TRUE,
+  TOKEN_FALSE,
+
   TOKEN_INT8,   // i8
   TOKEN_INT16,  // i16
   TOKEN_INT32,  // i32
@@ -126,6 +128,9 @@ enum TokenType {
   // Delete the following
   TOKEN_PRINT,
 };
+
+extern char* tokenTypeStrings[];
+#define getTokenName(tokentype) tokenTypeStrings[tokentype]
 
 struct Token {
   enum TokenType type;
