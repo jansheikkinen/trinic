@@ -8,6 +8,7 @@ Instructions are written in binary in use, but for the sake of documentation rea
 - C(X):  the Xth constant
 - RC(X): can be either a constant or register
 - PC: the program counter
+
 For example, `ADD A B C | R(A) = RC(B) + RC(C)` is how the `ADD` instruction definition would be written.
 
 ## Instructions
