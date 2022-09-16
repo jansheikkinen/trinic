@@ -109,7 +109,9 @@ struct Token newToken(enum TokenType type, char* literal,
 }
 
 void freeToken(struct Token* token) {
-  free(token->literal);
+  if(token->type != TOKEN_IDENTIFIER_LITERAL
+      && token->type != TOKEN_STRING_LITERAL)
+    free(token->literal);
 }
 
 

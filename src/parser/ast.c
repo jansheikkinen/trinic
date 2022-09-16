@@ -43,12 +43,12 @@ void printASTNode(const struct AST* ast) {
     case AST_LITERAL:
       switch(ast->as.literal.type) {
         case LIT_IDENTIFIER: printf("%s", ast->as.literal.as.identifier); break;
-        case LIT_STRING: printf("%s", ast->as.literal.as.string); break;
-        case LIT_INT64: printf("%ld", ast->as.literal.as.integer); break;
-        case LIT_UINT64: printf("%lu", ast->as.literal.as.uinteger); break;
-        case LIT_FLOAT64: printf("%lf", ast->as.literal.as.floating); break;
+        case LIT_STRING: printf("\"%s\"", ast->as.literal.as.string);     break;
+        case LIT_INT64: printf("%ld",     ast->as.literal.as.integer);    break;
+        case LIT_UINT64: printf("%lu",    ast->as.literal.as.uinteger);   break;
+        case LIT_FLOAT64: printf("%lf",   ast->as.literal.as.floating);   break;
         case LIT_BOOL:
-          printf("%s", ast->as.literal.as.boolean ? "true" : "false"); break;
+          printf("%s", ast->as.literal.as.boolean ? "true" : "false");    break;
       } break;
     case AST_UNARY:
       printf("(%s ", getTokenName(ast->as.unaryExpression.type));
