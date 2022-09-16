@@ -7,9 +7,11 @@
  * an AST to assembly / bytecode just consists of walking the tree and printing
  * out each node as they come. */
 
+#include <stdio.h>
+#include <stdlib.h>
+
 #include "ast.h"
 #include "token.h"
-#include <stdlib.h>
 
 struct AST* newASTNode(struct AST ast) {
   struct AST* ptr = malloc(sizeof(*ptr));
@@ -20,14 +22,15 @@ struct AST* newASTNode(struct AST ast) {
 void freeASTNode(struct AST* ast) {
   switch(ast->type) {
     case AST_UNDEFINED:
-    case AST_LITERAL: free(ast); break;
+    case AST_LITERAL:
+      free(ast); break;
     case AST_UNARY:
-      freeASTNode(ast->as.unary.operand);
+      freeASTNode(ast->as.unaryExpression.operand);
       free(ast);
       break;
     case AST_BINARY:
-      freeASTNode(ast->as.binary.left);
-      freeASTNode(ast->as.binary.right);
+      freeASTNode(ast->as.binaryExpression.left);
+      freeASTNode(ast->as.binaryExpression.right);
       free(ast);
       break;
   }
@@ -39,6 +42,7 @@ void printASTNode(const struct AST* ast) {
     case AST_UNDEFINED: printf("UNDEFINED\n"); break;
     case AST_LITERAL:
       switch(ast->as.literal.type) {
+        case LIT_IDENTIFIER: printf("%s", ast->as.literal.as.identifier); break;
         case LIT_STRING: printf("%s", ast->as.literal.as.string); break;
         case LIT_INT64: printf("%ld", ast->as.literal.as.integer); break;
         case LIT_UINT64: printf("%lu", ast->as.literal.as.uinteger); break;
@@ -47,14 +51,14 @@ void printASTNode(const struct AST* ast) {
           printf("%s", ast->as.literal.as.boolean ? "true" : "false"); break;
       } break;
     case AST_UNARY:
-      printf("(%s ", getTokenName(ast->as.unary.type));
-      printASTNode(ast->as.unary.operand);
+      printf("(%s ", getTokenName(ast->as.unaryExpression.type));
+      printASTNode(ast->as.unaryExpression.operand);
       printf(")"); break;
     case AST_BINARY:
-      printf("(%s ", getTokenName(ast->as.binary.type));
-      printASTNode(ast->as.binary.left);
+      printf("(%s ", getTokenName(ast->as.binaryExpression.type));
+      printASTNode(ast->as.binaryExpression.left);
       printf(" ");
-      printASTNode(ast->as.binary.right);
+      printASTNode(ast->as.binaryExpression.right);
       printf(")");
       break;
   }
@@ -72,8 +76,8 @@ struct AST* newLiteralNode(enum LiteralType type, union LiteralValue literal) {
 struct AST* newUnaryNode(enum TokenType operator, struct AST* operand) {
   struct AST ast;
   ast.type = AST_UNARY;
-  ast.as.unary.type = operator;
-  ast.as.unary.operand = operand;
+  ast.as.unaryExpression.type = operator;
+  ast.as.unaryExpression.operand = operand;
 
   return newASTNode(ast);
 }
@@ -82,9 +86,9 @@ struct AST* newBinaryNode(enum TokenType operator,
     struct AST* left, struct AST* right) {
   struct AST ast;
   ast.type = AST_BINARY;
-  ast.as.binary.type = operator;
-  ast.as.binary.left = left;
-  ast.as.binary.right = right;
+  ast.as.binaryExpression.type = operator;
+  ast.as.binaryExpression.left = left;
+  ast.as.binaryExpression.right = right;
 
   return newASTNode(ast);
 }

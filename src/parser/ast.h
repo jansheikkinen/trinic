@@ -1,7 +1,6 @@
 #ifndef AST_H
 #define AST_H
 
-#include <stdio.h>
 #include <stdbool.h>
 
 #include "token.h"
@@ -16,6 +15,7 @@ enum ASTType {
 };
 
 enum LiteralType {
+  LIT_IDENTIFIER,
   LIT_STRING,
   LIT_INT64,
   LIT_UINT64,
@@ -24,7 +24,8 @@ enum LiteralType {
 };
 
 union LiteralValue {
-  const char*   string;
+  char*   identifier;
+  char*   string;
   double        floating;
   long          integer;
   unsigned long uinteger;
@@ -42,13 +43,13 @@ struct AST {
     struct {
       enum TokenType type;
       struct AST* operand;
-    } unary;
+    } unaryExpression;
 
     struct {
       enum TokenType type;
       struct AST* left;
       struct AST* right;
-    } binary;
+    } binaryExpression;
   } as;
 };
 

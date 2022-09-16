@@ -17,12 +17,18 @@ The grammar specification uses a form of BNF.
 
 ```
 expression ::= logic ;
-logic      ::= equality ( ("and" | "or")                  equality )* ;
-equality   ::= compare  ( ("==" | "!=")                   compare  )* ;
-compare    ::= bitwise  ( (">" | ">=" | "<" | "<=")       bitwise  )* ;
-bitwise    ::= term     ( ("&" | "|" | "^" | "<<" | ">>") term     )* ;
-term       ::= factor   ( ("+" | "-")                     factor   )* ;
-factor     ::= unary    ( ("*" | "/")                     unary    )* ;
-unary      ::=            ("~" | "!" | "not" | "-")       unary ;
+
+assignment ::= IDENTIFIER "=" logic ;
+
+logic      ::= equality ( ("and" | "or")                  equality )*  ;
+equality   ::= compare  ( ("==" | "!=")                   compare  )*  ;
+compare    ::= bitwise  ( (">" | ">=" | "<" | "<=")       bitwise  )*  ;
+bitwise    ::= term     ( ("&" | "|" | "^" | "<<" | ">>") term     )*  ;
+term       ::= factor   ( ("+" | "-")                     factor   )*  ;
+factor     ::= unary    ( ("*" | "/")                     unary    )*  ;
+unary      ::=            ("~" | "!" | "not" | "-")       unary | call ;
+call       ::= primary "(" arguments? ")" ;
 primary    ::= "(" expression ")" | NUMBER | STRING | IDENTIFIER ;
+
+arguments ::= expression ( "," expression )* ;
 ```
