@@ -3,10 +3,13 @@
 #include "../debug/debug.h"
 #include "../util/readfile.h"
 #include "parser.h"
+#include "genast.h"
 #include "lexer.h"
 
+// In the future, this should return the bytecode representation of the code
 struct AST* parseProgram(const char* filename) {
 #ifdef PARSER_DEBUG
+  printf("[PARSER]: Parsing %s...\n", filename);
   printf("### TOKENISER ###\n");
 #endif
 

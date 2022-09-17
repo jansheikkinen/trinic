@@ -64,15 +64,4 @@ struct AST* newBinaryNode(enum TokenType, struct AST*, struct AST*);
 #define NEW_LITERAL_VALUE(type, value) \
   (union LiteralValue){ .type = value }
 
-
-struct ASTContext {
-  struct TokenArray* tokens;
-  size_t index;
-};
-
-struct ASTContext* newASTContext(struct TokenArray*);
-void freeASTContext(struct ASTContext*);
-
-struct AST* generateAST(struct TokenArray*);
-
 #endif
