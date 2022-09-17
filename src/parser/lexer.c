@@ -1,5 +1,8 @@
 /* lexer.c */
 
+#include <stdio.h>
+
+#include "../debug/debug.h"
 #include "../util/strutil.h"
 #include "tokeniser.h"
 #include "lexer.h"
@@ -206,6 +209,10 @@ static void lexKeyword(struct TokeniserData* td) {
 // I could have written the tokeniser as one massive switch statement,
 // but, quite frankly, that's ugly and I'd rather modularise it for readability
 struct TokenArray* tokenise(const char* __restrict__ program) {
+#ifdef LEXER_DEBUG
+  printf("[LEXER]: Generating tokens from source...\n");
+#endif
+
   struct TokeniserData* td = malloc(sizeof(*td));;
   newTokeniser(td, program);
 
@@ -224,5 +231,10 @@ struct TokenArray* tokenise(const char* __restrict__ program) {
 
   struct TokenArray* tokens = td->tokens;
   free(td); // Isn't this beautiful?
+
+#ifdef LEXER_DEBUG
+  printf("[LEXER]: Generated %ld tokens\n", tokens->length);
+#endif
+
   return tokens;
 }
