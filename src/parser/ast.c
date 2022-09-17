@@ -161,6 +161,7 @@ struct AST* unaryExpression(struct ASTContext* ctx) {
   return primaryExpression(ctx);
 }
 
+// cursed C functional programming moment
 #define binaryExpression(name, prev, cond)            \
   struct AST* name(struct ASTContext* ctx) {          \
     struct AST* left = prev(ctx);                     \

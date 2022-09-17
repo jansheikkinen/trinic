@@ -1,11 +1,11 @@
-/* parser.c */
+/* lexer.c */
 
 #include "../util/strutil.h"
 #include "tokeniser.h"
-#include "parser.h"
+#include "lexer.h"
 
 // Whitespace and newline
-static void parseNonTokens(struct TokeniserData* td) {
+static void lexNonTokens(struct TokeniserData* td) {
   switch(td->program[td->index]) {
     case '\n': td->row += 1; td->index += 1;
                td->tokenStart = td->index; td->col = 1; break;
@@ -22,7 +22,7 @@ static void newNonLiteral(struct TokeniserData* td, enum TokenType tt) {
 // Tokens that correspond to a single-character operator that cannot
 // be mistaken for any other token. I.e. '#' is unambiguous; it can
 // *only* be just '#', but '+' is ambiguous because it could be '+' or '+='.
-static void parseUnambiguousOperator(struct TokeniserData* td) {
+static void lexUnambiguousOperator(struct TokeniserData* td) {
   switch(td->program[td->index]) {
     case '(': newNonLiteral(td, TOKEN_LEFT_PAREN);     break;
     case ')': newNonLiteral(td, TOKEN_RIGHT_PAREN);    break;
@@ -49,7 +49,7 @@ static void newAmbiguousArithOp(struct TokeniserData* td, enum TokenType tokenTy
 // Tokens that correspond to operators that *are* ambiguous just from
 // looking at the first character. Using the example from above, this
 // is where '+' and '+=' would go.
-static void parseAmbiguousOperator(struct TokeniserData* td) {
+static void lexAmbiguousOperator(struct TokeniserData* td) {
   switch(td->program[td->index]) {
     case '<':
       if(peek(td) == '<') {
@@ -131,7 +131,7 @@ static void newLiteralToken(struct TokeniserData* td,
 // TODO: This part can fail, actually. Right now, I just have it set to
 // ignore the errors entirely, but ideally they'd be thrown to the calling
 // function and handled properly.
-static void parseLiteral(struct TokeniserData* td) {
+static void lexLiteral(struct TokeniserData* td) {
   if(get(td) == '\"') {
     nextToken(td);
     while(td->program[td->index++]) {
@@ -175,7 +175,7 @@ static void parseLiteral(struct TokeniserData* td) {
 }
 
 // The ones like "int32" or "if" that are alphanumeric
-static void parseKeyword(struct TokeniserData* td) {
+static void lexKeyword(struct TokeniserData* td) {
   if(!isalnum(get(td))) return;
 
   while(peek(td) && isalnum(peek(td))) {
@@ -211,14 +211,14 @@ struct TokenArray* tokenise(const char* __restrict__ program) {
 
   while(get(td)) {
     size_t i = td->index;
-    parseNonTokens(td);
+    lexNonTokens(td);
 
-    parseUnambiguousOperator(td);
-    parseAmbiguousOperator(td);
+    lexUnambiguousOperator(td);
+    lexAmbiguousOperator(td);
 
-    parseLiteral(td);
+    lexLiteral(td);
 
-    parseKeyword(td);
+    lexKeyword(td);
     if(i == td->index) td->index += 1;
   }
 

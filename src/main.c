@@ -4,7 +4,7 @@
 #include <errno.h>
 
 #include "parser/token.h"
-#include "parser/parser.h"
+#include "parser/lexer.h"
 #include "parser/ast.h"
 
 void panic(int err, const char* msg) {
@@ -19,7 +19,7 @@ size_t getFileSize(FILE* file) {
   return filesize;
 }
 
-const char* readFile(const char* filename) {
+char* readFile(const char* filename) {
   FILE* file = fopen(filename, "r");
   if(!file) panic(1, "Failed to open file");
 
@@ -32,8 +32,9 @@ const char* readFile(const char* filename) {
 }
 
 int main(void) {
-  const char* program = readFile("./build/test.uc");
+  char* program = readFile("./build/test.uc");
   struct TokenArray* tokens = tokenise(program);
+  free(program);
 
   printf("### TOKENISER ###\n");
   for(size_t i = 0; i < tokens->capacity; i++) {
@@ -47,6 +48,7 @@ int main(void) {
 
   printf("\n### AST GENERATION ###\n");
   struct AST* ast = generateAST(tokens);
+  printf("test\n");
 
   printASTNode(ast);
 
