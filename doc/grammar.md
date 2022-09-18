@@ -16,6 +16,18 @@ The grammar specification uses a form of BNF.
 ## Unholy C Grammar
 
 ```
+basetype    ::=  "int8"   | "int16"   | "int32"   | "int64"   | "isize"
+               | "uint8"  | "uint16"  | "uint32"  | "uint64"  | "usize"
+               | "float8" | "float16" | "float32" | "float64" | "fsize"
+               | bool ;
+arraytype   ::= type "[" expression "]" ;
+pointertype ::= type "*" ;
+structtype  ::= "struct" IDENTIFIER structbody*? ;
+structbody  ::= vardecl* "end" ;
+type        ::= basetype | arraytype | pointertype | structtype ;
+
+vardecl ::= ;
+
 expression ::= logic ;
 
 assignment ::= IDENTIFIER "=" logic ;
