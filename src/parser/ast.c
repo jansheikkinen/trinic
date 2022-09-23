@@ -37,6 +37,7 @@ void printASTNode(const struct AST* ast) {
     case AST_UNDEFINED: printf("UNDEFINED\n"); break;
     case AST_LITERAL:
       switch(ast->as.literal.type) {
+        case LIT_UNDEFINED: printf("UNDEFINED"); break;
         case LIT_IDENTIFIER: printf("%s", ast->as.literal.as.identifier); break;
         case LIT_STRING: printf("\"%s\"", ast->as.literal.as.string);     break;
         case LIT_INT64: printf("%ld",     ast->as.literal.as.integer);    break;

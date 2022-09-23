@@ -15,6 +15,7 @@ enum ASTType {
 };
 
 enum LiteralType {
+  LIT_UNDEFINED,
   LIT_IDENTIFIER,
   LIT_STRING,
   LIT_INT64,
