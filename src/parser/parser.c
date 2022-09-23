@@ -10,6 +10,9 @@
 struct AST* parseProgram(const char* filename) {
 #ifdef PARSER_DEBUG
   printf("[PARSER]: Parsing %s...\n", filename);
+#endif
+
+#ifdef VERBOSE_DEBUG
   printf("### TOKENISER ###\n");
 #endif
 
@@ -17,7 +20,7 @@ struct AST* parseProgram(const char* filename) {
   struct TokenArray* tokens = tokenise(program);
   free(program);
 
-#ifdef PARSER_DEBUG
+#ifdef VERBOSE_DEBUG
   for(size_t i = 0; i < tokens->capacity; i++) {
     if(tokens->tokens[i].type) { // TOKEN_UNDEFINED == 0 == NULL
       printf("%03ld: %12s, %10s, (%03ld, %03ld)\n", i,
@@ -28,13 +31,12 @@ struct AST* parseProgram(const char* filename) {
     }
   }
 
-
   printf("\n### AST GENERATION ###\n");
 #endif
 
   struct AST* ast = generateAST(tokens);
 
-#ifdef PARSER_DEBUG
+#ifdef VERBOSE_DEBUG
   printASTNode(ast);
 #endif
 
