@@ -113,38 +113,13 @@ struct AST* expression(struct ASTContext* ctx) {
   return logicExpression(ctx);
 }
 
-size_t _countNodes(struct AST* ast, size_t current) {
-  switch(ast->type) {
-    case AST_UNDEFINED:
-    case AST_LITERAL: return current + 1;
-
-    case AST_UNARY:
-      current += _countNodes(ast->as.unaryExpression.operand, current);
-      return current + 1;
-    case AST_BINARY:
-      current += _countNodes(ast->as.binaryExpression.left, current);
-      current += _countNodes(ast->as.binaryExpression.right, current);
-      return current + 1;
-    default: return current;
-  }
-}
-
-size_t countNodes(struct AST* ast) {
-  return _countNodes(ast, 0) - 1;
-}
-
 struct AST* generateAST(struct TokenArray* tokens) {
 #ifdef AST_DEBUG
   printf("[AST]: Generating AST...\n");
 #endif
 
   struct ASTContext* ctx = newASTContext(tokens);
-
   struct AST* ast = expression(ctx);
-
-#ifdef AST_DEBUG
-  printf("[AST]: Generated AST with %ld nodes\n", countNodes(ast));
-#endif
 
   freeASTContext(ctx);
   return ast;
