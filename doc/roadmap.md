@@ -25,7 +25,9 @@ would encompass implementation of an AST or optimisation.
 - [ ] `undefined` and Mutability
 - [ ] Pattern Matching
 - [ ] Anonymous struct/enum/union
-- [ ] A Tagged Union Type and/or Generics?
+- [ ] Tagged unions(?)
+- [ ] Macro system akin to Rust or [Nelua](https://github.com/edubart/nelua-lang)
+- [ ] Compiler/interpreter directives / attributes
 
 ## Build Tools
 
