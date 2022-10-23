@@ -3,11 +3,15 @@
 #include "../debug/debug.h"
 #include "../util/readfile.h"
 #include "parser.h"
-#include "genast.h"
 #include "lexer.h"
+#include "generateAST.h"
+
+#ifdef VERBOSE_DEBUG
+#include "statementAST.h"
+#endif
 
 // In the future, this should return the bytecode representation of the code
-struct AST* parseProgram(const char* filename) {
+struct StmtList* parseProgram(const char* filename) {
 #ifdef PARSER_DEBUG
   printf("[PARSER]: Parsing %s...\n", filename);
 #endif
@@ -34,11 +38,12 @@ struct AST* parseProgram(const char* filename) {
   printf("\n### AST GENERATION ###\n");
 #endif
 
-  struct AST* ast = generateAST(tokens);
+  struct StmtList* stmts = generateAST(tokens);
 
 #ifdef VERBOSE_DEBUG
-  printASTNode(ast);
+  for(size_t i = 0; i < stmts->capacity; i++)
+    printStmtAST(stmts->stmts[i]);
 #endif
 
-  return ast;
+  return stmts;
 }

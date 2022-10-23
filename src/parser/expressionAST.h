@@ -64,4 +64,6 @@ struct ExprAST* allocNewBinary(enum TokenType, struct ExprAST*, struct ExprAST*)
 
 void printExprAST(const struct ExprAST*);
 
+void freeExprNode(struct ExprAST* expr);
+
 #endif

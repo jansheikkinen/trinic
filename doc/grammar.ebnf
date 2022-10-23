@@ -14,7 +14,8 @@ structbody  = vardecl* "end" ;
 type        = basetype | arraytype | pointertype | structtype ;
 
 
-statement   = (assignment | vardecl | conditional) "." ;
+statement   = (expression | assignment | vardecl | conditional) "." ;
+builtin     = ("print") "(" expression ")" ;
 vardecl     = type assignment ;
 assignment  = IDENTIFIER "=" (expression | "undefined") ;
 conditional = "if" expression "do" statement*

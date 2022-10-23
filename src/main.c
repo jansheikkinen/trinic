@@ -3,9 +3,9 @@
 #include "parser/parser.h"
 
 int main(void) {
-  struct AST* ast = parseProgram("./build/test.uc");
+  struct StmtList* stmts = parseProgram("./build/test.uc");
 
-  freeASTNode(ast);
+  freeStmtList(stmts);
 
   return 0;
 }

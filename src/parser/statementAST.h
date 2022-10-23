@@ -38,4 +38,6 @@ struct StmtAST* allocNewBuiltin(enum BuiltinType, struct ExprAST*);
 
 void printStmtAST(const struct StmtAST*);
 
+void freeStmtNode(struct StmtAST* stmt);
+
 #endif

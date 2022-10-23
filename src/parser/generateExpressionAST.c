@@ -1,5 +1,7 @@
 /* generateExpressionAST.c */
 
+#include <stdio.h>
+
 #include "generateExpressionAST.h"
 #include "ASTContext.h"
 #include "token.h"
@@ -20,8 +22,56 @@
     return left;                                            \
   }
 
-struct ExprAST* genPrimaryNode(struct ASTContext* ctx);
-struct ExprAST* genUnaryNode(struct ASTContext* ctx);
+static struct ExprAST* genPrimaryNode(struct ASTContext* ctx) {
+  struct ExprAST* expr = NULL;
+
+  if(MATCH_TOKEN(ctx, TOKEN_TRUE)) {
+    long* value = malloc(sizeof(*value));
+    *value = 1;
+    expr = allocNewLiteral(LIT_BOOL, value);
+  } else if(MATCH_TOKEN(ctx, TOKEN_FALSE)) {
+    long* value = malloc(sizeof(*value));
+    *value = 0;
+    expr = allocNewLiteral(LIT_BOOL, value);
+
+  } else if(MATCH_TOKEN(ctx, TOKEN_INTEGER_LITERAL)) {
+    long* value = malloc(sizeof(*value));
+    *value = strtol(GET_CURRENT_TOKEN(ctx).literal, NULL, 10);
+    expr = allocNewLiteral(LIT_INTEGER, value);
+  } else if(MATCH_TOKEN(ctx, TOKEN_FLOAT_LITERAL)) {
+    double* value = malloc(sizeof(*value));
+    *value = strtod(GET_CURRENT_TOKEN(ctx).literal, NULL);
+    expr = allocNewLiteral(LIT_FLOAT, value);
+
+  } else if(MATCH_TOKEN(ctx, TOKEN_STRING_LITERAL)) {
+    expr = allocNewLiteral(LIT_STRING, GET_CURRENT_TOKEN(ctx).literal);
+  } else if(MATCH_TOKEN(ctx, TOKEN_IDENTIFIER_LITERAL)) {
+    expr = allocNewLiteral(LIT_IDENTIFIER, GET_CURRENT_TOKEN(ctx).literal);
+
+  } else {
+    printf("[PARSER ERROR]: (%ld, %ld) Expected expression at token %s\n",
+        GET_CURRENT_TOKEN(ctx).row, GET_CURRENT_TOKEN(ctx).col,
+        getTokenName(GET_CURRENT_TOKEN(ctx).type));
+  }
+
+  ctx->index += 1;
+  return expr;
+}
+
+static struct ExprAST* genUnaryNode(struct ASTContext* ctx) {
+  if(MATCH_TOKEN(ctx, TOKEN_TILDE)
+      || MATCH_TOKEN(ctx, TOKEN_BANG)
+      || MATCH_TOKEN(ctx, TOKEN_NOT)
+      || MATCH_TOKEN(ctx, TOKEN_MINUS)) {
+    enum TokenType operator = GET_CURRENT_TOKEN(ctx).type;
+    ctx->index += 1;
+    struct ExprAST* operand = genUnaryNode(ctx);
+
+    return allocNewUnary(operator, operand);
+  }
+
+  return genPrimaryNode(ctx);
+}
 
 generateBinaryNode(genFactorNode, genUnaryNode,
   MATCH_TOKEN(ctx, TOKEN_SLASH) || MATCH_TOKEN(ctx, TOKEN_STAR))

@@ -98,3 +98,25 @@ void printExprAST(const struct ExprAST* ast) {
       printf(")"); break;
   }
 }
+
+void freeExprNode(struct ExprAST* expr) {
+  switch(expr->type) {
+    case EXPR_UNDEFINED: break;
+    case EXPR_LITERAL:
+      switch(expr->as.literal.type) {
+        case LIT_IDENTIFIER:
+          free(expr->as.literal.as.identifier); break;
+        case LIT_STRING:
+          free(expr->as.literal.as.string); break;
+        default: break;
+      } break;
+    case EXPR_UNARY:
+      freeExprNode(expr->as.unary.operand); break;
+    case EXPR_BINARY:
+      freeExprNode(expr->as.binary.left);
+      freeExprNode(expr->as.binary.right);
+      break;
+  }
+
+  free(expr);
+}

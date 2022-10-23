@@ -61,3 +61,15 @@ void printStmtAST(const struct StmtAST* stmt) {
       printf(")\n"); break;
   }
 }
+
+void freeStmtNode(struct StmtAST* stmt) {
+  switch(stmt->type) {
+    case STMT_UNDEFINED: break;
+    case STMT_EXPRESSION:
+      freeExprNode(stmt->as.expression.expression); break;
+    case STMT_BUILTIN:
+      freeExprNode(stmt->as.builtin.parameter); break;
+  }
+
+  free(stmt);
+}

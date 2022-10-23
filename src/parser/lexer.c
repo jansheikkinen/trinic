@@ -164,7 +164,7 @@ static void lexLiteral(struct TokeniserData* td) {
     int isFloat = 0;
     while(td->program[td->index++]) {
       if(isdigit(get(td))) td->col += 1;
-      else if(get(td) == '.') { td->col += 1; isFloat = 1; }
+      // else if(get(td) == '.') { td->col += 1; isFloat = 1; }
       else {
         td->col += 1;
         appendToTokenArray(td->tokens,
