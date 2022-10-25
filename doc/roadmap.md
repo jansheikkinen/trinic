@@ -10,7 +10,7 @@ would encompass implementation of an AST or optimisation.
 ## Language
 
 - [x] Expressions
-- [ ] Statements
+- [x] Statements
 - [ ] Variable Initialisation and Assignment
 - [ ] Variable Scopes
 - [ ] Control Flow: `if`, `and`, `or`, `not`
