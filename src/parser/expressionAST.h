@@ -17,6 +17,7 @@ enum ExprASTType {
 enum LiteralType {
   LIT_UNDEFINED,
   LIT_IDENTIFIER,
+  LIT_CHAR,
   LIT_STRING,
   LIT_INTEGER,
   LIT_UINTEGER,
@@ -27,6 +28,7 @@ enum LiteralType {
 union LiteralValue {
   char*         identifier;
   char*         string;
+  char          character;
   double        floating;
   long          integer;
   unsigned long uinteger;

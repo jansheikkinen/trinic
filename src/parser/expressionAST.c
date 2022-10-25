@@ -26,6 +26,7 @@ static struct ExprAST newUnary(enum TokenType operation, struct ExprAST* operand
   unary.operation = operation;
   unary.operand = operand;
 
+  expr.type = EXPR_UNARY;
   expr.as.unary = unary;
   return expr;
 }
@@ -39,6 +40,7 @@ static struct ExprAST newBinary(enum TokenType operation,
   binary.left = left;
   binary.right = right;
 
+  expr.type = EXPR_BINARY;
   expr.as.binary = binary;
   return expr;
 }
@@ -80,6 +82,7 @@ void printExprAST(const struct ExprAST* ast) {
         case LIT_UNDEFINED: printf("LIT_UNDEFINED"); break;
         case LIT_IDENTIFIER: printf("%s", ast->as.literal.as.identifier); break;
         case LIT_STRING: printf("\"%s\"", ast->as.literal.as.string);     break;
+        case LIT_CHAR: printf("'%c'",     ast->as.literal.as.character);  break;
         case LIT_INTEGER: printf("%ld",   ast->as.literal.as.integer);    break;
         case LIT_UINTEGER: printf("%lu",  ast->as.literal.as.uinteger);   break;
         case LIT_FLOAT: printf("%lf",     ast->as.literal.as.floating);   break;

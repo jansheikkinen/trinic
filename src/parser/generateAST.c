@@ -1,5 +1,7 @@
 /* generateAST.c */
 
+#include <stdio.h>
+
 #include "ASTContext.h"
 #include "stmtlist.h"
 #include "generateStatementAST.h"
@@ -12,7 +14,7 @@ struct StmtList* generateAST(struct TokenArray* tokens) {
   struct StmtList* stmts = malloc(sizeof(*stmts));
   *stmts = newStmtList();
 
-  while(ctx->index <= ctx->tokens->length) {
+  while(ctx->index < ctx->tokens->length) {
     appendToStmtList(stmts, generateStatement(ctx));
   }
 

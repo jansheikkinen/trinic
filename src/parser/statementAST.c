@@ -50,13 +50,13 @@ struct StmtAST* allocNewBuiltin(enum BuiltinType type, struct ExprAST* expr) {
 void printStmtAST(const struct StmtAST* stmt) {
   switch(stmt->type) {
     case STMT_UNDEFINED:
-      printf("STMT_UNDEFINED\n"); break;
+      printf("(STMT_UNDEFINED)\n"); break;
     case STMT_EXPRESSION:
-      printf("EXPR ");
+      printf("(EXPR ");
       printExprAST(stmt->as.expression.expression);
-      printf("\n"); break;
+      printf(")\n"); break;
     case STMT_BUILTIN:
-      printf("BUILTIN_%d(", stmt->as.builtin.type);
+      printf("(BUILTIN_%d ", stmt->as.builtin.type);
       printExprAST(stmt->as.builtin.parameter);
       printf(")\n"); break;
   }
