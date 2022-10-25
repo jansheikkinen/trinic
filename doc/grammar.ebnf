@@ -1,5 +1,5 @@
 # Grammar
-A grammar specification of the Unholy C language using Extended Backus-Naur
+A grammar specification of the TriniC language using Extended Backus-Naur
 Form.
 
 ```ebnf
