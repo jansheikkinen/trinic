@@ -10,6 +10,9 @@
 #include "statementAST.h"
 #endif
 
+// TODO: Only output one error per statement, so as to prevent errors
+// caused by previous errors
+
 // In the future, this should return the bytecode representation of the code
 struct StmtList* parseProgram(const char* filename) {
 #ifdef PARSER_DEBUG

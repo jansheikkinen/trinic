@@ -70,6 +70,7 @@ char* tokenTypeStrings[] = {
   "BOOL",
   "ENUM",
   "STRUCT",
+  "LET",
   "FUNCTION",
   "INLINE",
   "FOR",

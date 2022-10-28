@@ -16,8 +16,8 @@ type        = basetype | arraytype | pointertype | structtype ;
 
 statement   = (expression | assignment | vardecl | conditional) "." ;
 builtin     = ("print") "(" expression ")" ;
-vardecl     = type assignment ;
-assignment  = IDENTIFIER "=" (expression | "undefined") ;
+vardecl     = "let" IDENTIFIER (":" type)? "=" (expression | "undefined") ;
+assignment  = IDENTIFIER "=" expression ;
 conditional = "if" expression "do" statement*
               ( "end" | "else" (statement* "end" | conditional) ) ;
 
@@ -31,7 +31,8 @@ term       = factor   ( ("+" | "-")                     factor   )*  ;
 factor     = unary    ( ("*" | "/")                     unary    )*  ;
 unary      =            ("~" | "!" | "not" | "-")       unary | call ;
 call       = primary "(" arguments? ")" ;
-primary    = "(" expression ")" | NUMBER | STRING | IDENTIFIER ;
+primary    = "(" expression ")" | NUMBER | STRING | IDENTIFIER
+            | "true" | "false" ;
 
 arguments = expression ( "," expression )* ;
 ```

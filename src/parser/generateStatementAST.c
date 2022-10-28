@@ -49,10 +49,31 @@ static struct StmtAST* genBuiltinNode(struct ASTContext* ctx) {
   return stmt;
 }
 
+static struct StmtAST* genVarDeclNode(struct ASTContext* ctx) {
+  struct StmtAST* stmt = NULL;
+  ctx->index += 1;
+
+  if(MATCH_TOKEN(ctx, TOKEN_IDENTIFIER_LITERAL)) {
+    const char* identifier = GET_CURRENT_TOKEN(ctx).literal;
+    ctx->index += 1;
+
+    // TODO: Type annotations
+
+    if(MATCH_TOKEN(ctx, TOKEN_ASSIGN)) {
+      ctx->index += 1;
+      struct ExprAST* value = generateExpression(ctx);
+      stmt = allocNewVarDecl(identifier, value);
+    }
+  }
+
+  return stmt;
+}
+
 static struct StmtAST* genStmtNode(struct ASTContext* ctx) {
   struct StmtAST* stmt = NULL;
 
   if(MATCH_TOKEN(ctx, TOKEN_PRINT)) stmt = genBuiltinNode(ctx);
+  else if(MATCH_TOKEN(ctx, TOKEN_LET)) stmt = genVarDeclNode(ctx);
   else stmt = allocNewExpression(generateExpression(ctx));
 
   if(MATCH_TOKEN(ctx, TOKEN_DOT)) {
