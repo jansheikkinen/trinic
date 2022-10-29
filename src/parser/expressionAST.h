@@ -12,6 +12,8 @@ enum ExprASTType {
   EXPR_LITERAL,
   EXPR_UNARY,
   EXPR_BINARY,
+  EXPR_VARIABLE,
+  EXPR_GROUPING,
 };
 
 enum LiteralType {
@@ -51,18 +53,31 @@ struct BinaryExpression {
   struct ExprAST* right;
 };
 
+struct VariableExpression {
+  // TODO: type info
+  const char* identifier;
+};
+
+struct GroupingExpression {
+  struct ExprAST* expression;
+};
+
 struct ExprAST {
   enum ExprASTType type;
   union {
     struct LiteralExpression literal;
     struct UnaryExpression   unary;
     struct BinaryExpression  binary;
+    struct VariableExpression variable;
+    struct GroupingExpression grouping;
   } as;
 };
 
 struct ExprAST* allocNewLiteral(enum LiteralType, void*);
 struct ExprAST* allocNewUnary(enum TokenType, struct ExprAST*);
 struct ExprAST* allocNewBinary(enum TokenType, struct ExprAST*, struct ExprAST*);
+struct ExprAST* allocNewVariable(const char* identifier);
+struct ExprAST* allocNewGrouping(struct ExprAST*);
 
 void printExprAST(const struct ExprAST*);
 

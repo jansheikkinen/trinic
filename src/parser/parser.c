@@ -44,8 +44,9 @@ struct StmtList* parseProgram(const char* filename) {
   struct StmtList* stmts = generateAST(tokens);
 
 #ifdef VERBOSE_DEBUG
-  for(size_t i = 0; i < stmts->size; i++)
+  for(size_t i = 0; i < stmts->size; i++) {
     printStmtAST(stmts->stmts[i]);
+  }
 #endif
 
   return stmts;

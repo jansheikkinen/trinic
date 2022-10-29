@@ -99,9 +99,9 @@ void printStmtAST(const struct StmtAST* stmt) {
       printExprAST(stmt->as.builtin.parameter);
       printf(")\n"); break;
     case STMT_VARDECL:
-      printf("VARDECL (%s) (", stmt->as.vardecl.identifier);
+      printf("(VARDECL (%s) ", stmt->as.vardecl.identifier);
       printExprAST(stmt->as.vardecl.value);
-      printf("))\n"); break;
+      printf(")\n"); break;
     case STMT_VARASSIGN:
       printf("VARASSIGN %s (", stmt->as.assignment.identifier);
       printExprAST(stmt->as.assignment.value);

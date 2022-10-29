@@ -45,31 +45,63 @@ static struct ExprAST newBinary(enum TokenType operation,
   return expr;
 }
 
-struct ExprAST* allocNewLiteral(enum LiteralType type, void* value) {
-  struct ExprAST ast = newLiteral(type, value);
+static struct ExprAST newVariable(const char* identifier) {
+  struct ExprAST expr;
 
+  struct VariableExpression variable;
+  variable.identifier = identifier;
+
+  expr.type = EXPR_VARIABLE;
+  expr.as.variable = variable;
+
+  return expr;
+}
+
+static struct ExprAST newGrouping(struct ExprAST* expression) {
+  struct ExprAST expr;
+
+  struct GroupingExpression grouping;
+  grouping.expression = expression;
+
+  expr.type = EXPR_GROUPING;
+  expr.as.grouping = grouping;
+
+  return expr;
+}
+
+struct ExprAST* allocNewLiteral(enum LiteralType type, void* value) {
   struct ExprAST* ptr = malloc(sizeof(*ptr));
-  if(ptr) *ptr = ast;
+  if(ptr) *ptr = newLiteral(type, value);
 
   return ptr;
 }
 
 struct ExprAST* allocNewUnary(enum TokenType operation,
     struct ExprAST* operand) {
-  struct ExprAST ast = newUnary(operation, operand);
-
   struct ExprAST* ptr = malloc(sizeof(*ptr));
-  if(ptr) *ptr = ast;
+  if(ptr) *ptr = newUnary(operation, operand);
 
   return ptr;
 }
 
 struct ExprAST* allocNewBinary(enum TokenType operation,
     struct ExprAST* left, struct ExprAST* right) {
-  struct ExprAST ast = newBinary(operation, left, right);
-
   struct ExprAST* ptr = malloc(sizeof(*ptr));
-  if(ptr) *ptr = ast;
+  if(ptr) *ptr = newBinary(operation, left,right);
+
+  return ptr;
+}
+
+struct ExprAST* allocNewVariable(const char* identifier) {
+  struct ExprAST* ptr = malloc(sizeof(*ptr));
+  if(ptr) *ptr = newVariable(identifier);
+
+  return ptr;
+}
+
+struct ExprAST* allocNewGrouping(struct ExprAST* expr) {
+  struct ExprAST* ptr = malloc(sizeof(*ptr));
+  if(ptr) *ptr = newGrouping(expr);
 
   return ptr;
 }
@@ -99,6 +131,12 @@ void printExprAST(const struct ExprAST* ast) {
       printf(" ");
       printExprAST(ast->as.binary.right);
       printf(")"); break;
+    case EXPR_VARIABLE:
+      printf("(var %s)", ast->as.variable.identifier); break;
+    case EXPR_GROUPING:
+      printf("(");
+      printExprAST(ast->as.grouping.expression);
+      printf(")"); break;
   }
 }
 
@@ -119,6 +157,10 @@ void freeExprNode(struct ExprAST* expr) {
       freeExprNode(expr->as.binary.left);
       freeExprNode(expr->as.binary.right);
       break;
+    case EXPR_VARIABLE:
+      break;
+    case EXPR_GROUPING:
+      freeExprNode(expr->as.grouping.expression); break;
   }
 
   free(expr);

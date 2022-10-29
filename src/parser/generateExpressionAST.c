@@ -43,7 +43,21 @@ static struct ExprAST* genPrimaryNode(struct ASTContext* ctx) {
   } else if(MATCH_TOKEN(ctx, TOKEN_STRING_LITERAL)) {  // many problems later
     expr = allocNewLiteral(LIT_STRING, GET_CURRENT_TOKEN(ctx).literal);
   } else if(MATCH_TOKEN(ctx, TOKEN_IDENTIFIER_LITERAL)) {
-    expr = allocNewLiteral(LIT_IDENTIFIER, GET_CURRENT_TOKEN(ctx).literal);
+    // saving the following in case its needed later
+    // expr = allocNewLiteral(LIT_IDENTIFIER, GET_CURRENT_TOKEN(ctx).literal);
+    expr = allocNewVariable(GET_CURRENT_TOKEN(ctx).literal);
+
+  } else if(MATCH_TOKEN(ctx, TOKEN_LEFT_PAREN)) {
+    ctx->index += 1;
+    struct ExprAST* exprast = generateExpression(ctx);
+
+    if(MATCH_TOKEN(ctx, TOKEN_RIGHT_PAREN)) {
+      expr = allocNewGrouping(exprast);
+    } else
+      printf("[PARSER ERROR]: (%ld, %ld) "
+          "Expected closing parenthesis in expression; got %s\n",
+          GET_CURRENT_TOKEN(ctx).row, GET_CURRENT_TOKEN(ctx).col,
+          getTokenName(GET_CURRENT_TOKEN(ctx).type));
 
   } else {
     printf("[PARSER ERROR]: (%ld, %ld) Expected expression at token %s\n",
