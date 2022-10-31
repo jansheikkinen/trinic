@@ -13,16 +13,22 @@ structtype  = "struct" IDENTIFIER structbody*? ;
 structbody  = vardecl* "end" ;
 type        = basetype | arraytype | pointertype | structtype ;
 
+# TODO: Functions, types and anything that uses them
 
 statement   = (expression | assignment | vardecl | conditional) "." ;
 builtin     = ("print") "(" expression ")" ;
-vardecl     = "let" IDENTIFIER (":" type)? "=" (expression | "undefined") ;
-assignment  = IDENTIFIER "=" expression ;
+vardecl     = "let" "mut"? idargs ":" type "=" arguments ;
+assignment  = idargs "=" arguments ;
 conditional = "if" expression "do" statement*
               ( "end" | "else" (statement* "end" | conditional) ) ;
+loop        = "loop" statement* "end" ;
+while       = "while" expression "do" statement* "end" ;
+forin       = "for" expression "in" expression "do" statement* "end" ;
+for         = ; # TODO
 
-
-expression = logic ;
+# Note that "undefined", though allowed anywhere an expression is in the syntax
+# should produce an error when not used in variable declarations
+expression = logic | "undefined" ;
 logic      = equality ( ("and" | "or")                  equality )*  ;
 equality   = compare  ( ("==" | "!=")                   compare  )*  ;
 compare    = bitwise  ( (">" | ">=" | "<" | "<=")       bitwise  )*  ;
@@ -34,5 +40,6 @@ call       = primary "(" arguments? ")" ;
 primary    = "(" expression ")" | NUMBER | STRING | IDENTIFIER
             | "true" | "false" ;
 
+idargs    = IDENTIFIER ( "," IDENTIFIER )* ;
 arguments = expression ( "," expression )* ;
 ```

@@ -1,7 +1,7 @@
 /* readFile.c */
 
 
-#include "panic.h"
+#include "../error/panic.h"
 #include "readfile.h"
 
 size_t getFileSize(FILE* file) {

@@ -4,6 +4,6 @@
 #include "token.h"
 #include "stmtlist.h"
 
-struct StmtList* generateAST(struct TokenArray*);
+struct StmtList* generateAST(const char*, struct TokenArray*);
 
 #endif

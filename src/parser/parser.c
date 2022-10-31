@@ -41,7 +41,7 @@ struct StmtList* parseProgram(const char* filename) {
   printf("\n### AST GENERATION ###\n");
 #endif
 
-  struct StmtList* stmts = generateAST(tokens);
+  struct StmtList* stmts = generateAST(filename, tokens);
 
 #ifdef VERBOSE_DEBUG
   for(size_t i = 0; i < stmts->size; i++) {

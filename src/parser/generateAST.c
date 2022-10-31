@@ -7,7 +7,7 @@
 #include "generateStatementAST.h"
 #include "generateAST.h"
 
-struct StmtList* generateAST(struct TokenArray* tokens) {
+struct StmtList* generateAST(const char* filename, struct TokenArray* tokens) {
   struct ASTContext* ctx = malloc(sizeof(*ctx));
   *ctx = newASTContext(tokens);
 
@@ -18,6 +18,16 @@ struct StmtList* generateAST(struct TokenArray* tokens) {
     appendToStmtList(stmts, generateStatement(ctx));
   }
 
+  struct ASTErrorList* errors = ctx->errors;
+  if(errors->size > 0) {
+    for(size_t i = 0; i < errors->size; i++) {
+      printASTError(filename, &errors->errors[i]);
+    }
+
+    exit(1);
+  }
+
+  free(errors);
   free(ctx);
   return stmts;
 }

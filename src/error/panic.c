@@ -4,6 +4,6 @@
 #include <stdlib.h>
 
 void panic(int err, const char* msg) {
-  perror(msg);
+  printf("ERROR: %s\n", msg);
   exit(err);
 }

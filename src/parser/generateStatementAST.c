@@ -29,20 +29,11 @@ static struct StmtAST* genBuiltinNode(struct ASTContext* ctx) {
       if(MATCH_TOKEN(ctx, TOKEN_RIGHT_PAREN)) {
         ctx->index += 1;
         stmt = allocNewBuiltin(BUILTIN_PRINT, parameter);
-      } else printf(
-          // TODO: Error print function
-          "[PARSER ERROR: (%ld, %ld)"
-          " Expected right parenthesis to close 'print' statement."
-          " Got %s\n",
-          ctx->tokens->tokens[ctx->index].row,
-          ctx->tokens->tokens[ctx->index].col,
-          getTokenName(ctx->tokens->tokens[ctx->index].type));
+      } else {
+        APPEND_ASTERROR(ctx, ASTERR_UNCLOSED_PAREN);
+      }
     } else {
-      printf(
-          "[PARSER ERROR]: (%ld, %ld)"
-          " Expected left parentheses after token 'print'\n",
-          ctx->tokens->tokens[ctx->index].row,
-          ctx->tokens->tokens[ctx->index].col);
+      APPEND_ASTERROR(ctx, ASTERR_FUNC_NO_LEFT_PAREN);
     }
   }
 
@@ -76,13 +67,8 @@ static struct StmtAST* genStmtNode(struct ASTContext* ctx) {
   else if(MATCH_TOKEN(ctx, TOKEN_LET)) stmt = genVarDeclNode(ctx);
   else stmt = allocNewExpression(generateExpression(ctx));
 
-  if(MATCH_TOKEN(ctx, TOKEN_DOT)) {
-    ctx->index += 1;
-  } else {
-    printf("[PARSER ERROR]: (%ld, %ld) Expected end of statement at %s\n",
-        GET_CURRENT_TOKEN(ctx).row, GET_CURRENT_TOKEN(ctx).col,
-        getTokenName(GET_CURRENT_TOKEN(ctx).type));
-  }
+  if(MATCH_TOKEN(ctx, TOKEN_DOT)) ctx->index += 1;
+  else APPEND_ASTERROR(ctx, ASTERR_STMT_END);
 
   return stmt;
 }

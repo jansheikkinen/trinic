@@ -12,7 +12,7 @@ dirs:
 	mkdir -p $(BUILD) src tests
 
 run: uc
-	$(BUILD)/uc
+	$(BUILD)/uc build/test.uc
 
 uc: $(OBJ)
 	$(CC) $(CFLAGS) $(INCLUDE) -o $(BUILD)/$@ $?
