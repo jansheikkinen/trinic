@@ -3,6 +3,6 @@
 
 #include <stdlib.h>
 
-struct TokenArray* tokenise(const char* __restrict__);
+struct TokenArray* tokenise(const char*, const char* __restrict__);
 
 #endif

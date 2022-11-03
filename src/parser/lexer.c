@@ -8,7 +8,7 @@
 #include "lexer.h"
 
 // Whitespace and newline
-static void lexNonTokens(struct TokeniserData* td) {
+static void lexNonTokens(struct LexerContext* td) {
   switch(td->program[td->index]) {
     case '\n': td->row += 1; td->index += 1;
                td->tokenStart = td->index; td->col = 1; break;
@@ -17,7 +17,7 @@ static void lexNonTokens(struct TokeniserData* td) {
 }
 
 // The tokens that don't have any alphanumeric characters.
-static void newNonLiteral(struct TokeniserData* td, enum TokenType tt) {
+static void newNonLiteral(struct LexerContext* td, enum TokenType tt) {
   appendToTokenArray(td->tokens, newToken(tt, NULL, td->row, td->col));
   nextToken(td);
 }
@@ -25,7 +25,7 @@ static void newNonLiteral(struct TokeniserData* td, enum TokenType tt) {
 // Tokens that correspond to a single-character operator that cannot
 // be mistaken for any other token. I.e. '#' is unambiguous; it can
 // *only* be just '#', but '+' is ambiguous because it could be '+' or '+='.
-static void lexUnambiguousOperator(struct TokeniserData* td) {
+static void lexUnambiguousOperator(struct LexerContext* td) {
   switch(td->program[td->index]) {
     case '(': newNonLiteral(td, TOKEN_LEFT_PAREN);     break;
     case ')': newNonLiteral(td, TOKEN_RIGHT_PAREN);    break;
@@ -44,7 +44,7 @@ static void lexUnambiguousOperator(struct TokeniserData* td) {
 // THIS DEPENDS ON THE ENUM ORDERING THE TWO TOKEN TYPES AS:
 // OP, OP_ASSIGN,
 // DO NOT FUCK THAT UP
-static void newAmbiguousArithOp(struct TokeniserData* td, enum TokenType tokenType) {
+static void newAmbiguousArithOp(struct LexerContext* td, enum TokenType tokenType) {
   if(peek(td) == '=') { newNonLiteral(td, tokenType + 1); td->index += 1; }
   else newNonLiteral(td, tokenType);
 }
@@ -52,7 +52,7 @@ static void newAmbiguousArithOp(struct TokeniserData* td, enum TokenType tokenTy
 // Tokens that correspond to operators that *are* ambiguous just from
 // looking at the first character. Using the example from above, this
 // is where '+' and '+=' would go.
-static void lexAmbiguousOperator(struct TokeniserData* td) {
+static void lexAmbiguousOperator(struct LexerContext* td) {
   switch(td->program[td->index]) {
     case '<':
       if(peek(td) == '<') {
@@ -121,7 +121,7 @@ static void lexAmbiguousOperator(struct TokeniserData* td) {
 }
 
 
-static void newLiteralToken(struct TokeniserData* td,
+static void newLiteralToken(struct LexerContext* td,
     enum TokenType tt, char* literal) {
   appendToTokenArray(td->tokens, newToken(tt, literal, td->row, td->col));
   nextToken(td);
@@ -134,7 +134,7 @@ static void newLiteralToken(struct TokeniserData* td,
 // TODO: This part can fail, actually. Right now, I just have it set to
 // ignore the errors entirely, but ideally they'd be thrown to the calling
 // function and handled properly.
-static void lexLiteral(struct TokeniserData* td) {
+static void lexLiteral(struct LexerContext* td) {
   if(get(td) == '\"') {
     nextToken(td);
     while(td->program[td->index++]) {
@@ -149,6 +149,8 @@ static void lexLiteral(struct TokeniserData* td) {
       }
     }
 
+    APPEND_LEXERROR(td, LEXERR_UNTERMINATED_STRING);
+
   } else if(get(td) == '\'') {
     nextToken(td);
     if(peek(td) == '\'') {
@@ -157,6 +159,8 @@ static void lexLiteral(struct TokeniserData* td) {
       newLiteralToken(td, TOKEN_CHAR_LITERAL, literal);
     }
 
+    APPEND_LEXERROR(td, LEXERR_UNTERMINATED_CHAR);
+
   // TODO: add support for any radix 1-60
   // Right now it can only handle decimal.
   // Floats must be 0.x, not .x or xf. This is intended.
@@ -164,8 +168,9 @@ static void lexLiteral(struct TokeniserData* td) {
     int isFloat = 0;
     while(td->program[td->index++]) {
       if(isdigit(get(td))) td->col += 1;
-      // else if(get(td) == '.') { td->col += 1; isFloat = 1; }
-      else {
+      else if(get(td) == '.' && isdigit(peek(td))) {
+        td->col += 1; isFloat = 1;
+      } else {
         td->col += 1;
         appendToTokenArray(td->tokens,
             newToken(isFloat ? TOKEN_FLOAT_LITERAL : TOKEN_INTEGER_LITERAL,
@@ -178,7 +183,7 @@ static void lexLiteral(struct TokeniserData* td) {
 }
 
 // The ones like "int32" or "if" that are alphanumeric
-static void lexKeyword(struct TokeniserData* td) {
+static void lexKeyword(struct LexerContext* td) {
   if(!isalnum(get(td))) return;
 
   while(peek(td) && isalnum(peek(td))) {
@@ -208,12 +213,13 @@ static void lexKeyword(struct TokeniserData* td) {
 // I could have definitely written the tokeniser more efficiently;
 // I could have written the tokeniser as one massive switch statement,
 // but, quite frankly, that's ugly and I'd rather modularise it for readability
-struct TokenArray* tokenise(const char* __restrict__ program) {
+struct TokenArray* tokenise(const char* filename,
+    const char* __restrict__ program) {
 #ifdef LEXER_DEBUG
-  printf("[LEXER]: Generating tokens from source...\n");
+  printf("Generating tokens from source...\n");
 #endif
 
-  struct TokeniserData* td = malloc(sizeof(*td));;
+  struct LexerContext* td = malloc(sizeof(*td));;
   newTokeniser(td, program);
 
   while(get(td)) {
@@ -229,11 +235,20 @@ struct TokenArray* tokenise(const char* __restrict__ program) {
     if(i == td->index) td->index += 1;
   }
 
+  struct LexErrorList* errors = td->errors;
+  if(errors->size > 0) {
+    for(size_t i = 0; i < errors->size; i++) {
+      printLexError(filename, &errors->errors[i]);
+    }
+
+    exit(2);
+  }
+
   struct TokenArray* tokens = td->tokens;
   free(td); // Isn't this beautiful?
 
 #ifdef LEXER_DEBUG
-  printf("[LEXER]: Generated %ld tokens\n", tokens->length);
+  printf("Generated %ld tokens\n", tokens->length);
 #endif
 
   return tokens;

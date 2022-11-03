@@ -16,15 +16,15 @@
 // In the future, this should return the bytecode representation of the code
 struct StmtList* parseProgram(const char* filename) {
 #ifdef PARSER_DEBUG
-  printf("[PARSER]: Parsing %s...\n", filename);
+  printf("## PARSER ##\nParsing %s...\n", filename);
 #endif
 
 #ifdef VERBOSE_DEBUG
-  printf("### TOKENISER ###\n");
+  printf("\n### LEXER ###\n");
 #endif
 
   char* program = readFile(filename);
-  struct TokenArray* tokens = tokenise(program);
+  struct TokenArray* tokens = tokenise(filename, program);
   free(program);
 
 #ifdef VERBOSE_DEBUG
