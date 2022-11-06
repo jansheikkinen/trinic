@@ -26,25 +26,24 @@ static struct ExprAST* genPrimaryNode(struct ASTContext* ctx) {
   struct ExprAST* expr = NULL;
 
   if(MATCH_TOKEN(ctx, TOKEN_TRUE)) {
-    expr = allocNewLiteral(LIT_BOOL, (void*)1);
+    expr = ALLOC_NEW_LITERAL(LIT_BOOL, boolean, 1);
   } else if(MATCH_TOKEN(ctx, TOKEN_FALSE)) {
-    expr = allocNewLiteral(LIT_BOOL, 0);
+    expr = ALLOC_NEW_LITERAL(LIT_BOOL, boolean, 0);
 
   } else if(MATCH_TOKEN(ctx, TOKEN_INTEGER_LITERAL)) {
-    expr = allocNewLiteral(LIT_INTEGER, (void*)
+    expr = ALLOC_NEW_LITERAL(LIT_INTEGER, integer,
         strtol(GET_CURRENT_TOKEN(ctx).literal, NULL, 10));
   } else if(MATCH_TOKEN(ctx, TOKEN_FLOAT_LITERAL)) {
-    expr = allocNewLiteral(LIT_FLOAT, (void*)(long) // i regret everything
+    expr = ALLOC_NEW_LITERAL(LIT_FLOAT, floating,
         strtod(GET_CURRENT_TOKEN(ctx).literal, NULL));
 
   } else if(MATCH_TOKEN(ctx, TOKEN_CHAR_LITERAL)) {
-    char ch = *GET_CURRENT_TOKEN(ctx).literal;
-    expr = allocNewLiteral(LIT_CHAR, (void*)(long)ch); // $10 says this'll cause
-  } else if(MATCH_TOKEN(ctx, TOKEN_STRING_LITERAL)) {  // many problems later
-    expr = allocNewLiteral(LIT_STRING, GET_CURRENT_TOKEN(ctx).literal);
+    expr = ALLOC_NEW_LITERAL(LIT_CHAR, character,
+        *GET_CURRENT_TOKEN(ctx).literal);
+  } else if(MATCH_TOKEN(ctx, TOKEN_STRING_LITERAL)) {
+    expr = ALLOC_NEW_LITERAL(LIT_STRING, string,
+        GET_CURRENT_TOKEN(ctx).literal);
   } else if(MATCH_TOKEN(ctx, TOKEN_IDENTIFIER_LITERAL)) {
-    // saving the following in case its needed later
-    // expr = allocNewLiteral(LIT_IDENTIFIER, GET_CURRENT_TOKEN(ctx).literal);
     expr = allocNewVariable(GET_CURRENT_TOKEN(ctx).literal);
 
   } else if(MATCH_TOKEN(ctx, TOKEN_LEFT_PAREN)) {

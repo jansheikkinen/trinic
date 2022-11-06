@@ -73,11 +73,14 @@ struct ExprAST {
   } as;
 };
 
-struct ExprAST* allocNewLiteral(enum LiteralType, void*);
+struct ExprAST* allocNewLiteral(enum LiteralType, union LiteralValue);
 struct ExprAST* allocNewUnary(enum TokenType, struct ExprAST*);
 struct ExprAST* allocNewBinary(enum TokenType, struct ExprAST*, struct ExprAST*);
 struct ExprAST* allocNewVariable(const char* identifier);
 struct ExprAST* allocNewGrouping(struct ExprAST*);
+
+#define ALLOC_NEW_LITERAL(type, vtype, value) \
+  allocNewLiteral(type, (union LiteralValue){ .vtype = value })
 
 void printExprAST(const struct ExprAST*);
 

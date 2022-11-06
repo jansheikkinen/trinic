@@ -7,12 +7,13 @@
 #include "expressionAST.h"
 
 
-static struct ExprAST newLiteral(enum LiteralType type, void* value) {
+static struct ExprAST newLiteral(enum LiteralType type,
+    union LiteralValue value) {
   struct ExprAST expr;
 
   struct LiteralExpression literal;
   literal.type = type;
-  literal.as = (union LiteralValue){ value };
+  literal.as = value;
 
   expr.type = EXPR_LITERAL;
   expr.as.literal = literal;
@@ -69,7 +70,8 @@ static struct ExprAST newGrouping(struct ExprAST* expression) {
   return expr;
 }
 
-struct ExprAST* allocNewLiteral(enum LiteralType type, void* value) {
+struct ExprAST* allocNewLiteral(enum LiteralType type,
+    union LiteralValue value) {
   struct ExprAST* ptr = malloc(sizeof(*ptr));
   if(ptr) *ptr = newLiteral(type, value);
 

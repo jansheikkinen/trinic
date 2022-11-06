@@ -130,10 +130,6 @@ static void newLiteralToken(struct LexerContext* td,
 // Literals: strings, chars, numbers
 // Should technically include boolean literals "true" and "false", but its
 // easier to include those two with the keywords, instead
-//
-// TODO: This part can fail, actually. Right now, I just have it set to
-// ignore the errors entirely, but ideally they'd be thrown to the calling
-// function and handled properly.
 static void lexLiteral(struct LexerContext* td) {
   if(get(td) == '\"') {
     nextToken(td);
@@ -157,9 +153,8 @@ static void lexLiteral(struct LexerContext* td) {
       char* literal = calloc(2, 1); // bc null-terminated
       *literal = get(td);
       newLiteralToken(td, TOKEN_CHAR_LITERAL, literal);
-    }
-
-    APPEND_LEXERROR(td, LEXERR_UNTERMINATED_CHAR);
+      nextToken(td);
+    } else APPEND_LEXERROR(td, LEXERR_UNTERMINATED_CHAR);
 
   // TODO: add support for any radix 1-60
   // Right now it can only handle decimal.
