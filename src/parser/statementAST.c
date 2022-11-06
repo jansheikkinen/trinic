@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 
+#include "../error/panic.h"
 #include "statementAST.h"
 
 static struct StmtAST newExpression(struct ExprAST* expr) {
@@ -56,34 +57,51 @@ static struct StmtAST newAssign(const char* identifier, struct ExprAST* expr) {
   return stmt;
 }
 
-struct StmtAST* allocNewExpression(struct ExprAST* expr) {
-  struct StmtAST* ptr = malloc(sizeof(*ptr));
-  if(ptr) *ptr = newExpression(expr);
+static struct StmtAST newConditional(struct ExprAST* condition,
+    struct StmtList* body, enum ConditionalElseTypes type,
+    union ConditionalElse elseBranch) {
+  struct StmtAST stmt;
 
-  return ptr;
+  struct ConditionalStmt cond;
+  cond.condition = condition;
+  cond.body = body;
+  cond.type = type;
+  cond.elseBranch = elseBranch;
+
+  stmt.type = STMT_CONDITIONAL;
+  stmt.as.conditional = cond;
+
+  return stmt;
+}
+
+// I initially wanted to put the entire function declaration in the macro,
+// but that requires two separate VA_ARGS :(
+#define ALLOC_NODE(func, ...) \
+  struct StmtAST* ptr = malloc(sizeof(*ptr)); \
+  if(ptr) *ptr = func(__VA_ARGS__); \
+  return ptr \
+
+struct StmtAST* allocNewExpression(struct ExprAST* expr) {
+  ALLOC_NODE(newExpression, expr);
 }
 
 struct StmtAST* allocNewBuiltin(enum BuiltinType type, struct ExprAST* expr) {
-  struct StmtAST* ptr = malloc(sizeof(*ptr));
-  if(ptr) *ptr = newBuiltin(type, expr);
-
-  return ptr;
+  ALLOC_NODE(newBuiltin, type, expr);
 }
 
 struct StmtAST* allocNewVarDecl(const char* identifier,
     struct ExprAST* expr) {
-  struct StmtAST* ptr = malloc(sizeof(*ptr));
-  if(ptr) *ptr = newVarDecl(identifier, expr);
-
-  return ptr;
+  ALLOC_NODE(newVarDecl, identifier, expr);
 }
 
-struct StmtAST* allocNewAssign(const char* identifier,
-    struct ExprAST* expr) {
-  struct StmtAST* ptr = malloc(sizeof(*ptr));
-  if(ptr) *ptr = newAssign(identifier, expr);
+struct StmtAST* allocNewAssign(const char* identifier, struct ExprAST* expr) {
+  ALLOC_NODE(newAssign, identifier, expr);
+}
 
-  return ptr;
+struct StmtAST* allocNewConditional(struct ExprAST* condition,
+    struct StmtList* body, enum ConditionalElseTypes type,
+    union ConditionalElse elseBranch) {
+  ALLOC_NODE(newConditional, condition, body, type, elseBranch);
 }
 
 void printStmtAST(const struct StmtAST* stmt) {
@@ -106,6 +124,23 @@ void printStmtAST(const struct StmtAST* stmt) {
       printf("VARASSIGN %s (", stmt->as.assignment.identifier);
       printExprAST(stmt->as.assignment.value);
       printf("))\n"); break;
+    case STMT_CONDITIONAL:
+      printf("(IF (");
+      printExprAST(stmt->as.conditional.condition);
+      printf(") (");
+      switch(stmt->as.conditional.type) {
+        case CONDELSE_UNDEFINED:
+          panic(1, "Undefined else branch in conditional node"); break;
+        case CONDELSE_ELSE:
+          for(size_t i = 0;
+              i < stmt->as.conditional.elseBranch.elseBody->size; i++) {
+            printStmtAST(stmt->as.conditional.elseBranch.elseBody->stmts[i]);
+          } break;
+        case CONDELSE_ELSEIF:
+          printStmtAST(stmt->as.conditional.elseBranch.elseif); break;
+        case CONDELSE_NONE: break;
+      }
+      break;
   }
 }
 
@@ -120,6 +155,18 @@ void freeStmtNode(struct StmtAST* stmt) {
       freeExprNode(stmt->as.vardecl.value); break;
     case STMT_VARASSIGN:
       freeExprNode(stmt->as.assignment.value); break;
+    case STMT_CONDITIONAL:
+      freeStmtList(stmt->as.conditional.body);
+      switch(stmt->as.conditional.type) {
+        case CONDELSE_UNDEFINED:
+          panic(1, "Undefined else branch in conditional node"); break;
+        case CONDELSE_ELSE:
+          freeStmtList(stmt->as.conditional.elseBranch.elseBody); break;
+        case CONDELSE_ELSEIF:
+          freeStmtNode(stmt->as.conditional.elseBranch.elseif); break;
+        case CONDELSE_NONE: break;
+      }
+      freeExprNode(stmt->as.conditional.condition); break;
   }
 
   free(stmt);

@@ -10,6 +10,9 @@ const char* ASTErrorMessages[] = {
   "Missing '(' after function call",
   "Unclosed parentheses",
   "Expected end of statement",
+  "Undefined AST node",
+  "Undefined else branch in conditional node",
+  "Unterminated if statement"
 };
 
 const char* LexerErrorMessages[] = {
@@ -32,8 +35,9 @@ struct ASTError newASTError(enum ASTErrorType type, const char* tokenName,
 
 // TODO: Filenames
 void printASTError(const char* filename, const struct ASTError* error) {
-  printf("Error generating AST @ %s:(%ld, %ld), token \"%s\": %s.\n", filename,
-      error->row, error->col, error->tokenName, ASTErrorMessages[error->type]);
+  printf("Error generating AST @ %s:(%ld, %ld), token \"%s\"\n  %03d: %s.\n",
+      filename, error->row, error->col, error->tokenName, error->type,
+      ASTErrorMessages[error->type]);
 }
 
 struct LexError newLexError(enum LexerErrorType type, size_t row, size_t col) {

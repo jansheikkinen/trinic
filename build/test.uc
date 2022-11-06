@@ -1,1 +1,7 @@
-print(34.1 + 'a' + 34 + "string" + var + true).
+if x < 3 do
+  print(34).
+else if x < 4 do
+  print(35).
+else
+  print(69).
+end
