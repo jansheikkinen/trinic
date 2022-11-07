@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 
+#include "../error/error.h"
 #include "generateExpressionAST.h"
 #include "ASTContext.h"
 #include "token.h"
@@ -52,17 +53,8 @@ static struct ExprAST* genPrimaryNode(struct ASTContext* ctx) {
 
     if(MATCH_TOKEN(ctx, TOKEN_RIGHT_PAREN)) {
       expr = allocNewGrouping(exprast);
-    } else
-      printf("[PARSER ERROR]: (%ld, %ld) "
-          "Expected closing parenthesis in expression; got %s\n",
-          GET_CURRENT_TOKEN(ctx).row, GET_CURRENT_TOKEN(ctx).col,
-          getTokenName(GET_CURRENT_TOKEN(ctx).type));
-
-  } else {
-    printf("[PARSER ERROR]: (%ld, %ld) Expected expression at token %s\n",
-        GET_CURRENT_TOKEN(ctx).row, GET_CURRENT_TOKEN(ctx).col,
-        getTokenName(GET_CURRENT_TOKEN(ctx).type));
-  }
+    } else APPEND_ASTERROR(ctx, ASTERR_UNCLOSED_PAREN);
+  } else APPEND_ASTERROR(ctx, ASTERR_EXPECTED_EXPRESSION);
 
   ctx->index += 1;
   return expr;

@@ -15,6 +15,7 @@ const char* ASTErrorMessages[] = {
   "Unterminated if statement",
   "Unterminated loop statement",
   "Unterminated while statement",
+  "Expected expression"
 };
 
 const char* LexerErrorMessages[] = {
