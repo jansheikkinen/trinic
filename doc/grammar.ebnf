@@ -8,8 +8,7 @@ basetype    =  "int8"   | "int16"   | "int32"   | "int64"   | "isize"
              | "bool" ;
 arraytype   = type "[" expression "]" ;
 pointertype = type "*" ;
-structtype  = "struct" IDENTIFIER structbody*? ;
-structbody  = vardecl* "end" ;
+structtype  = "struct" IDENTIFIER (type IDENTIFIER ".")* "end" ;
 type        = basetype | arraytype | pointertype | structtype ;
 
 # TODO: Functions, types and anything that uses them
@@ -25,7 +24,7 @@ while       = "while" expression "do" statement* "end" ;
 forin       = "for" expression "in" expression "do" statement* "end" ;
 for         = ; # TODO
 
-# Note that "undefined", though allowed anywhere an expression is in the syntax
+# Note that "undefined", though allowed anywhere an expression is in the syntax,
 # should produce an error when not used in variable declarations
 expression = logic | "undefined" ;
 logic      = equality ( ("and" | "or")                  equality )*  ;

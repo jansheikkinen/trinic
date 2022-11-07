@@ -32,6 +32,10 @@ static struct StmtAST* genBuiltinNode(struct ASTContext* ctx) {
   return stmt;
 }
 
+// TODO: Multiple assignment, i.e.
+// let x: int, y: float = 69, 42.0. -> int x = 69; float y = 42.0
+// let x, y: int = 69, 42.          -> int x = 69; int y = 42
+// let x, y: int = 69.              -> int x = 69; int y = 69
 static struct StmtAST* genVarDeclNode(struct ASTContext* ctx) {
   struct StmtAST* stmt = NULL;
   ctx->index += 1;
@@ -52,7 +56,19 @@ static struct StmtAST* genVarDeclNode(struct ASTContext* ctx) {
   return stmt;
 }
 
-// TODO: i forgor variable assignment :(
+static struct StmtAST* genAssignmentNode(struct ASTContext* ctx) {
+  struct StmtAST* stmt = NULL;
+
+  struct ExprAST* lvalue = generateExpression(ctx);
+
+  if(MATCH_TOKEN(ctx, TOKEN_ASSIGN)) {
+    ctx->index += 1;
+    struct ExprAST* rvalue = generateExpression(ctx);
+    stmt = allocNewAssign(lvalue, rvalue);
+  } else return allocNewExpression(lvalue);
+
+  return stmt;
+}
 
 static struct StmtAST* genConditionalNode(struct ASTContext* ctx) {
   struct StmtAST* stmt = NULL;
@@ -169,7 +185,7 @@ static struct StmtAST* genStmtNode(struct ASTContext* ctx) {
     // Everything in this branch must end with a .
     if(MATCH_TOKEN(ctx, TOKEN_PRINT)) stmt = genBuiltinNode(ctx);
     else if(MATCH_TOKEN(ctx, TOKEN_LET)) stmt = genVarDeclNode(ctx);
-    else stmt = allocNewExpression(generateExpression(ctx));
+    else stmt = genAssignmentNode(ctx); // THIS MUST BE LAST
 
     if(MATCH_TOKEN(ctx, TOKEN_DOT)) ctx->index += 1;
     else APPEND_ASTERROR(ctx, ASTERR_STMT_END);

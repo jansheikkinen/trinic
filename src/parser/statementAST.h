@@ -30,8 +30,8 @@ struct VarDeclStmt {
 
 // x = 0.
 struct VarAssignStmt {
-  const char* identifier;
-  struct ExprAST* value;
+  struct ExprAST* lvalue;
+  struct ExprAST* rvalue;
 };
 
 enum ConditionalElseTypes {
@@ -97,7 +97,7 @@ struct StmtAST {
 struct StmtAST* allocNewExpression(struct ExprAST*);
 struct StmtAST* allocNewBuiltin(enum BuiltinType, struct ExprAST*);
 struct StmtAST* allocNewVarDecl(const char*, struct ExprAST*);
-struct StmtAST* allocNewAssign(const char*, struct ExprAST*);
+struct StmtAST* allocNewAssign(struct ExprAST*, struct ExprAST*);
 struct StmtAST* allocNewConditional(struct ExprAST*, struct StmtList*,
     enum ConditionalElseTypes, union ConditionalElse);
 struct StmtAST* allocNewLoop(struct StmtList*);

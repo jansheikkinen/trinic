@@ -44,12 +44,12 @@ static struct StmtAST newVarDecl(const char* identifier, struct ExprAST* expr) {
   return stmt;
 }
 
-static struct StmtAST newAssign(const char* identifier, struct ExprAST* expr) {
+static struct StmtAST newAssign(struct ExprAST* lvalue, struct ExprAST* rvalue) {
   struct StmtAST stmt;
 
   struct VarAssignStmt assign;
-  assign.identifier = identifier;
-  assign.value = expr;
+  assign.lvalue = lvalue;
+  assign.rvalue = rvalue;
 
   stmt.type = STMT_VARASSIGN;
   stmt.as.assignment = assign;
@@ -120,8 +120,8 @@ struct StmtAST* allocNewVarDecl(const char* identifier,
   ALLOC_NODE(newVarDecl, identifier, expr);
 }
 
-struct StmtAST* allocNewAssign(const char* identifier, struct ExprAST* expr) {
-  ALLOC_NODE(newAssign, identifier, expr);
+struct StmtAST* allocNewAssign(struct ExprAST* lvalue, struct ExprAST* rvalue) {
+  ALLOC_NODE(newAssign, lvalue, rvalue);
 }
 
 struct StmtAST* allocNewConditional(struct ExprAST* condition,
@@ -156,8 +156,10 @@ void printStmtAST(const struct StmtAST* stmt) {
       printExprAST(stmt->as.vardecl.value);
       printf(")"); break;
     case STMT_VARASSIGN:
-      printf(")VARASSIGN %s (", stmt->as.assignment.identifier);
-      printExprAST(stmt->as.assignment.value);
+      printf("(VARASSIGN (");
+      printExprAST(stmt->as.assignment.lvalue);
+      printf(") (");
+      printExprAST(stmt->as.assignment.rvalue);
       printf("))"); break;
     case STMT_CONDITIONAL:
       printf("(IF (");
@@ -202,7 +204,8 @@ void freeStmtNode(struct StmtAST* stmt) {
     case STMT_VARDECL: // uhh do i free const char*s; dont think so lol
       freeExprNode(stmt->as.vardecl.value); break;
     case STMT_VARASSIGN:
-      freeExprNode(stmt->as.assignment.value); break;
+      freeExprNode(stmt->as.assignment.lvalue);
+      freeExprNode(stmt->as.assignment.rvalue); break;
     case STMT_CONDITIONAL:
       freeStmtList(stmt->as.conditional.body);
       switch(stmt->as.conditional.type) {
