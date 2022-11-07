@@ -1,6 +1,5 @@
 # Grammar
-A grammar specification of the TriniC language using Extended Backus-Naur
-Form.
+A grammar specification of the TriniC language using Extended Backus-Naur Form.
 
 ```ebnf
 basetype    =  "int8"   | "int16"   | "int32"   | "int64"   | "isize"

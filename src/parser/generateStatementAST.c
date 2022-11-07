@@ -52,10 +52,7 @@ static struct StmtAST* genVarDeclNode(struct ASTContext* ctx) {
   return stmt;
 }
 
-// conditional = "if" expression "do" statement*
-//               ( "end" | "else" (statement* "end" | conditional) ) ;
-// expression = logic ;
-
+// TODO: i forgor variable assignment :(
 
 static struct StmtAST* genConditionalNode(struct ASTContext* ctx) {
   struct StmtAST* stmt = NULL;
@@ -110,12 +107,65 @@ static struct StmtAST* genConditionalNode(struct ASTContext* ctx) {
   return stmt;
 }
 
+static struct StmtAST* genLoopNode(struct ASTContext* ctx) {
+  struct StmtAST* stmt = NULL;
+  ctx->index += 1;
+
+  struct StmtList* body = malloc(sizeof(*body));
+  *body = newStmtList();
+
+  while(ctx->index < ctx->tokens->length) {
+    if(MATCH_TOKEN(ctx, TOKEN_END)) {
+      ctx->index += 1;
+      return allocNewLoop(body);
+    } else {
+      appendToStmtList(body, generateStatement(ctx));
+    }
+  }
+
+  if(ctx->index >= ctx->tokens->length) {
+    APPEND_ASTERROR(ctx, ASTERR_UNTERMINATED_LOOP);
+    freeStmtList(body);
+  }
+
+  return stmt;
+}
+
+static struct StmtAST* genWhileNode(struct ASTContext* ctx) {
+  struct StmtAST* stmt = NULL;
+  ctx->index += 1;
+
+  struct ExprAST* condition = generateExpression(ctx);
+
+  if(MATCH_TOKEN(ctx, TOKEN_DO)) {
+    ctx->index += 1;
+
+    struct StmtList* body = malloc(sizeof(*body));
+    *body = newStmtList();
+
+    while(ctx->index < ctx->tokens->length) {
+      if(MATCH_TOKEN(ctx, TOKEN_END)) {
+        ctx->index += 1;
+        return allocNewWhile(condition, body);
+      } else appendToStmtList(body, generateStatement(ctx));
+    }
+
+    if(ctx->index >= ctx->tokens->length) {
+      APPEND_ASTERROR(ctx, ASTERR_UNTERMINATED_WHILE);
+      freeStmtList(body);
+    }
+  }
+
+  return stmt;
+}
+
 static struct StmtAST* genStmtNode(struct ASTContext* ctx) {
   struct StmtAST* stmt = NULL;
 
-  if(MATCH_TOKEN(ctx, TOKEN_IF)) {
-    stmt = genConditionalNode(ctx);
-  } else {
+  if(MATCH_TOKEN(ctx, TOKEN_IF)) stmt = genConditionalNode(ctx);
+  else if(MATCH_TOKEN(ctx, TOKEN_LOOP)) stmt = genLoopNode(ctx);
+  else if(MATCH_TOKEN(ctx, TOKEN_WHILE)) stmt = genWhileNode(ctx);
+  else {
     // Everything in this branch must end with a .
     if(MATCH_TOKEN(ctx, TOKEN_PRINT)) stmt = genBuiltinNode(ctx);
     else if(MATCH_TOKEN(ctx, TOKEN_LET)) stmt = genVarDeclNode(ctx);

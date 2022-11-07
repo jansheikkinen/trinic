@@ -59,6 +59,17 @@ struct ConditionalStmt {
   union ConditionalElse elseBranch;
 };
 
+// loop print(x). end
+struct LoopStmt {
+  struct StmtList* body;
+};
+
+// while x < 3 do x += 1. end
+struct WhileStmt {
+  struct ExprAST* condition;
+  struct StmtList* body;
+};
+
 enum StmtASTType {
   STMT_UNDEFINED,
   STMT_EXPRESSION,
@@ -66,6 +77,8 @@ enum StmtASTType {
   STMT_VARDECL,
   STMT_VARASSIGN,
   STMT_CONDITIONAL,
+  STMT_LOOP,
+  STMT_WHILE,
 };
 
 struct StmtAST {
@@ -76,6 +89,8 @@ struct StmtAST {
     struct VarDeclStmt vardecl;
     struct VarAssignStmt assignment;
     struct ConditionalStmt conditional;
+    struct LoopStmt loop;
+    struct WhileStmt whileloop;
   } as;
 };
 
@@ -85,6 +100,8 @@ struct StmtAST* allocNewVarDecl(const char*, struct ExprAST*);
 struct StmtAST* allocNewAssign(const char*, struct ExprAST*);
 struct StmtAST* allocNewConditional(struct ExprAST*, struct StmtList*,
     enum ConditionalElseTypes, union ConditionalElse);
+struct StmtAST* allocNewLoop(struct StmtList*);
+struct StmtAST* allocNewWhile(struct ExprAST*, struct StmtList*);
 
 void printStmtAST(const struct StmtAST*);
 

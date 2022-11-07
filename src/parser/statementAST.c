@@ -74,6 +74,32 @@ static struct StmtAST newConditional(struct ExprAST* condition,
   return stmt;
 }
 
+static struct StmtAST newLoop(struct StmtList* body) {
+  struct StmtAST stmt;
+
+  struct LoopStmt loop;
+  loop.body = body;
+
+  stmt.type = STMT_LOOP;
+  stmt.as.loop = loop;
+
+  return stmt;
+}
+
+static struct StmtAST newWhile(struct ExprAST* condition,
+    struct StmtList* body) {
+  struct StmtAST stmt;
+
+  struct WhileStmt loop;
+  loop.condition = condition;
+  loop.body = body;
+
+  stmt.type = STMT_WHILE;
+  stmt.as.whileloop = loop;
+
+  return stmt;
+}
+
 // I initially wanted to put the entire function declaration in the macro,
 // but that requires two separate VA_ARGS :(
 #define ALLOC_NODE(func, ...) \
@@ -104,6 +130,15 @@ struct StmtAST* allocNewConditional(struct ExprAST* condition,
   ALLOC_NODE(newConditional, condition, body, type, elseBranch);
 }
 
+struct StmtAST* allocNewLoop(struct StmtList* body) {
+  ALLOC_NODE(newLoop, body);
+}
+
+struct StmtAST* allocNewWhile(struct ExprAST* condition,
+    struct StmtList* body) {
+  ALLOC_NODE(newWhile, condition, body);
+}
+
 void printStmtAST(const struct StmtAST* stmt) {
   switch(stmt->type) {
     case STMT_UNDEFINED:
@@ -121,7 +156,7 @@ void printStmtAST(const struct StmtAST* stmt) {
       printExprAST(stmt->as.vardecl.value);
       printf(")"); break;
     case STMT_VARASSIGN:
-      printf("VARASSIGN %s (", stmt->as.assignment.identifier);
+      printf(")VARASSIGN %s (", stmt->as.assignment.identifier);
       printExprAST(stmt->as.assignment.value);
       printf("))"); break;
     case STMT_CONDITIONAL:
@@ -136,16 +171,24 @@ void printStmtAST(const struct StmtAST* stmt) {
         case CONDELSE_UNDEFINED:
           panic(1, "Undefined else branch in conditional node"); break;
         case CONDELSE_ELSE:
-          for(size_t i = 0;
-              i < stmt->as.conditional.elseBranch.elseBody->size; i++) {
-            printStmtAST(stmt->as.conditional.elseBranch.elseBody->stmts[i]);
-          } break;
+          printStmtList(stmt->as.conditional.elseBranch.elseBody);
+          break;
         case CONDELSE_ELSEIF:
           printStmtAST(stmt->as.conditional.elseBranch.elseif); break;
         case CONDELSE_NONE: break;
       }
       printf("))");
       break;
+    case STMT_LOOP:
+      printf("(LOOP (");
+      printStmtList(stmt->as.loop.body);
+      printf("))"); break;
+    case STMT_WHILE:
+      printf("(WHILE (");
+      printExprAST(stmt->as.whileloop.condition);
+      printf(") (");
+      printStmtList(stmt->as.whileloop.body);
+      printf("))"); break;
   }
 }
 
@@ -172,6 +215,11 @@ void freeStmtNode(struct StmtAST* stmt) {
         case CONDELSE_NONE: break;
       }
       freeExprNode(stmt->as.conditional.condition); break;
+    case STMT_LOOP:
+      freeStmtList(stmt->as.loop.body); break;
+    case STMT_WHILE:
+      freeExprNode(stmt->as.whileloop.condition);
+      freeStmtList(stmt->as.whileloop.body); break;
   }
 
   free(stmt);

@@ -29,3 +29,9 @@ void freeStmtList(struct StmtList* list) {
 
   free(list);
 }
+
+void printStmtList(const struct StmtList* stmts) {
+  for(size_t i = 0; i < stmts->size; i++) {
+    printStmtAST(stmts->stmts[i]);
+  }
+}

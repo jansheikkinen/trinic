@@ -12,7 +12,9 @@ const char* ASTErrorMessages[] = {
   "Expected end of statement",
   "Undefined AST node",
   "Undefined else branch in conditional node",
-  "Unterminated if statement"
+  "Unterminated if statement",
+  "Unterminated loop statement",
+  "Unterminated while statement",
 };
 
 const char* LexerErrorMessages[] = {
