@@ -46,6 +46,7 @@ struct StmtList* parseProgram(const char* filename) {
 #ifdef VERBOSE_DEBUG
   for(size_t i = 0; i < stmts->size; i++) {
     printStmtAST(stmts->stmts[i]);
+    printf("\n");
   }
 #endif
 

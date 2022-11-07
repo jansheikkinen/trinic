@@ -73,13 +73,13 @@ static struct StmtAST* genConditionalNode(struct ASTContext* ctx) {
     while(ctx->index < ctx->tokens->length) {
       if(MATCH_TOKEN(ctx, TOKEN_END)) {
         ctx->index += 1;
-        stmt = allocNewConditional(condition, body, type, elseBranch);
+        return allocNewConditional(condition, body, type, elseBranch);
       } else if(MATCH_TOKEN(ctx, TOKEN_ELSE)) {
         ctx->index += 1;
         if(MATCH_TOKEN(ctx, TOKEN_IF)) {
-          ctx->index += 1;
-          type = CONDELSE_ELSEIF;
           elseBranch.elseif = genConditionalNode(ctx);
+          return allocNewConditional(condition, body,
+              CONDELSE_ELSEIF, elseBranch);
         } else {
           type = CONDELSE_ELSE;
           elseBranch.elseBody = malloc(sizeof(*elseBranch.elseBody));
@@ -88,7 +88,7 @@ static struct StmtAST* genConditionalNode(struct ASTContext* ctx) {
           while(ctx->index < ctx->tokens->length) {
             if(MATCH_TOKEN(ctx, TOKEN_END)) {
               ctx->index += 1;
-              stmt = allocNewConditional(condition, body, type, elseBranch);
+              return allocNewConditional(condition, body, type, elseBranch);
             } else {
               appendToStmtList(elseBranch.elseBody, generateStatement(ctx));
             }

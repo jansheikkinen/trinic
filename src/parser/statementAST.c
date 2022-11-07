@@ -107,26 +107,30 @@ struct StmtAST* allocNewConditional(struct ExprAST* condition,
 void printStmtAST(const struct StmtAST* stmt) {
   switch(stmt->type) {
     case STMT_UNDEFINED:
-      printf("(STMT_UNDEFINED)\n"); break;
+      printf("(STMT_UNDEFINED)"); break;
     case STMT_EXPRESSION:
       printf("(EXPR ");
       printExprAST(stmt->as.expression.expression);
-      printf(")\n"); break;
+      printf(")"); break;
     case STMT_BUILTIN:
       printf("(BUILTIN_%d ", stmt->as.builtin.type);
       printExprAST(stmt->as.builtin.parameter);
-      printf(")\n"); break;
+      printf(")"); break;
     case STMT_VARDECL:
       printf("(VARDECL (%s) ", stmt->as.vardecl.identifier);
       printExprAST(stmt->as.vardecl.value);
-      printf(")\n"); break;
+      printf(")"); break;
     case STMT_VARASSIGN:
       printf("VARASSIGN %s (", stmt->as.assignment.identifier);
       printExprAST(stmt->as.assignment.value);
-      printf("))\n"); break;
+      printf("))"); break;
     case STMT_CONDITIONAL:
       printf("(IF (");
       printExprAST(stmt->as.conditional.condition);
+      printf(") (");
+      for(size_t i = 0; i < stmt->as.conditional.body->size; i++) {
+        printStmtAST(stmt->as.conditional.body->stmts[i]);
+      }
       printf(") (");
       switch(stmt->as.conditional.type) {
         case CONDELSE_UNDEFINED:
@@ -140,6 +144,7 @@ void printStmtAST(const struct StmtAST* stmt) {
           printStmtAST(stmt->as.conditional.elseBranch.elseif); break;
         case CONDELSE_NONE: break;
       }
+      printf("))");
       break;
   }
 }
