@@ -3,8 +3,9 @@
 #include <stdio.h>
 
 #include "../error/error.h"
+#include "argumentAST.h"
 #include "generateExpressionAST.h"
-#include "ASTContext.h"
+#include "generateArgumentAST.h"
 #include "token.h"
 
 #define GET_CURRENT_TOKEN(ctx) ctx->tokens->tokens[ctx->index]
@@ -60,6 +61,24 @@ static struct ExprAST* genPrimaryNode(struct ASTContext* ctx) {
   return expr;
 }
 
+static struct ExprAST* genCallNode(struct ASTContext* ctx) {
+  struct ExprAST* primary = genPrimaryNode(ctx);
+
+  if(MATCH_TOKEN(ctx, TOKEN_LEFT_PAREN)) {
+    ctx->index += 1;
+    struct ArgAST* args = generateExpressionArguments(ctx);
+
+    if(MATCH_TOKEN(ctx, TOKEN_RIGHT_PAREN)) {
+      ctx->index += 1;
+      return allocNewCall(primary, args);
+    } else {
+      APPEND_ASTERROR(ctx, ASTERR_UNCLOSED_PAREN);
+      freeArgAST(args);
+    }
+  }
+  return primary;
+}
+
 static struct ExprAST* genUnaryNode(struct ASTContext* ctx) {
   if(MATCH_TOKEN(ctx, TOKEN_TILDE)
       || MATCH_TOKEN(ctx, TOKEN_BANG)
@@ -72,7 +91,7 @@ static struct ExprAST* genUnaryNode(struct ASTContext* ctx) {
     return allocNewUnary(operator, operand);
   }
 
-  return genPrimaryNode(ctx);
+  return genCallNode(ctx);
 }
 
 generateBinaryNode(genFactorNode, genUnaryNode,

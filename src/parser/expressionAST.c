@@ -4,6 +4,7 @@
 
 #include <stdio.h>
 
+#include "argumentAST.h"
 #include "expressionAST.h"
 
 
@@ -58,6 +59,19 @@ static struct ExprAST newVariable(const char* identifier) {
   return expr;
 }
 
+static struct ExprAST newCall(struct ExprAST* callee, struct ArgAST* args) {
+  struct ExprAST expr;
+
+  struct CallExpression call;
+  call.callee = callee;
+  call.args = args;
+
+  expr.type = EXPR_CALL;
+  expr.as.call = call;
+
+  return expr;
+}
+
 static struct ExprAST newGrouping(struct ExprAST* expression) {
   struct ExprAST expr;
 
@@ -101,6 +115,13 @@ struct ExprAST* allocNewVariable(const char* identifier) {
   return ptr;
 }
 
+struct ExprAST* allocNewCall(struct ExprAST* callee, struct ArgAST* args) {
+  struct ExprAST* ptr = malloc(sizeof(*ptr));
+  if(ptr) *ptr = newCall(callee, args);
+
+  return ptr;
+}
+
 struct ExprAST* allocNewGrouping(struct ExprAST* expr) {
   struct ExprAST* ptr = malloc(sizeof(*ptr));
   if(ptr) *ptr = newGrouping(expr);
@@ -139,6 +160,12 @@ void printExprAST(const struct ExprAST* ast) {
       printf("(");
       printExprAST(ast->as.grouping.expression);
       printf(")"); break;
+    case EXPR_CALL:
+      printf("(");
+      printExprAST(ast->as.call.callee);
+      printf(" ");
+      printArgAST(ast->as.call.args);
+      printf(")");
   }
 }
 
@@ -163,6 +190,9 @@ void freeExprNode(struct ExprAST* expr) {
       break;
     case EXPR_GROUPING:
       freeExprNode(expr->as.grouping.expression); break;
+    case EXPR_CALL:
+      freeExprNode(expr->as.call.callee);
+      freeArgAST(expr->as.call.args); break;
   }
 
   free(expr);

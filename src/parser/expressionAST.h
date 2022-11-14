@@ -14,6 +14,7 @@ enum ExprASTType {
   EXPR_BINARY,
   EXPR_VARIABLE,
   EXPR_GROUPING,
+  EXPR_CALL
 };
 
 enum LiteralType {
