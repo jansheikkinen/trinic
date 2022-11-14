@@ -42,6 +42,7 @@ call       = primary "(" arguments? ")" ;
 primary    = "(" expression ")" | NUMBER | STRING | IDENTIFIER
             | "true" | "false" ;
 
+# Not sure how to represent it, but the last idarg HAS to have type annotation
 idargs    = idarg ( "," idarg )* ;
 idarg     = IDENTIFIER (":" "mut"? type)? ;
 arguments = expression ( "," expression )* ;

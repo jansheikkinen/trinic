@@ -54,8 +54,12 @@ struct BinaryExpression {
 };
 
 struct VariableExpression {
-  // TODO: type info
   const char* identifier;
+};
+
+struct CallExpression {
+  struct ExprAST* callee;
+  struct ArgAST* args;
 };
 
 struct GroupingExpression {
@@ -69,6 +73,7 @@ struct ExprAST {
     struct UnaryExpression   unary;
     struct BinaryExpression  binary;
     struct VariableExpression variable;
+    struct CallExpression call;
     struct GroupingExpression grouping;
   } as;
 };
@@ -77,6 +82,7 @@ struct ExprAST* allocNewLiteral(enum LiteralType, union LiteralValue);
 struct ExprAST* allocNewUnary(enum TokenType, struct ExprAST*);
 struct ExprAST* allocNewBinary(enum TokenType, struct ExprAST*, struct ExprAST*);
 struct ExprAST* allocNewVariable(const char* identifier);
+struct ExprAST* allocNewCall(struct ExprAST*, struct ArgAST*);
 struct ExprAST* allocNewGrouping(struct ExprAST*);
 
 #define ALLOC_NEW_LITERAL(type, vtype, value) \

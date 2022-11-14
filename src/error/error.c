@@ -3,7 +3,13 @@
 /* Code for handling errors encountered during compilation */
 
 #include <stdio.h>
+
+#include "../util/textcolor.h"
 #include "error.h"
+
+const int LOC_COLOR = COL_BLUE;
+const int ERROR_COLOR = COL_RED;
+const int WARN_COLOR = COL_MAGENTA;
 
 const char* ASTErrorMessages[] = {
   "Undefined Error",
@@ -38,9 +44,23 @@ struct ASTError newASTError(enum ASTErrorType type, const char* tokenName,
 
 // TODO: Filenames
 void printASTError(const char* filename, const struct ASTError* error) {
-  printf("Error generating AST @ %s:(%ld, %ld), token \"%s\"\n  %03d: %s.\n",
-      filename, error->row, error->col, error->tokenName, error->type,
-      ASTErrorMessages[error->type]);
+  setColor(COLATTR_BRIGHT, ERROR_COLOR, COL_DEFAULT);
+  printf("Error ");
+  resetColor();
+
+  printf("generating AST @ ");
+
+  setColor(COLATTR_BRIGHT, LOC_COLOR, COL_DEFAULT);
+  printf("%s:(%ld, %ld)", filename, error->row, error->col);
+  resetColor();
+
+  printf(" \"%s\"\n  ", error->tokenName);
+
+  setColor(COLATTR_BRIGHT, ERROR_COLOR, COL_DEFAULT);
+  printf("%03d", error->type);
+  resetColor();
+
+  printf(": %s.\n", ASTErrorMessages[error->type]);
 }
 
 struct LexError newLexError(enum LexerErrorType type, size_t row, size_t col) {
