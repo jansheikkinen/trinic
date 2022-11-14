@@ -21,6 +21,9 @@ const char* ASTErrorMessages[] = {
   "Unterminated if statement",
   "Unterminated loop statement",
   "Unterminated while statement",
+  "Unterminated expression argument list",
+  "Unterminated identifier argument list",
+  "Missing identifier in identifier argument list",
   "Expected expression"
 };
 

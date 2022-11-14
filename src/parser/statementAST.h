@@ -3,6 +3,7 @@
 
 #include "stmtlist.h"
 #include "expressionAST.h"
+#include "argumentAST.h"
 
 // 1 + 1.
 struct ExprStmt {
@@ -24,8 +25,8 @@ struct BuiltinStmt {
 // TODO: Add types lol
 struct VarDeclStmt {
   // type information
-  const char* identifier;
-  struct ExprAST* value;
+  struct ArgAST* lvalue;
+  struct ArgAST* rvalue;
 };
 
 // x = 0.
@@ -96,7 +97,7 @@ struct StmtAST {
 
 struct StmtAST* allocNewExpression(struct ExprAST*);
 struct StmtAST* allocNewBuiltin(enum BuiltinType, struct ExprAST*);
-struct StmtAST* allocNewVarDecl(const char*, struct ExprAST*);
+struct StmtAST* allocNewVarDecl(struct ArgAST*, struct ArgAST*);
 struct StmtAST* allocNewAssign(struct ExprAST*, struct ExprAST*);
 struct StmtAST* allocNewConditional(struct ExprAST*, struct StmtList*,
     enum ConditionalElseTypes, union ConditionalElse);

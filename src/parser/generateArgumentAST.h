@@ -3,6 +3,7 @@
 
 #include "ASTContext.h"
 
-struct ArgAST* generateArguments(struct ASTContext*);
+struct ArgAST* generateIdentifierArguments(struct ASTContext*);
+struct ArgAST* generateExpressionArguments(struct ASTContext*);
 
 #endif

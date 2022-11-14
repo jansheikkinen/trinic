@@ -4,6 +4,7 @@
 
 #include "statementAST.h"
 #include "generateExpressionAST.h"
+#include "generateArgumentAST.h"
 #include "generateStatementAST.h"
 
 #define GET_CURRENT_TOKEN(ctx) ctx->tokens->tokens[ctx->index]
@@ -40,17 +41,13 @@ static struct StmtAST* genVarDeclNode(struct ASTContext* ctx) {
   struct StmtAST* stmt = NULL;
   ctx->index += 1;
 
-  if(MATCH_TOKEN(ctx, TOKEN_IDENTIFIER_LITERAL)) {
-    const char* identifier = GET_CURRENT_TOKEN(ctx).literal;
+  struct ArgAST* lvals = generateIdentifierArguments(ctx);
+
+  if(MATCH_TOKEN(ctx, TOKEN_ASSIGN)) {
     ctx->index += 1;
 
-    // TODO: Type annotations
-
-    if(MATCH_TOKEN(ctx, TOKEN_ASSIGN)) {
-      ctx->index += 1;
-      struct ExprAST* value = generateExpression(ctx);
-      stmt = allocNewVarDecl(identifier, value);
-    }
+    struct ArgAST* rvals = generateExpressionArguments(ctx);
+    stmt = allocNewVarDecl(lvals, rvals);
   }
 
   return stmt;

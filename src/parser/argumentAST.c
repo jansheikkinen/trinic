@@ -9,7 +9,7 @@
 #include "argumentAST.h"
 #include "expressionAST.h"
 
-struct ArgAST* allocNewExprArg(struct ExprList* args) {
+struct ArgAST* allocNewExprArgList(struct ExprList* args) {
   struct ArgAST* argast = malloc(sizeof(*argast));
 
   argast->type = ARG_EXPR;
@@ -18,7 +18,15 @@ struct ArgAST* allocNewExprArg(struct ExprList* args) {
   return argast;
 }
 
-struct ArgAST* allocNewIdentifierArg(void) {
+struct IdentifierArg* allocNewIdentifierArg(const char* identifier) {
+  struct IdentifierArg* arg = malloc(sizeof(*arg));
+
+  arg->identifier = identifier;
+
+  return arg;
+}
+
+struct ArgAST* allocNewIdentifierArgList(void) {
   struct ArgAST* argast = malloc(sizeof(*argast));
 
   argast->type = ARG_IDENTIFIER;
@@ -33,7 +41,7 @@ void freeIdentifierArg(struct IdentifierArg* arg) {
 }
 
 void printIdentifierArg(const struct IdentifierArg* arg) {
-  printf("(%s)", arg->identifier);
+  printf("%s", arg->identifier);
 }
 
 void freeArgAST(struct ArgAST* args) {
@@ -51,12 +59,19 @@ void printArgAST(const struct ArgAST* args) {
   switch(args->type) {
     case ARG_UNDEFINED: printf("(ARG_UNDEFINED)"); break;
     case ARG_EXPR:
-      printf("(expr-args (");
-      PRINT_MEMBERS(args->as.exprargs.args, printExprAST);
-      printf("))"); break;
+      printf("(expr-args ");
+      for(size_t i = 0; i < args->as.exprargs.args->size; i++) {
+        printf("(");
+        printExprAST(args->as.exprargs.args->members[i]);
+        printf(")");
+      }
+      printf(")"); break;
     case ARG_IDENTIFIER:
-      printf("(identifier-args (");
-      PRINT_MEMBERS(&args->as.idargs, printIdentifierArg);
-      printf("))"); break;
+      printf("(identifier-args ");
+      for(size_t i = 0; i < args->as.idargs.size; i++) {
+        printf("("); printIdentifierArg(args->as.idargs.members[i]);
+        printf(")");
+      }
+      printf(")"); break;
   }
 }

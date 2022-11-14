@@ -31,12 +31,12 @@ static struct StmtAST newBuiltin(enum BuiltinType type, struct ExprAST* paramete
 }
 
 // I promise VarDecl and Assign are(will be) different
-static struct StmtAST newVarDecl(const char* identifier, struct ExprAST* expr) {
+static struct StmtAST newVarDecl(struct ArgAST* lvalue, struct ArgAST* rvalue) {
   struct StmtAST stmt;
 
   struct VarDeclStmt vardecl;
-  vardecl.identifier = identifier;
-  vardecl.value = expr;
+  vardecl.lvalue = lvalue;
+  vardecl.rvalue = rvalue;
 
   stmt.type = STMT_VARDECL;
   stmt.as.vardecl = vardecl;
@@ -115,9 +115,8 @@ struct StmtAST* allocNewBuiltin(enum BuiltinType type, struct ExprAST* expr) {
   ALLOC_NODE(newBuiltin, type, expr);
 }
 
-struct StmtAST* allocNewVarDecl(const char* identifier,
-    struct ExprAST* expr) {
-  ALLOC_NODE(newVarDecl, identifier, expr);
+struct StmtAST* allocNewVarDecl(struct ArgAST* lvalue, struct ArgAST* rvalue) {
+  ALLOC_NODE(newVarDecl, lvalue, rvalue);
 }
 
 struct StmtAST* allocNewAssign(struct ExprAST* lvalue, struct ExprAST* rvalue) {
@@ -152,8 +151,9 @@ void printStmtAST(const struct StmtAST* stmt) {
       printExprAST(stmt->as.builtin.parameter);
       printf(")"); break;
     case STMT_VARDECL:
-      printf("(VARDECL (%s) ", stmt->as.vardecl.identifier);
-      printExprAST(stmt->as.vardecl.value);
+      printf("(VARDECL ");
+      printArgAST(stmt->as.vardecl.lvalue);
+      printArgAST(stmt->as.vardecl.rvalue);
       printf(")"); break;
     case STMT_VARASSIGN:
       printf("(VARASSIGN (");
@@ -201,8 +201,9 @@ void freeStmtNode(struct StmtAST* stmt) {
       freeExprNode(stmt->as.expression.expression); break;
     case STMT_BUILTIN:
       freeExprNode(stmt->as.builtin.parameter); break;
-    case STMT_VARDECL: // uhh do i free const char*s; dont think so lol
-      freeExprNode(stmt->as.vardecl.value); break;
+    case STMT_VARDECL:
+      freeArgAST(stmt->as.vardecl.lvalue);
+      freeArgAST(stmt->as.vardecl.rvalue); break;
     case STMT_VARASSIGN:
       freeExprNode(stmt->as.assignment.lvalue);
       freeExprNode(stmt->as.assignment.rvalue); break;

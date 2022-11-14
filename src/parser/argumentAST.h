@@ -30,4 +30,10 @@ struct ArgAST {
   } as;
 };
 
+struct ArgAST* allocNewExprArgList(struct ExprList* args);
+struct IdentifierArg* allocNewIdentifierArg(const char*);
+struct ArgAST* allocNewIdentifierArgList(void);
+void freeArgAST(struct ArgAST*);
+void printArgAST(const struct ArgAST*);
+
 #endif
