@@ -84,6 +84,14 @@ static struct ExprAST newGrouping(struct ExprAST* expression) {
   return expr;
 }
 
+static struct ExprAST newUndefined(void) {
+  struct ExprAST expr;
+
+  expr.type = EXPR_UNDEFINED;
+
+  return expr;
+}
+
 struct ExprAST* allocNewLiteral(enum LiteralType type,
     union LiteralValue value) {
   struct ExprAST* ptr = malloc(sizeof(*ptr));
@@ -129,9 +137,16 @@ struct ExprAST* allocNewGrouping(struct ExprAST* expr) {
   return ptr;
 }
 
+struct ExprAST* allocNewUndefined(void) {
+  struct ExprAST* ptr = malloc(sizeof(*ptr));
+  if(ptr) *ptr = newUndefined();
+
+  return ptr;
+}
+
 void printExprAST(const struct ExprAST* ast) {
   switch(ast->type) {
-    case EXPR_UNDEFINED: printf("EXPR_UNDEFINED"); break;
+    case EXPR_UNDEFINED: printf("UNDEFINED"); break;
     case EXPR_LITERAL:
       switch(ast->as.literal.type) {
         case LIT_UNDEFINED: printf("LIT_UNDEFINED"); break;

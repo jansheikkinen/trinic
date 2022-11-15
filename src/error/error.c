@@ -14,6 +14,7 @@ const int WARN_COLOR = COL_MAGENTA;
 const char* ASTErrorMessages[] = {
   "Undefined Error",
   "Missing '(' after function call",
+  "Missing ']' in array",
   "Unclosed parentheses",
   "Expected end of statement",
   "Undefined AST node",
@@ -24,7 +25,9 @@ const char* ASTErrorMessages[] = {
   "Unterminated expression argument list",
   "Unterminated identifier argument list",
   "Missing identifier in identifier argument list",
-  "Expected expression"
+  "Expected expression",
+  "Expected type",
+  "Expected identifier"
 };
 
 const char* LexerErrorMessages[] = {

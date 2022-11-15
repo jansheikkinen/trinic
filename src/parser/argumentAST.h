@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include "../util/arraylist.h"
+#include "typeAST.h"
 #include "exprlist.h"
 
 enum ArgASTType {
@@ -12,8 +13,8 @@ enum ArgASTType {
 };
 
 struct IdentifierArg {
-  // type info
   const char* identifier;
+  struct TypeAST* type;
 };
 
 struct ExprArgList {
@@ -31,7 +32,7 @@ struct ArgAST {
 };
 
 struct ArgAST* allocNewExprArgList(struct ExprList* args);
-struct IdentifierArg* allocNewIdentifierArg(const char*);
+struct IdentifierArg* allocNewIdentifierArg(const char*, struct TypeAST*);
 struct ArgAST* allocNewIdentifierArgList(void);
 void freeArgAST(struct ArgAST*);
 void printArgAST(const struct ArgAST*);

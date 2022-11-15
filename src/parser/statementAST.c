@@ -30,7 +30,6 @@ static struct StmtAST newBuiltin(enum BuiltinType type, struct ExprAST* paramete
   return stmt;
 }
 
-// I promise VarDecl and Assign are(will be) different
 static struct StmtAST newVarDecl(struct ArgAST* lvalue, struct ArgAST* rvalue) {
   struct StmtAST stmt;
 

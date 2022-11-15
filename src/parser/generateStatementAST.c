@@ -33,7 +33,6 @@ static struct StmtAST* genBuiltinNode(struct ASTContext* ctx) {
   return stmt;
 }
 
-// TODO: Multiple assignment, i.e.
 // let x: int, y: float = 69, 42.0. -> int x = 69; float y = 42.0
 // let x, y: int = 69, 42.          -> int x = 69; int y = 42
 // let x, y: int = 69.              -> int x = 69; int y = 69

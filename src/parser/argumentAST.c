@@ -18,10 +18,12 @@ struct ArgAST* allocNewExprArgList(struct ExprList* args) {
   return argast;
 }
 
-struct IdentifierArg* allocNewIdentifierArg(const char* identifier) {
+struct IdentifierArg* allocNewIdentifierArg(const char* identifier,
+    struct TypeAST* type) {
   struct IdentifierArg* arg = malloc(sizeof(*arg));
 
   arg->identifier = identifier;
+  arg->type = type;
 
   return arg;
 }
@@ -36,12 +38,18 @@ struct ArgAST* allocNewIdentifierArgList(void) {
 }
 
 void freeIdentifierArg(struct IdentifierArg* arg) {
-  // TODO: implement and free type info
+  freeTypeAST(arg->type);
   free(arg);
 }
 
 void printIdentifierArg(const struct IdentifierArg* arg) {
-  printf("%s", arg->identifier);
+  if(arg->type) {
+    printf("(%s ", arg->identifier);
+    printTypeAST(arg->type);
+  } else {
+    printf("%s", arg->identifier);
+  }
+  printf(")");
 }
 
 void freeArgAST(struct ArgAST* args) {
@@ -69,7 +77,8 @@ void printArgAST(const struct ArgAST* args) {
     case ARG_IDENTIFIER:
       printf("(identifier-args ");
       for(size_t i = 0; i < args->as.idargs.size; i++) {
-        printf("("); printIdentifierArg(args->as.idargs.members[i]);
+        printf("(");
+        printIdentifierArg(args->as.idargs.members[i]);
         printf(")");
       }
       printf(")"); break;

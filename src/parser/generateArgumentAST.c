@@ -3,6 +3,7 @@
 #include "../error/error.h"
 #include "../util/arraylist.h"
 #include "argumentAST.h"
+#include "generateTypeAST.h"
 #include "generateExpressionAST.h"
 
 // Differentiating these two in a single function as I have in expression or
@@ -40,25 +41,36 @@ struct ArgAST* generateExpressionArguments(struct ASTContext* ctx) {
   return ast;
 }
 
+static struct IdentifierArg* generateIdentifierArg(struct ASTContext* ctx) {
+  if(MATCH_TOKEN(ctx, TOKEN_IDENTIFIER_LITERAL)) {
+    const char* identifier = GET_CURRENT_TOKEN(ctx).literal;
+    ctx->index += 1;
+
+    if(MATCH_TOKEN(ctx, TOKEN_COLON)) {
+      ctx->index += 1;
+
+      struct TypeAST* type = generateType(ctx);
+      return allocNewIdentifierArg(identifier, type);
+    } else return allocNewIdentifierArg(identifier, NULL);
+  } else {
+    APPEND_ASTERROR(ctx, ASTERR_MISSING_IDENTIFIER_IDARGS);
+  }
+  return NULL;
+}
+
 struct ArgAST* generateIdentifierArguments(struct ASTContext* ctx) {
   if(MATCH_TOKEN(ctx, TOKEN_IDENTIFIER_LITERAL)) {
-    struct IdentifierArg* id =
-      allocNewIdentifierArg(GET_CURRENT_TOKEN(ctx).literal);
-    ctx->index += 1;
     struct ArgAST* ast = allocNewIdentifierArgList();
-    APPEND_ARRAYLIST(&ast->as.idargs, id);
+
+    struct IdentifierArg* arg = generateIdentifierArg(ctx);
+    APPEND_ARRAYLIST(&ast->as.idargs, arg);
 
     while(ctx->index < ctx->tokens->length) {
       if(MATCH_TOKEN(ctx, TOKEN_COMMA)) {
         ctx->index += 1;
-        if(MATCH_TOKEN(ctx, TOKEN_IDENTIFIER_LITERAL)) {
-          APPEND_ARRAYLIST(&ast->as.idargs,
-              allocNewIdentifierArg(GET_CURRENT_TOKEN(ctx).literal));
-          ctx->index += 1;
-        } else {
-          APPEND_ASTERROR(ctx, ASTERR_MISSING_IDENTIFIER_IDARGS);
-          freeArgAST(ast);
-        }
+
+        arg = generateIdentifierArg(ctx);
+        APPEND_ARRAYLIST(&ast->as.idargs, arg);
       } else return ast;
    }
 

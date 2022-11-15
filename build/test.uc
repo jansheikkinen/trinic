@@ -1,3 +1,11 @@
-let x, y = 1, 2.
-1, 2 = 1, 2. // this should error eventually
-test(1, 2). // if this works, it means i've also implemented function call syntax
+let a: int8,   a: int16,   a: int32,   a: int64,   a: isize = undefined.
+let b: uint8,  b: uint16,  b: uint32,  b: uint64,  b: usize = undefined.
+let c: float8, c: float16, c: float32, c: float64, c: fsize = undefined.
+let d: byte,   d: char,    d: void,    d: bool              = undefined.
+let e: int8*,  e: int8[34 + 35],       e: struct TestStruct = undefined.
+let f, f: int8 = undefined.
+let g: int8, g = undefined.
+let h = undefined.
+let i: int8 = undefined.
+let j = undefined, undefined.
+let k, k = undefined, undefined.

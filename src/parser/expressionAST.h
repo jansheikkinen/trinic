@@ -14,7 +14,7 @@ enum ExprASTType {
   EXPR_BINARY,
   EXPR_VARIABLE,
   EXPR_GROUPING,
-  EXPR_CALL
+  EXPR_CALL,
 };
 
 enum LiteralType {
@@ -85,6 +85,7 @@ struct ExprAST* allocNewBinary(enum TokenType, struct ExprAST*, struct ExprAST*)
 struct ExprAST* allocNewVariable(const char* identifier);
 struct ExprAST* allocNewCall(struct ExprAST*, struct ArgAST*);
 struct ExprAST* allocNewGrouping(struct ExprAST*);
+struct ExprAST* allocNewUndefined(void);
 
 #define ALLOC_NEW_LITERAL(type, vtype, value) \
   allocNewLiteral(type, (union LiteralValue){ .vtype = value })

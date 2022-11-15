@@ -22,9 +22,7 @@ struct BuiltinStmt {
 };
 
 // let x: int32 = 0.
-// TODO: Add types lol
 struct VarDeclStmt {
-  // type information
   struct ArgAST* lvalue;
   struct ArgAST* rvalue;
 };

@@ -55,6 +55,8 @@ static struct ExprAST* genPrimaryNode(struct ASTContext* ctx) {
     if(MATCH_TOKEN(ctx, TOKEN_RIGHT_PAREN)) {
       expr = allocNewGrouping(exprast);
     } else APPEND_ASTERROR(ctx, ASTERR_UNCLOSED_PAREN);
+  } else if(MATCH_TOKEN(ctx, TOKEN_UNDEFINED)) {
+    expr = allocNewUndefined();
   } else APPEND_ASTERROR(ctx, ASTERR_EXPECTED_EXPRESSION);
 
   ctx->index += 1;
