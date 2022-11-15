@@ -11,16 +11,17 @@ would encompass implementation of an AST or optimisation.
 
 - [x] Expressions
 - [x] Statements
-- [ ] Variable Initialisation and Assignment
+- [x] Variable Initialisation and Assignment
 - [ ] Variable Scopes
-- [ ] Control Flow: `if`, `and`, `or`, `not`
-- [ ] Loops: `loop`, `while`, `for`, `foreach`
+- [x] Control Flow: `if`, `and`, `or`, `not`
+- [x] Loops: `loop`, `while`, `for`, `foreach`
 - [ ] `break`, `continue`
 - [ ] Typechecking of Primitive Types
 - [ ] Functions
 - [ ] Function Overloading
-- [ ] Pointers and Arrays
-- [ ] `struct`, `enum`, `union`
+- [x] Pointers and Arrays
+- [x] `struct`
+- [ ]`enum`, `union`
 - [ ] `include` and `extern`
 - [ ] `undefined` and Mutability
 - [ ] Pattern Matching
