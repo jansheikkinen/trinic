@@ -1,5 +1,6 @@
 /* stmtlist.c */
 
+#include <stdio.h>
 #include "../util/reallocarray.h"
 #include "stmtlist.h"
 #include "statementAST.h"
@@ -33,5 +34,6 @@ void freeStmtList(struct StmtList* list) {
 void printStmtList(const struct StmtList* stmts) {
   for(size_t i = 0; i < stmts->size; i++) {
     printStmtAST(stmts->stmts[i]);
+    printf(". ");
   }
 }

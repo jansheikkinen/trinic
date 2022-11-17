@@ -73,15 +73,15 @@ void printTypeAST(const struct TypeAST* ast) {
       switch(ast->as.structure.type) {
         case STRUCT_UNDEFINED: printf("UNDEFINED STRUCT"); break;
         case STRUCT_STRUCT:
-          printf("(struct %s)", ast->as.structure.name); break;
+          printf("struct %s", ast->as.structure.name); break;
         case STRUCT_UNION:
-          printf("(union %s)", ast->as.structure.name); break;
+          printf("union %s", ast->as.structure.name); break;
         case STRUCT_ENUM:
-          printf("(enum %s)", ast->as.structure.name); break;
+          printf("enum %s", ast->as.structure.name); break;
         case STRUCT_SUM:
-          printf("(sum %s)", ast->as.structure.name); break;
+          printf("sum %s", ast->as.structure.name); break;
         case STRUCT_INTERFACE:
-          printf("(interface %s)", ast->as.structure.name); break;
+          printf("interface %s", ast->as.structure.name); break;
       }
   }
 }

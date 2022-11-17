@@ -160,25 +160,21 @@ void printExprAST(const struct ExprAST* ast) {
           printf("%s", ast->as.literal.as.boolean ? "true" : "false"); break;
       } break;
     case EXPR_UNARY:
-      printf("(%s ", getTokenName(ast->as.unary.operation));
-      printExprAST(ast->as.unary.operand);
-      printf(")"); break;
+      printf("%s", getTokenName(ast->as.unary.operation));
+      printExprAST(ast->as.unary.operand); break;
     case EXPR_BINARY:
-      printf("(%s ", getTokenName(ast->as.binary.operation));
       printExprAST(ast->as.binary.left);
-      printf(" ");
-      printExprAST(ast->as.binary.right);
-      printf(")"); break;
+      printf(" %s ", getTokenName(ast->as.binary.operation));
+      printExprAST(ast->as.binary.right); break;
     case EXPR_VARIABLE:
-      printf("(var %s)", ast->as.variable.identifier); break;
+      printf("%s", ast->as.variable.identifier); break;
     case EXPR_GROUPING:
       printf("(");
       printExprAST(ast->as.grouping.expression);
       printf(")"); break;
     case EXPR_CALL:
-      printf("(");
       printExprAST(ast->as.call.callee);
-      printf(" ");
+      printf("(");
       printArgAST(ast->as.call.args);
       printf(")");
   }

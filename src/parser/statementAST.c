@@ -140,57 +140,52 @@ struct StmtAST* allocNewWhile(struct ExprAST* condition,
 void printStmtAST(const struct StmtAST* stmt) {
   switch(stmt->type) {
     case STMT_UNDEFINED:
-      printf("(STMT_UNDEFINED)"); break;
+      printf("STMT_UNDEFINED"); break;
     case STMT_EXPRESSION:
-      printf("(EXPR ");
-      printExprAST(stmt->as.expression.expression);
-      printf(")"); break;
+      printExprAST(stmt->as.expression.expression); break;
     case STMT_BUILTIN:
-      printf("(BUILTIN_%d ", stmt->as.builtin.type);
+      printf("BUILTIN_%d(", stmt->as.builtin.type);
       printExprAST(stmt->as.builtin.parameter);
       printf(")"); break;
     case STMT_VARDECL:
-      printf("(VARDECL ");
+      printf("let ");
       printArgAST(stmt->as.vardecl.lvalue);
-      printf(" ");
+      printf(" = ");
       printArgAST(stmt->as.vardecl.rvalue);
-      printf(")"); break;
+      break;
     case STMT_VARASSIGN:
-      printf("(VARASSIGN ");
       printArgAST(stmt->as.assignment.lvalue);
-      printf(" ");
+      printf(" = ");
       printArgAST(stmt->as.assignment.rvalue);
-      printf(")"); break;
+      break;
     case STMT_CONDITIONAL:
-      printf("(IF (");
+      printf("if ");
       printExprAST(stmt->as.conditional.condition);
-      printf(") (");
-      for(size_t i = 0; i < stmt->as.conditional.body->size; i++) {
-        printStmtAST(stmt->as.conditional.body->stmts[i]);
-      }
-      printf(") (");
+      printf(" do ");
+      printStmtList(stmt->as.conditional.body);
       switch(stmt->as.conditional.type) {
         case CONDELSE_UNDEFINED:
           panic(1, "Undefined else branch in conditional node"); break;
         case CONDELSE_ELSE:
+          printf("else ");
           printStmtList(stmt->as.conditional.elseBranch.elseBody);
-          break;
+          printf("end"); break;
         case CONDELSE_ELSEIF:
+          printf("else ");
           printStmtAST(stmt->as.conditional.elseBranch.elseif); break;
-        case CONDELSE_NONE: break;
+        case CONDELSE_NONE: printf("end"); break;
       }
-      printf("))");
       break;
     case STMT_LOOP:
-      printf("(LOOP (");
+      printf("loop ");
       printStmtList(stmt->as.loop.body);
-      printf("))"); break;
+      printf("end"); break;
     case STMT_WHILE:
-      printf("(WHILE (");
+      printf("while ");
       printExprAST(stmt->as.whileloop.condition);
-      printf(") (");
+      printf(" do ");
       printStmtList(stmt->as.whileloop.body);
-      printf("))"); break;
+      printf("end"); break;
   }
 }
 

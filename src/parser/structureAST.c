@@ -33,16 +33,16 @@ void printStructureAST(const struct StructureAST* ast) {
   switch(ast->type) {
     case STRUCTURE_UNDEFINED: printf("UNDEFINED STRUCTURE"); break;
     case STRUCTURE_STRUCT:
-      printf("(struct %s ", ast->name);
+      printf("struct %s ", ast->name);
       printArgAST(ast->fields);
-      printf(")"); break;
+      printf("end"); break;
     case STRUCTURE_UNION:
-      printf("(union %s ", ast->name);
+      printf("union %s ", ast->name);
       printArgAST(ast->fields);
-      printf(")"); break;
+      printf("end"); break;
     case STRUCTURE_ENUM:
-      printf("(enum %s ", ast->name);
+      printf("enum %s ", ast->name);
       printArgAST(ast->fields);
-      printf(")"); break;
+      printf("end"); break;
   }
 }

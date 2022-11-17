@@ -66,12 +66,11 @@ void freeAssignArg(struct AssignArg* arg) {
 
 void printIdentifierArg(const struct IdentifierArg* arg) {
   if(arg->type) {
-    printf("(%s ", arg->identifier);
+    printf("%s: ", arg->identifier);
     printTypeAST(arg->type);
   } else {
     printf("%s", arg->identifier);
   }
-  printf(")");
 }
 
 void printAssignArg(const struct AssignArg* arg) {
@@ -95,26 +94,21 @@ void freeArgAST(struct ArgAST* args) {
 
 void printArgAST(const struct ArgAST* args) {
   switch(args->type) {
-    case ARG_UNDEFINED: printf("(ARG_UNDEFINED)"); break;
+    case ARG_UNDEFINED: printf("ARG_UNDEFINED"); break;
     case ARG_EXPR:
-      printf("(expr-args ");
       for(size_t i = 0; i < args->as.exprargs.args->size; i++) {
-        printf("(");
         printExprAST(args->as.exprargs.args->members[i]);
-        printf(")");
-      }
-      printf(")"); break;
+        printf(", ");
+      } printf("\b\b  \b\b"); break;
     case ARG_IDENTIFIER:
-      printf("(identifier-args ");
       for(size_t i = 0; i < args->as.idargs.size; i++) {
-        printf("(");
         printIdentifierArg(args->as.idargs.members[i]);
-        printf(")");
-      }
-      printf(")"); break;
+        printf(", ");
+      } printf("\b\b  \b\b"); break;
     case ARG_ASSIGN:
-      printf("(assign-args ");
-      PRINT_MEMBERS(&args->as.assignargs, printAssignArg);
-      printf(")"); break;
+      for(size_t i = 0; i < args->as.assignargs.size; i++) {
+        printAssignArg(args->as.assignargs.members[i]);
+        printf(", ");
+      } printf("\b\b  \b\b"); break;
   }
 }
