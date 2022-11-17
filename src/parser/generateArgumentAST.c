@@ -133,3 +133,92 @@ struct ArgAST* generateAssignmentArguments(struct ASTContext* ctx) {
 
   return NULL;
 }
+
+struct ArgAST* generateGenericArguments(struct ASTContext* ctx) {
+  if(MATCH_TOKEN(ctx, TOKEN_IDENTIFIER_LITERAL)) {
+    struct ArgAST* ast = allocNewGenericList();
+
+    const char* identifier = GET_CURRENT_TOKEN(ctx).literal;
+    APPEND_ARRAYLIST(&ast->as.generics, identifier);
+    ctx->index += 1;
+
+    while(ctx->index < ctx->tokens->length) {
+      if(MATCH_TOKEN(ctx, TOKEN_COMMA)) {
+        ctx->index += 1;
+
+        if(MATCH_TOKEN(ctx, TOKEN_IDENTIFIER_LITERAL)) {
+          identifier = GET_CURRENT_TOKEN(ctx).literal;
+          APPEND_ARRAYLIST(&ast->as.generics, identifier);
+        }
+      } else return ast;
+    }
+  }
+
+  return NULL;
+}
+
+static struct ArgAST* genSumTypes(struct ASTContext* ctx) {
+  struct ArgAST* ast = allocNewSumArgTypeList();
+  const char* identifier;
+  struct TypeAST* type;
+
+  if(MATCH_TOKEN(ctx, TOKEN_IDENTIFIER_LITERAL)) {
+    identifier = GET_CURRENT_TOKEN(ctx).literal;
+    APPEND_ARRAYLIST(&ast->as.sumtypes, allocNewSumArgTypeStr(identifier));
+  } else {
+    type = generateType(ctx);
+    APPEND_ARRAYLIST(&ast->as.sumtypes, allocNewSumArgTypeType(type));
+  }
+
+  while(ctx->index < ctx->tokens->length) {
+    if(MATCH_TOKEN(ctx, TOKEN_COMMA)) {
+      ctx->index += 1;
+
+      if(MATCH_TOKEN(ctx, TOKEN_IDENTIFIER_LITERAL)) {
+        identifier = GET_CURRENT_TOKEN(ctx).literal;
+        ctx->index += 1;
+        APPEND_ARRAYLIST(&ast->as.sumtypes, allocNewSumArgTypeStr(identifier));
+      } else {
+        type = generateType(ctx);
+        APPEND_ARRAYLIST(&ast->as.sumtypes, allocNewSumArgTypeType(type));
+      }
+    } else return ast;
+  }
+
+  return NULL;
+}
+
+struct ArgAST* generateSumArguments(struct ASTContext* ctx) {
+  struct ArgAST* ast = allocNewSumArgList();
+
+  if(MATCH_TOKEN(ctx, TOKEN_IDENTIFIER_LITERAL)) {
+    const char* name = GET_CURRENT_TOKEN(ctx).literal;
+    ctx->index += 1;
+
+    if(MATCH_TOKEN(ctx, TOKEN_LEFT_PAREN)) {
+      ctx->index += 1;
+      struct ArgAST* fields = genSumTypes(ctx);
+      if(MATCH_TOKEN(ctx, TOKEN_RIGHT_PAREN)) {
+        ctx->index += 1;
+        APPEND_ARRAYLIST(&ast->as.sums, allocNewSumArg(name, fields));
+      }
+    }
+
+    while(ctx->index < ctx->tokens->length) {
+      if(MATCH_TOKEN(ctx, TOKEN_COMMA)) {
+        ctx->index += 1;
+
+        if(MATCH_TOKEN(ctx, TOKEN_LEFT_PAREN)) {
+          ctx->index += 1;
+          struct ArgAST* fields = genSumTypes(ctx);
+          if(MATCH_TOKEN(ctx, TOKEN_RIGHT_PAREN)) {
+            ctx->index += 1;
+            APPEND_ARRAYLIST(&ast->as.sums, allocNewSumArg(name, fields));
+          }
+        }
+      }
+    }
+  }
+
+  return NULL;
+}

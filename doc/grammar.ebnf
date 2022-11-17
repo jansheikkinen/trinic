@@ -5,13 +5,13 @@ program = declaration* EOF ;
 
 declaration = structdecl | uniondecl | enumdecl | sumdecl
             | intrfcdecl | funcdecl  | vardecl  ;
-structdecl  = structtype genericlist? idargs     "end" ;
-uniondecl   = uniontype  genericlist? idargs     "end" ;
-enumdecl    = enumtype   genericlist? assignargs "end" ;
-sumdecl     = sumtype    genericlist? sumargs    "end" ;
-intrfcdecl  = intrfctype genericlist? function*  "end" ;
+structdecl  = structtype genericlist? idargs      "end" ;
+uniondecl   = uniontype  genericlist? idargs      "end" ;
+enumdecl    = enumtype   genericlist? assignargs  "end" ;
+sumdecl     = sumtype    genericlist? sumargs     "end" ;
+intrfcdecl  = intrfctype genericlist? function*   "end" ;
 funcdecl    = "function" function "do" statement* "end" ;
-function    = IDENTIFIER "(" (idargs | "void") ")" "->" type
+function    = IDENTIFIER "(" (idargs | "void") ")" "->" ( type | IDENTIFIER )
               ("where" exprargs)? ("for" identifiers)? ;
 
 basetype    = "int8"   | "int16"   | "int32"   | "int64"   | "isize"
@@ -54,6 +54,10 @@ primary    = "(" expression ")" | NUMBER | STRING | IDENTIFIER
 
 genericlist = "(" identifiers* ")" ;
 identifiers = IDENTIFIER ( "," IDENTIFIER )* ;
+
+sumargs = sumarg ( "," sumarg )* ;
+sumarg  = IDENTIFIER ("(" sumlist ")")? ;
+sumlist = (IDENTIFIER | type) ( "," (IDENTIFIER | type))* ;
 
 # Not sure how to represent it, but the last idarg HAS to have type annotation
 idargs      = idarg ( "," idarg )* ;
