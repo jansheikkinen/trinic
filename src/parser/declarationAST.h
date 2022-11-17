@@ -29,8 +29,8 @@ struct DeclarationAST {
   enum DeclarationTypes type;
   const char* name;
   union {
-    struct StructureAST* structure;
-    struct FunctionAST* function;
+    struct StructureAST structure;
+    struct FunctionAST function;
   } as;
   struct ArgAST* fields;
 };

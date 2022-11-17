@@ -10,7 +10,7 @@
     struct DeclarationAST* ast = malloc(sizeof(*ast)); \
     ast->type = enum; \
     ast->name = name; \
-    ast->as.structure->fields = fields; \
+    ast->as.structure.fields = fields; \
     return ast; \
   }
 
@@ -28,10 +28,10 @@ struct DeclarationAST* allocNewFunction(const char* name, struct ArgAST* args,
   ast->type = DECLARATION_FUNCTION;
   ast->name = name;
 
-  ast->as.function->args = args;
-  ast->as.function->returns = returns;
-  ast->as.function->contracts = contracts;
-  ast->as.function->generics = generics;
+  ast->as.function.args = args;
+  ast->as.function.returns = returns;
+  ast->as.function.contracts = contracts;
+  ast->as.function.generics = generics;
 
   return ast;
 }
@@ -44,12 +44,12 @@ void freeDeclarationAST(struct DeclarationAST* ast) {
     case DECLARATION_ENUM:
     case DECLARATION_SUM:
     case DECLARATION_INTERFACE:
-      freeArgAST(ast->as.structure->fields); break;
+      freeArgAST(ast->as.structure.fields); break;
     case DECLARATION_FUNCTION:
-      freeArgAST(ast->as.function->args);
-      freeArgAST(ast->as.function->contracts);
-      freeArgAST(ast->as.function->generics);
-      freeTypeAST(ast->as.function->returns); break;
+      freeArgAST(ast->as.function.args);
+      freeArgAST(ast->as.function.contracts);
+      freeArgAST(ast->as.function.generics);
+      freeTypeAST(ast->as.function.returns); break;
   }
 
   free(ast);
@@ -60,40 +60,40 @@ void printDeclarationAST(const struct DeclarationAST* ast) {
     case DECLARATION_UNDEFINED: printf("DECL_UNDEFINED"); break;
     case DECLARATION_STRUCT:
       printf("struct %s ", ast->name);
-      printArgAST(ast->as.structure->fields);
+      printArgAST(ast->as.structure.fields);
       printf(" end"); break;
     case DECLARATION_UNION:
       printf("union %s ", ast->name);
-      printArgAST(ast->as.structure->fields);
+      printArgAST(ast->as.structure.fields);
       printf(" end"); break;
     case DECLARATION_ENUM:
       printf("enum %s ", ast->name);
-      printArgAST(ast->as.structure->fields);
+      printArgAST(ast->as.structure.fields);
       printf(" end"); break;
     case DECLARATION_SUM:
       printf("sum %s ", ast->name);
-      printArgAST(ast->as.structure->fields);
+      printArgAST(ast->as.structure.fields);
       printf(" end"); break;
     case DECLARATION_INTERFACE:
       printf("interface %s ", ast->name);
-      printArgAST(ast->as.structure->fields);
+      printArgAST(ast->as.structure.fields);
       printf(" end"); break;
     case DECLARATION_FUNCTION:
       printf("function %s(", ast->name);
 
-      if(ast->as.function->args) printArgAST(ast->as.function->args);
+      if(ast->as.function.args) printArgAST(ast->as.function.args);
       else printf("void");
 
       printf(" -> ");
-      if(ast->as.function->returns) printTypeAST(ast->as.function->returns);
+      if(ast->as.function.returns) printTypeAST(ast->as.function.returns);
 
-      if(ast->as.function->contracts) {
+      if(ast->as.function.contracts) {
         printf(" where ");
-        printArgAST(ast->as.function->contracts);
+        printArgAST(ast->as.function.contracts);
       }
-      if(ast->as.function->generics) {
+      if(ast->as.function.generics) {
         printf(" for ");
-        printArgAST(ast->as.function->generics);
+        printArgAST(ast->as.function.generics);
       }
   }
 }
