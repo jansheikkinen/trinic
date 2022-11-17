@@ -97,7 +97,11 @@ enum TokenType {
 
   TOKEN_ENUM,
   TOKEN_STRUCT,
-  // Not entirely sure about union
+  TOKEN_UNION, // Not entirely sure about union
+
+  TOKEN_SUM,
+  TOKEN_INTERFACE,
+
   TOKEN_LET,
 
   TOKEN_FUNCTION,

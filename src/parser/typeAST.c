@@ -34,11 +34,12 @@ struct TypeAST* allocNewArrayType(struct TypeAST* type, struct ExprAST* size) {
 
 }
 
-struct TypeAST* allocNewStructType(const char* name) {
+struct TypeAST* allocNewStructType(const char* name, enum StructTypes type) {
   struct TypeAST* ast = malloc(sizeof(*ast));
 
   ast->type = TYPE_STRUCT;
   ast->as.structure.name = name;
+  ast->as.structure.type = type;
 
   return ast;
 }
@@ -69,6 +70,18 @@ void printTypeAST(const struct TypeAST* ast) {
       printTypeAST(ast->as.array.type);
       printf("["); printExprAST(ast->as.array.size); printf("]"); break;
     case TYPE_STRUCT:
-      printf("(struct %s)", ast->as.structure.name); break;
+      switch(ast->as.structure.type) {
+        case STRUCT_UNDEFINED: printf("UNDEFINED STRUCT"); break;
+        case STRUCT_STRUCT:
+          printf("(struct %s)", ast->as.structure.name); break;
+        case STRUCT_UNION:
+          printf("(union %s)", ast->as.structure.name); break;
+        case STRUCT_ENUM:
+          printf("(enum %s)", ast->as.structure.name); break;
+        case STRUCT_SUM:
+          printf("(sum %s)", ast->as.structure.name); break;
+        case STRUCT_INTERFACE:
+          printf("(interface %s)", ast->as.structure.name); break;
+      }
   }
 }

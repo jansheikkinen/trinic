@@ -1,0 +1,71 @@
+/* interface.tc */
+
+// A potential implementation of interfaces in Trinic, meant hopefully to
+// provide for polymorphic / generic functions
+
+// Also meant to showcase some newer developments I'm thinking of for the
+// language, such as function attributes(which also showcase effects) and
+// function contracts
+
+// ----------------------- //
+
+type any interface end
+
+interface ToNumber
+  isnumber(self) -> bool
+  tonumber(self) -> number where isnumber(self)
+end
+
+@[Effect(Pure)] // idea comes from Koka; may be different for each impl
+function isnumber(self: string) -> bool
+  for c: char in self do
+    if not isalphanum(c) do
+      return false
+  end
+
+  return true
+end
+
+@[Effect(Pure, Exception)]
+function tonumber(self: string) -> number
+  where isnumber(self)
+do
+  // I'm gonna be honest: I don't want to implement this right now
+  // so just pretend there's a real implementation
+end
+
+// ----------------------- //
+
+enum ResultTypes
+  Some,
+  None
+end
+
+struct Result
+  result: enum ResultTypes,
+  some: any
+end
+
+@[Effect(Pure, Exception)]
+function unwrap(result: struct Result) -> any
+  where result.result == ResultTypes.Some
+do
+  return result.some
+end
+
+@[Effect(Pure)]
+function wrap(x: any) -> struct Result
+  return struct Result
+    result = ResultTypes.Some,
+    some = x
+  end
+end
+
+// ----------------------- //
+
+@[Main, Effect(Pure)]
+function main(argc: usize, argv: string[]) -> struct Result
+  where argc == 3, isnumber(argv[1]), isnumber(argv[2])
+do
+  return wrap(tonumber(argv[1]) / tonumber(argv[2]))
+end

@@ -1,0 +1,72 @@
+/* interface-v2.tc */
+
+// This version of interface.tc was made after a bit of discussion
+// It involves finally conceeding to the implementation of generics, as well
+// as making a few things more reasonable(i.e. string isn't a number, but
+// may very well be *numeric, i.e. "69"). I also changed Result to Option bc
+// I'm stupid.
+
+// any type was replaced with generics so as to allow for known types at
+// compile time. beforehand, *anything* wrapped in an Option could have been
+// returned from main with no issues
+
+interface Numeric
+  function isnumeric(self) -> bool
+  function tonumber(self) -> number where isnumeric(self) // idk here tbh
+end
+
+impl Numeric for char
+  function isnumeric(self) -> bool
+    if char <= 30 and char >= 39 then // assuming character arithmetic
+      return true
+    else return false end
+  end
+
+  function tonumber(self) -> number where isnumeric(self)
+    return self - 30
+  end
+end
+
+impl Numeric for string
+  function isnumeric(self) -> bool
+    for c: char in self do
+      if not isnumeric(c) then
+        return false
+      end
+    end
+
+    return true
+  end
+
+  function tonumber(self) -> number where isnumeric(self) do
+    // still not implementing this
+  end
+end
+
+// --------------- //
+
+sum Option(T)
+  Some(T),
+  None
+end
+
+// I couldn't use a contract here, which I am incredibly sad about
+// Is there some good syntax for checking which sum value it is?
+function unwrap(self: sum Option(T)) -> T for T do
+  return match self do
+    Some(x) => x,
+    None    => panic(1, "Expected Some(T)")
+  end
+end
+
+function wrap(self: T) -> sum Option(T) for T do
+  return Some(self)
+end
+
+// --------------- //
+
+function main(argc: integer, argv: string[]) -> sum Option(number)
+  where argc == 3, isnumeric(argv[1]), isnumeric(argv[2])
+do
+  return tonumber(argv[1]) / tonumber(argv[2])
+end

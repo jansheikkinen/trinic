@@ -55,14 +55,15 @@ static struct StmtAST* genVarDeclNode(struct ASTContext* ctx) {
 static struct StmtAST* genAssignmentNode(struct ASTContext* ctx) {
   struct StmtAST* stmt = NULL;
 
-  struct ArgAST* lvalue = generateExpressionArguments(ctx);
+  struct ExprAST* expr = generateExpression(ctx);
+  struct ArgAST* lvalue = generateExpressionArgumentsWithFirst(ctx, expr);
 
   if(MATCH_TOKEN(ctx, TOKEN_ASSIGN)) {
     ctx->index += 1;
 
     struct ArgAST* rvalue = generateExpressionArguments(ctx);
     stmt = allocNewAssign(lvalue, rvalue);
-  } else return allocNewExpression(lvalue->as.exprargs.args->members[0]);
+  } else return allocNewExpression(expr);
 
   return stmt;
 }

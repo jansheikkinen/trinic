@@ -38,11 +38,13 @@ struct TypeAST* generateBaseType(struct ASTContext* ctx) {
   return NULL;
 }
 
-struct TypeAST* generateStructType(struct ASTContext* ctx) {
+struct TypeAST* generateStructType(struct ASTContext* ctx,
+    enum StructTypes type) {
+  ctx->index += 1;
   if(MATCH_TOKEN(ctx, TOKEN_IDENTIFIER_LITERAL)) {
     const char* identifier = GET_CURRENT_TOKEN(ctx).literal;
     ctx->index += 1;
-    return allocNewStructType(identifier);
+    return allocNewStructType(identifier, type);
   } else {
     APPEND_ASTERROR(ctx, ASTERR_EXPECTED_IDENTIFIER);
     return NULL;
@@ -50,8 +52,15 @@ struct TypeAST* generateStructType(struct ASTContext* ctx) {
 }
 
 struct TypeAST* generateType(struct ASTContext* ctx) {
-  if(MATCH_TOKEN(ctx, TOKEN_STRUCT)) {
-    ctx->index += 1;
-    return generateStructType(ctx);
-  } else return generateBaseType(ctx);
+  if(MATCH_TOKEN(ctx, TOKEN_STRUCT))
+    return generateStructType(ctx, STRUCT_STRUCT);
+  else if(MATCH_TOKEN(ctx, TOKEN_UNION))
+    return generateStructType(ctx, STRUCT_UNION);
+  else if(MATCH_TOKEN(ctx, TOKEN_ENUM))
+    return generateStructType(ctx, STRUCT_ENUM);
+  else if(MATCH_TOKEN(ctx, TOKEN_SUM))
+    return generateStructType(ctx, STRUCT_SUM);
+  else if(MATCH_TOKEN(ctx, TOKEN_INTERFACE))
+    return generateStructType(ctx, STRUCT_INTERFACE);
+  else return generateBaseType(ctx);
 }

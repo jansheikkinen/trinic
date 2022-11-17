@@ -19,6 +19,7 @@ char* readFile(const char* filename) {
   char* program = calloc(filesize, sizeof(char));
 
   fread(program, filesize, sizeof(char), file);
+  fclose(file);
 
   return program;
 }

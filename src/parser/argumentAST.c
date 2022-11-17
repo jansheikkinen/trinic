@@ -28,6 +28,15 @@ struct IdentifierArg* allocNewIdentifierArg(const char* identifier,
   return arg;
 }
 
+struct AssignArg* allocNewAssignArg(const char* identifier, long value) {
+  struct AssignArg* arg = malloc(sizeof(*arg));
+
+  arg->identifier = identifier;
+  arg->value = value;
+
+  return arg;
+}
+
 struct ArgAST* allocNewIdentifierArgList(void) {
   struct ArgAST* argast = malloc(sizeof(*argast));
 
@@ -37,8 +46,21 @@ struct ArgAST* allocNewIdentifierArgList(void) {
   return argast;
 }
 
+struct ArgAST* allocNewAssignArgList(void) {
+  struct ArgAST* argast = malloc(sizeof(*argast));
+
+  argast->type = ARG_ASSIGN;
+  NEW_ARRAYLIST(&argast->as.assignargs);
+
+  return argast;
+}
+
 void freeIdentifierArg(struct IdentifierArg* arg) {
   freeTypeAST(arg->type);
+  free(arg);
+}
+
+void freeAssignArg(struct AssignArg* arg) {
   free(arg);
 }
 
@@ -52,13 +74,21 @@ void printIdentifierArg(const struct IdentifierArg* arg) {
   printf(")");
 }
 
+void printAssignArg(const struct AssignArg* arg) {
+  printf("(= %s ", arg->identifier);
+  if(arg->value) printf("%ld)", arg->value);
+  else printf("- )");
+}
+
 void freeArgAST(struct ArgAST* args) {
   switch(args->type) {
     case ARG_UNDEFINED: break;
     case ARG_EXPR:
       FREE_SELF_AND_MEMBERS(args->as.exprargs.args, freeExprNode); break;
-    case ARG_IDENTIFIER: break;
+    case ARG_IDENTIFIER:
       FREE_MEMBERS(&args->as.idargs, freeIdentifierArg); break;
+    case ARG_ASSIGN:
+      FREE_MEMBERS(&args->as.assignargs, freeAssignArg); break;
   }
   free(args);
 }
@@ -81,6 +111,10 @@ void printArgAST(const struct ArgAST* args) {
         printIdentifierArg(args->as.idargs.members[i]);
         printf(")");
       }
+      printf(")"); break;
+    case ARG_ASSIGN:
+      printf("(assign-args ");
+      PRINT_MEMBERS(&args->as.assignargs, printAssignArg);
       printf(")"); break;
   }
 }

@@ -1,0 +1,2 @@
+let a: struct TestStruct, b: union TestUnion, c: enum TestEnum = undefined.
+let d: sum TestSum, e: interface TestInterface = undefined.

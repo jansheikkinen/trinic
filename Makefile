@@ -6,20 +6,20 @@ SRC = $(wildcard src/*.c) $(wildcard src/**/*.c)
 OBJ = $(SRC:.c=.o)
 BUILD = build
 
-all: dirs uc
+all: dirs tc
 
 dirs:
 	mkdir -p $(BUILD) src tests
 
-run: uc
-	$(BUILD)/uc build/test.uc
+run: tc
+	$(BUILD)/tc build/test.tc
 
-uc: $(OBJ)
+tc: $(OBJ)
 	$(CC) $(CFLAGS) $(INCLUDE) -o $(BUILD)/$@ $?
 
 %.o: %.c
 	$(CC) $(CFLAGS) $(INCLUDE) -o $@ -c $<
 
 clean:
-	find build/ -type f ! -name '*.uc' -delete
+	find build/ -type f ! -name '*.tc' -delete
 	rm -Rf $(OBJ)

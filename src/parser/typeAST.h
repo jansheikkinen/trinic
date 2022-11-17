@@ -35,8 +35,18 @@ struct ArrayType {
   struct ExprAST* size;
 };
 
+enum StructTypes {
+  STRUCT_UNDEFINED,
+  STRUCT_STRUCT,
+  STRUCT_UNION,
+  STRUCT_ENUM,
+  STRUCT_SUM,
+  STRUCT_INTERFACE
+};
+
 // struct Test
 struct StructType {
+  enum StructTypes type;
   const char* name;
 };
 
@@ -61,7 +71,7 @@ struct TypeAST {
 struct TypeAST* allocNewBaseType(enum BaseTypes);
 struct TypeAST* allocNewPointerType(enum BaseTypes);
 struct TypeAST* allocNewArrayType(struct TypeAST*, struct ExprAST*);
-struct TypeAST* allocNewStructType(const char*);
+struct TypeAST* allocNewStructType(const char*, enum StructTypes);
 
 void freeTypeAST(struct TypeAST*);
 

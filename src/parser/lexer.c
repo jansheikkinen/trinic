@@ -177,11 +177,15 @@ static void lexLiteral(struct LexerContext* td) {
   }
 }
 
+static int isalnum_(int c) {
+  return isalnum(c) || c == '_';
+}
+
 // The ones like "int32" or "if" that are alphanumeric
 static void lexKeyword(struct LexerContext* td) {
-  if(!isalnum(get(td))) return;
+  if(!isalnum_(get(td))) return;
 
-  while(peek(td) && isalnum(peek(td))) {
+  while(peek(td) && isalnum_(peek(td))) {
     td->index += 1;
     td->col += 1;
   }
