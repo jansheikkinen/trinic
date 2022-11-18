@@ -54,14 +54,22 @@ void freeDeclarationAST(struct DeclarationAST* ast) {
     case DECLARATION_UNION:
     case DECLARATION_ENUM:
     case DECLARATION_SUM:
+      if(ast->as.structure.fields) freeArgAST(ast->as.structure.fields);
+      break;
     case DECLARATION_INTERFACE:
-      freeArgAST(ast->as.structure.fields); break;
+      FREE_SELF_AND_MEMBERS(ast->as.interface, freeDeclarationAST); break;
     case DECLARATION_FUNCTION:
-      freeArgAST(ast->as.function.args);
-      freeArgAST(ast->as.function.contracts);
-      freeArgAST(ast->as.function.generics);
-      freeTypeAST(ast->as.function.returns);
-      freeStmtList(ast->as.function.body); break;
+      if(ast->as.function.args)
+        freeArgAST(ast->as.function.args);
+      if(ast->as.function.contracts)
+        freeArgAST(ast->as.function.contracts);
+      if(ast->as.function.generics)
+        freeArgAST(ast->as.function.generics);
+      if(ast->as.function.returns)
+        freeTypeAST(ast->as.function.returns);
+      if(ast->as.function.body)
+        freeStmtList(ast->as.function.body);
+      break;
   }
 
   free(ast);
@@ -73,30 +81,33 @@ void printDeclarationAST(const struct DeclarationAST* ast) {
     case DECLARATION_STRUCT:
       printf("struct %s ", ast->name);
       printArgAST(ast->as.structure.fields);
-      printf(" end"); break;
+      printf(" end\n\n"); break;
     case DECLARATION_UNION:
       printf("union %s ", ast->name);
       printArgAST(ast->as.structure.fields);
-      printf(" end"); break;
+      printf(" end\n"); break;
     case DECLARATION_ENUM:
       printf("enum %s ", ast->name);
       printArgAST(ast->as.structure.fields);
-      printf(" end"); break;
+      printf(" end\n\n"); break;
     case DECLARATION_SUM:
       printf("sum %s ", ast->name);
       printArgAST(ast->as.structure.fields);
-      printf(" end"); break;
+      printf(" end\n\n"); break;
     case DECLARATION_INTERFACE:
-      printf("interface %s ", ast->name);
-      printArgAST(ast->as.structure.fields);
-      printf(" end"); break;
+      printf("interface %s\n  ", ast->name);
+      for(size_t i = 0; i < ast->as.interface->size; i++) {
+        printDeclarationAST(ast->as.interface->members[i]);
+        printf("\n  ");
+      }
+      printf("\b\bend\n\n"); break;
     case DECLARATION_FUNCTION:
       printf("function %s(", ast->name);
 
       if(ast->as.function.args) printArgAST(ast->as.function.args);
       else printf("void");
 
-      printf(" -> ");
+      printf(") -> ");
       if(ast->as.function.returns) printTypeAST(ast->as.function.returns);
 
       if(ast->as.function.contracts) {
@@ -108,8 +119,10 @@ void printDeclarationAST(const struct DeclarationAST* ast) {
         printf(" for ");
         printArgAST(ast->as.function.generics);
       }
-
-      if(ast->as.function.body) printStmtList(ast->as.function.body);
-
+      if(ast->as.function.body) {
+        printf(" do\n  ");
+        printStmtList(ast->as.function.body);
+        printf("\b\bend\n\n");
+      }
   }
 }

@@ -14,11 +14,11 @@ struct TypeAST* allocNewBaseType(enum BaseTypes type) {
   return ast;
 }
 
-struct TypeAST* allocNewPointerType(enum BaseTypes type) {
+struct TypeAST* allocNewPointerType(struct TypeAST* base) {
   struct TypeAST* ast = malloc(sizeof(*ast));
 
   ast->type = TYPE_PTR;
-  ast->as.pointer = type;
+  ast->as.pointer.type = base;
 
   return ast;
 }
@@ -65,7 +65,8 @@ void printTypeAST(const struct TypeAST* ast) {
     case TYPE_BASE:
       printf("%s", getTokenName(TOKEN_FALSE + ast->as.base)); break;
     case TYPE_PTR:
-      printf("%s*", getTokenName(TOKEN_FALSE + ast->as.pointer)); break;
+      printTypeAST(ast->as.pointer.type);
+      printf("*"); break;
     case TYPE_ARRAY:
       printTypeAST(ast->as.array.type);
       printf("["); printExprAST(ast->as.array.size); printf("]"); break;

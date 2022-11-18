@@ -7,38 +7,7 @@
 #define GET_CURRENT_TOKEN(ctx) ctx->tokens->tokens[ctx->index]
 #define MATCH_TOKEN(ctx, token) GET_CURRENT_TOKEN(ctx).type == token
 
-struct TypeAST* generateBaseType(struct ASTContext* ctx) {
-  for(enum TokenType type = TOKEN_INT8; type <= TOKEN_BOOL; type++) {
-    if(MATCH_TOKEN(ctx, type)) {
-      ctx->index += 1;
-
-      struct TypeAST* base = allocNewBaseType(type - TOKEN_FALSE);
-
-      if(MATCH_TOKEN(ctx, TOKEN_STAR)) {
-        ctx->index += 1;
-
-        base->type = TYPE_PTR;
-        return base;
-
-      } else if(MATCH_TOKEN(ctx, TOKEN_LEFT_BRACKET)) {
-        ctx->index += 1;
-
-        struct ExprAST* size = generateExpression(ctx);
-
-        if(MATCH_TOKEN(ctx, TOKEN_RIGHT_BRACKET)) {
-          ctx->index += 1;
-          return allocNewArrayType(base, size);
-        } else APPEND_ASTERROR(ctx, ASTERR_MISSING_RIGHT_BRACKET);
-
-      } else return base;
-    }
-  }
-
-  APPEND_ASTERROR(ctx, ASTERR_EXPECTED_TYPE);
-  return NULL;
-}
-
-struct TypeAST* generateStructType(struct ASTContext* ctx,
+static struct TypeAST* generateStructType(struct ASTContext* ctx,
     enum StructTypes type) {
   ctx->index += 1;
   if(MATCH_TOKEN(ctx, TOKEN_IDENTIFIER_LITERAL)) {
@@ -49,6 +18,38 @@ struct TypeAST* generateStructType(struct ASTContext* ctx,
     APPEND_ASTERROR(ctx, ASTERR_EXPECTED_IDENTIFIER);
     return NULL;
   }
+}
+
+static struct TypeAST* generateBaseType(struct ASTContext* ctx) {
+  for(enum TokenType type = TOKEN_INT8; type <= TOKEN_BOOL; type++) {
+    if(MATCH_TOKEN(ctx, type)) {
+      ctx->index += 1;
+      return allocNewBaseType(type - TOKEN_FALSE);
+    }
+  }
+
+  APPEND_ASTERROR(ctx, ASTERR_EXPECTED_TYPE);
+  return NULL;
+}
+
+static struct TypeAST* generatePointerType(struct ASTContext* ctx) {
+  ctx->index += 1;
+
+  return allocNewPointerType(generateType(ctx));
+}
+
+static struct TypeAST* generateArrayType(struct ASTContext* ctx) {
+  ctx->index += 1;
+
+  struct ExprAST* size = generateExpression(ctx);
+
+  if(MATCH_TOKEN(ctx, TOKEN_RIGHT_BRACKET)) {
+    ctx->index += 1;
+
+    return allocNewArrayType(generateType(ctx), size);
+  }
+
+  return NULL;
 }
 
 struct TypeAST* generateType(struct ASTContext* ctx) {
@@ -62,5 +63,9 @@ struct TypeAST* generateType(struct ASTContext* ctx) {
     return generateStructType(ctx, STRUCT_SUM);
   else if(MATCH_TOKEN(ctx, TOKEN_INTERFACE))
     return generateStructType(ctx, STRUCT_INTERFACE);
+  else if(MATCH_TOKEN(ctx, TOKEN_STAR))
+    return generatePointerType(ctx);
+  else if(MATCH_TOKEN(ctx, TOKEN_LEFT_BRACKET))
+    return generateArrayType(ctx);
   else return generateBaseType(ctx);
 }

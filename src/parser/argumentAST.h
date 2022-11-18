@@ -27,7 +27,7 @@ struct ExprArgList {
 
 struct AssignArg {
   const char* identifier;
-  long value;
+  struct ExprAST* rval;
 };
 
 enum SumArgTypes {
@@ -68,7 +68,7 @@ struct ArgAST {
 };
 
 struct IdentifierArg* allocNewIdentifierArg(const char*, struct TypeAST*);
-struct AssignArg* allocNewAssignArg(const char*, long);
+struct AssignArg* allocNewAssignArg(const char*, struct ExprAST*);
 struct SumArg* allocNewSumArg(const char*, struct ArgAST*);
 struct SumArgType* allocNewSumArgTypeType(struct TypeAST*);
 struct SumArgType* allocNewSumArgTypeStr(const char*);

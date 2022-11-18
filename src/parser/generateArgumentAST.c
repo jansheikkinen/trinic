@@ -102,14 +102,12 @@ static struct AssignArg* generateAssignArg(struct ASTContext* ctx) {
     const char* identifier = GET_CURRENT_TOKEN(ctx).literal;
     ctx->index += 1;
 
-    if(MATCH_TOKEN(ctx, TOKEN_EQUAL)) {
+    if(MATCH_TOKEN(ctx, TOKEN_ASSIGN)) {
       ctx->index += 1;
 
-      if(MATCH_TOKEN(ctx, TOKEN_INTEGER_LITERAL)) {
-        long value = strtol(GET_CURRENT_TOKEN(ctx).literal, NULL, 10);
-        return allocNewAssignArg(identifier, value);
-      }
-    }
+      struct ExprAST* rval = generateExpression(ctx);
+      return allocNewAssignArg(identifier, rval);
+    } else return allocNewAssignArg(identifier, NULL);
   }
 
   return NULL;
@@ -164,6 +162,7 @@ static struct ArgAST* genSumTypes(struct ASTContext* ctx) {
 
   if(MATCH_TOKEN(ctx, TOKEN_IDENTIFIER_LITERAL)) {
     identifier = GET_CURRENT_TOKEN(ctx).literal;
+    ctx->index += 1;
     APPEND_ARRAYLIST(&ast->as.sumtypes, allocNewSumArgTypeStr(identifier));
   } else {
     type = generateType(ctx);
@@ -208,15 +207,20 @@ struct ArgAST* generateSumArguments(struct ASTContext* ctx) {
       if(MATCH_TOKEN(ctx, TOKEN_COMMA)) {
         ctx->index += 1;
 
-        if(MATCH_TOKEN(ctx, TOKEN_LEFT_PAREN)) {
+        if(MATCH_TOKEN(ctx, TOKEN_IDENTIFIER_LITERAL)) {
+          name = GET_CURRENT_TOKEN(ctx).literal;
           ctx->index += 1;
-          struct ArgAST* fields = genSumTypes(ctx);
-          if(MATCH_TOKEN(ctx, TOKEN_RIGHT_PAREN)) {
+
+          if(MATCH_TOKEN(ctx, TOKEN_LEFT_PAREN)) {
             ctx->index += 1;
-            APPEND_ARRAYLIST(&ast->as.sums, allocNewSumArg(name, fields));
-          }
+            struct ArgAST* fields = genSumTypes(ctx);
+            if(MATCH_TOKEN(ctx, TOKEN_RIGHT_PAREN)) {
+              ctx->index += 1;
+              APPEND_ARRAYLIST(&ast->as.sums, allocNewSumArg(name, fields));
+            }
+          } else APPEND_ARRAYLIST(&ast->as.sums, allocNewSumArg(name, NULL));
         }
-      }
+      } else return ast;
     }
   }
 

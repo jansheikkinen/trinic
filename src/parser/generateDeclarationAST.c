@@ -19,7 +19,10 @@ static struct DeclarationAST* fnname(struct ASTContext* ctx) { \
     const char* name = GET_CURRENT_TOKEN(ctx).literal; \
     ctx->index += 1; \
     struct ArgAST* fields = argfnname(ctx); \
-    if(MATCH_TOKEN(ctx, TOKEN_END)) return allocfnname(name, fields); \
+    if(MATCH_TOKEN(ctx, TOKEN_END)) { \
+      ctx->index += 1; \
+      return allocfnname(name, fields); \
+    } \
   } else { \
     APPEND_ASTERROR(ctx, ASTERR_EXPECTED_IDENTIFIER); \
   } \
@@ -36,6 +39,7 @@ static struct DeclarationAST* genFunctionHeader(struct ASTContext* ctx) {
 
   if(MATCH_TOKEN(ctx, TOKEN_IDENTIFIER_LITERAL)) {
     const char* name = GET_CURRENT_TOKEN(ctx).literal;
+    ctx->index += 1;
 
     if(MATCH_TOKEN(ctx, TOKEN_LEFT_PAREN)) {
       ctx->index += 1;
@@ -43,20 +47,24 @@ static struct DeclarationAST* genFunctionHeader(struct ASTContext* ctx) {
       if(!MATCH_TOKEN(ctx, TOKEN_VOID)) {
         struct ArgAST* args = generateIdentifierArguments(ctx);
 
-        if(MATCH_TOKEN(ctx, TOKEN_ARROW)) {
+        if(MATCH_TOKEN(ctx, TOKEN_RIGHT_PAREN)) {
           ctx->index += 1;
 
-          // TODO: implement returning generics
-          struct TypeAST* returns = generateType(ctx);
-          struct ArgAST* contracts = NULL, *generics = NULL;
+          if(MATCH_TOKEN(ctx, TOKEN_ARROW)) {
+            ctx->index += 1;
 
-          if(MATCH_TOKEN(ctx, TOKEN_WHERE))
-            contracts = generateExpressionArguments(ctx);
-          if(MATCH_TOKEN(ctx, TOKEN_FOR))
-            generics = generateGenericArguments(ctx);
+            // TODO: implement returning generics
+            struct TypeAST* returns = generateType(ctx);
+            struct ArgAST* contracts = NULL, *generics = NULL;
 
-          return
-            allocNewFunction(name, args, returns, contracts, generics, NULL);
+            if(MATCH_TOKEN(ctx, TOKEN_WHERE))
+              contracts = generateExpressionArguments(ctx);
+            if(MATCH_TOKEN(ctx, TOKEN_FOR))
+              generics = generateGenericArguments(ctx);
+
+            return
+              allocNewFunction(name, args, returns, contracts, generics, NULL);
+          }
         }
       }
     }
@@ -69,6 +77,7 @@ static struct DeclarationAST* genInterface(struct ASTContext* ctx) {
 
   if(MATCH_TOKEN(ctx, TOKEN_IDENTIFIER_LITERAL)) {
     const char* name = GET_CURRENT_TOKEN(ctx).literal;
+    ctx->index += 1;
 
     struct DeclarationList* functions = malloc(sizeof(*functions));
     NEW_ARRAYLIST(functions);
@@ -77,7 +86,12 @@ static struct DeclarationAST* genInterface(struct ASTContext* ctx) {
       if(MATCH_TOKEN(ctx, TOKEN_FUNCTION)) {
         struct DeclarationAST* header = genFunctionHeader(ctx);
         APPEND_ARRAYLIST(functions, header);
-      } else return allocNewInterface(name, functions);
+      } else {
+        if(MATCH_TOKEN(ctx, TOKEN_END)) {
+          ctx->index += 1;
+          return allocNewInterface(name, functions);
+        }
+      }
     }
   }
   return NULL;
@@ -87,6 +101,7 @@ static struct DeclarationAST* genFunction(struct ASTContext* ctx) {
   struct DeclarationAST* ast = genFunctionHeader(ctx);
 
   if(MATCH_TOKEN(ctx, TOKEN_DO)) {
+    ctx->index += 1;
     struct StmtList* body = malloc(sizeof(*body));
     *body = newStmtList();
 

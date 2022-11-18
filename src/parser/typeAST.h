@@ -29,6 +29,11 @@ enum BaseTypes {
   BASETYPE_BOOL,
 };
 
+// int8*
+struct PtrType {
+  struct TypeAST* type;
+};
+
 // int8[34 + 35]
 struct ArrayType {
   struct TypeAST* type;
@@ -58,18 +63,19 @@ enum TypeASTTypes {
   TYPE_STRUCT
 };
 
+// TODO: char** is broken
 struct TypeAST {
   enum TypeASTTypes type;
   union {
-    enum BaseTypes base; // the first two are differentiated despite being
-    enum BaseTypes pointer; // the same thing
+    enum BaseTypes base;
+    struct PtrType pointer;
     struct ArrayType array;
     struct StructType structure;
   } as;
 };
 
 struct TypeAST* allocNewBaseType(enum BaseTypes);
-struct TypeAST* allocNewPointerType(enum BaseTypes);
+struct TypeAST* allocNewPointerType(struct TypeAST*);
 struct TypeAST* allocNewArrayType(struct TypeAST*, struct ExprAST*);
 struct TypeAST* allocNewStructType(const char*, enum StructTypes);
 

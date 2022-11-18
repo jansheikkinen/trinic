@@ -28,11 +28,12 @@ struct IdentifierArg* allocNewIdentifierArg(const char* identifier,
   return arg;
 }
 
-struct AssignArg* allocNewAssignArg(const char* identifier, long value) {
+struct AssignArg* allocNewAssignArg(const char* identifier,
+    struct ExprAST* rval) {
   struct AssignArg* arg = malloc(sizeof(*arg));
 
   arg->identifier = identifier;
-  arg->value = value;
+  arg->rval = rval;
 
   return arg;
 }
@@ -115,6 +116,7 @@ static void freeIdentifierArg(struct IdentifierArg* arg) {
 }
 
 static void freeAssignArg(struct AssignArg* arg) {
+  if(arg->rval) freeExprNode(arg->rval);
   free(arg);
 }
 
@@ -129,7 +131,7 @@ static void freeSumArgType(struct SumArgType* arg) {
 }
 
 static void freeSumArg(struct SumArg* arg) {
-  freeArgAST(arg->fields);
+  if(arg->fields) freeArgAST(arg->fields);
   free(arg);
 }
 
@@ -144,18 +146,24 @@ static void printIdentifierArg(const struct IdentifierArg* arg) {
 
 static void printAssignArg(const struct AssignArg* arg) {
   printf("%s", arg->identifier);
-  if(arg->value) printf(" = %ld", arg->value);
+  if(arg->rval) {
+    printf(" = ");
+    printExprAST(arg->rval);
+  }
 }
 
 static void printSumArgType(const struct SumArgType* arg) {
-  printf("(");
   if(arg->type == SUMARG_IDENTIFIER) printf("%s", arg->as.identifier);
   else if(arg->type == SUMARG_TYPE) printTypeAST(arg->as.type);
 }
 
 static void printSumArg(const struct SumArg* arg) {
   printf("%s", arg->name);
-  if(arg->fields) printArgAST(arg->fields);
+  if(arg->fields) {
+    printf("(");
+    printArgAST(arg->fields);
+    printf(")");
+  }
 }
 
 void freeArgAST(struct ArgAST* args) {

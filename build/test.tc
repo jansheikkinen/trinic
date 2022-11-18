@@ -1,7 +1,33 @@
-function testfunc(argc: int32, argv: char**) -> int32 do
+
+enum TestEnum
+  ENUM_A = 0,
+  ENUM_B
+end
+
+interface TestInterface
+  function testfunc(argc: int32, argv: **char) -> int32
+end
+
+sum TestSum
+  Some(T),
+  Sume(T, int32),
+  None
+end
+
+union TestUnion
+  i: int32,
+  f, f2: float32
+end
+
+struct TestStruct
+  i: int32,
+  f, f2: float32
+end
+
+function testfunc(argc: int32, argv: **char) -> int32 do /*
   !1 + 2 + (3 - "string" - var * call(arg, 1)).
   print(3).
-  let a: int8, b: int8[2], c: int8* = undefined, 2.
+  let a: int8, b: [2]int8, c: *int8 = undefined, 2.
   let d: struct Test, e: union Test, f: enum Test = undefined.
   let g: sum Test, f: interface Test = undefined.
   a = 4.
@@ -11,4 +37,4 @@ function testfunc(argc: int32, argv: char**) -> int32 do
   if x do y. else if z do a. else b. end
   loop x. end
   while x do y. end
-end
+*/ end
