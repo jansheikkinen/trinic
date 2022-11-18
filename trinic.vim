@@ -15,7 +15,7 @@ syn match trinicNumber "\<\d\+\>"
 syn match trinicNumber "\<\d\+\.\d*\>"
 
 syn keyword trinicOperator and or not
-syn match   trinicOperator "[#?@<>=~^&|*/%+-]\|\.\{2,3}"
+syn match   trinicOperator "[!#?@<>=~^&|*/%+-]\|\.\{2,3}"
 syn keyword trinicConstant undefined true false
 
 syn keyword trinicType int8   int16   int32   int64   isize

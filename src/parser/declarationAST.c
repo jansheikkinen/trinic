@@ -85,7 +85,7 @@ void printDeclarationAST(const struct DeclarationAST* ast) {
     case DECLARATION_UNION:
       printf("union %s ", ast->name);
       printArgAST(ast->as.structure.fields);
-      printf(" end\n"); break;
+      printf(" end\n\n"); break;
     case DECLARATION_ENUM:
       printf("enum %s ", ast->name);
       printArgAST(ast->as.structure.fields);

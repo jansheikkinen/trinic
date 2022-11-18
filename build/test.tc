@@ -24,7 +24,9 @@ struct TestStruct
   f, f2: float32
 end
 
-function testfunc(argc: int32, argv: **char) -> int32 do /*
+function testfunc(argc: int32, argv: **char) -> int32 do
+  where argc != 1
+do /*
   !1 + 2 + (3 - "string" - var * call(arg, 1)).
   print(3).
   let a: int8, b: [2]int8, c: *int8 = undefined, 2.
