@@ -5,28 +5,32 @@
 #include "token.h"
 #include "typeAST.h"
 
-struct TypeAST* allocNewBaseType(enum BaseTypes type) {
+struct TypeAST* allocNewBaseType(enum BaseTypes type, bool mutable) {
   struct TypeAST* ast = malloc(sizeof(*ast));
 
   ast->type = TYPE_BASE;
+  ast->ismutable = mutable;
   ast->as.base = type;
 
   return ast;
 }
 
-struct TypeAST* allocNewPointerType(struct TypeAST* base) {
+struct TypeAST* allocNewPointerType(struct TypeAST* base, bool mutable) {
   struct TypeAST* ast = malloc(sizeof(*ast));
 
   ast->type = TYPE_PTR;
+  ast->ismutable = mutable;
   ast->as.pointer.type = base;
 
   return ast;
 }
 
-struct TypeAST* allocNewArrayType(struct TypeAST* type, struct ExprAST* size) {
+struct TypeAST* allocNewArrayType(struct TypeAST* type, struct ExprAST* size,
+    bool mutable) {
   struct TypeAST* ast = malloc(sizeof(*ast));
 
   ast->type = TYPE_ARRAY;
+  ast->ismutable = mutable;
   ast->as.array.type = type;
   ast->as.array.size = size;
 
@@ -34,10 +38,12 @@ struct TypeAST* allocNewArrayType(struct TypeAST* type, struct ExprAST* size) {
 
 }
 
-struct TypeAST* allocNewStructType(const char* name, enum StructTypes type) {
+struct TypeAST* allocNewStructType(const char* name, enum StructTypes type,
+    bool mutable) {
   struct TypeAST* ast = malloc(sizeof(*ast));
 
   ast->type = TYPE_STRUCT;
+  ast->ismutable = mutable;
   ast->as.structure.name = name;
   ast->as.structure.type = type;
 
@@ -60,19 +66,21 @@ void freeTypeAST(struct TypeAST* ast) {
 }
 
 void printTypeAST(const struct TypeAST* ast) {
+  if(ast->ismutable) printf("mut ");
   switch(ast->type) {
     case TYPE_UNDEFINED:
       printf("(UNDEFINED TYPE)"); break;
     case TYPE_BASE:
       printf("%s", getTokenName(TOKEN_FALSE + ast->as.base)); break;
     case TYPE_PTR:
+      printf("*");
       printTypeAST(ast->as.pointer.type);
-      printf("*"); break;
+      break;
     case TYPE_ARRAY:
-      printTypeAST(ast->as.array.type);
       printf("[");
       if(ast->as.array.size) printExprAST(ast->as.array.size);
-      printf("]"); break;
+      printf("]");
+      printTypeAST(ast->as.array.type); break;
     case TYPE_STRUCT:
       switch(ast->as.structure.type) {
         case STRUCT_UNDEFINED: printf("UNDEFINED STRUCT"); break;

@@ -25,8 +25,8 @@ uniontype   = "union"     IDENTIFIER genericlist? ;
 enumtype    = "enum"      IDENTIFIER genericlist? ;
 sumtype     = "sum"       IDENTIFIER genericlist? ;
 intrfctype  = "interface" IDENTIFIER genericlist? ;
-type        = basetype | arraytype | pointertype | structtype | uniontype
-            | enumtype | sumtype   | intrfctype  ;
+type        = "mut" (basetype | arraytype | pointertype | structtype | uniontype
+            | enumtype | sumtype   | intrfctype) ;
 
 statement   = (expression | assignment | vardecl | conditional) "." ;
 builtin     = ("print") "(" expression ")" ;
@@ -61,7 +61,7 @@ sumlist = (IDENTIFIER | type) ( "," (IDENTIFIER | type))* ;
 
 # Not sure how to represent it, but the last idarg HAS to have type annotation
 idargs      = idarg ( "," idarg )* ;
-idarg       = IDENTIFIER (":" "mut"? type)? ;
+idarg       = IDENTIFIER (":" type)? ;
 exprargs    = expression ( "," expression )* ;
 assignargs  = assignarg ( "," assignarg)* ;
 # MUST evaluate to an integer using only constant values

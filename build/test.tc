@@ -26,12 +26,13 @@ end
 
 function testfunc(argc: int32, argv: []struct String) -> int32
   where argc != 1, [1]argv == "cock"
-do /*
+do
   !1 + 2 + (3 - "string" - var * call(arg, 1)).
   print(3).
   let a: int8, b: [2]int8, c: *int8 = undefined, 2.
   let d: struct Test, e: union Test, f: enum Test = undefined.
-  let g: sum Test, f: interface Test = undefined.
+  let g: sum Test, h: interface Test = undefined.
+  let i: *int8, j: mut *int8, k: *mut int8, l: mut *mut int8 = undefined.
   a = 4.
   if x do y. end
   if x do y. else z. end
@@ -39,4 +40,4 @@ do /*
   if x do y. else if z do a. else b. end
   loop x. end
   while x do y. end
-*/ end
+end

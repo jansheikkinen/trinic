@@ -1,6 +1,7 @@
 #ifndef TYPEAST_H
 #define TYPEAST_H
 
+#include <stdbool.h>
 #include "expressionAST.h"
 
 struct TypeAST;
@@ -66,6 +67,7 @@ enum TypeASTTypes {
 // TODO: char** is broken
 struct TypeAST {
   enum TypeASTTypes type;
+  bool ismutable;
   union {
     enum BaseTypes base;
     struct PtrType pointer;
@@ -74,10 +76,10 @@ struct TypeAST {
   } as;
 };
 
-struct TypeAST* allocNewBaseType(enum BaseTypes);
-struct TypeAST* allocNewPointerType(struct TypeAST*);
-struct TypeAST* allocNewArrayType(struct TypeAST*, struct ExprAST*);
-struct TypeAST* allocNewStructType(const char*, enum StructTypes);
+struct TypeAST* allocNewBaseType(enum BaseTypes, bool);
+struct TypeAST* allocNewPointerType(struct TypeAST*, bool);
+struct TypeAST* allocNewArrayType(struct TypeAST*, struct ExprAST*, bool);
+struct TypeAST* allocNewStructType(const char*, enum StructTypes, bool);
 
 void freeTypeAST(struct TypeAST*);
 
