@@ -111,7 +111,7 @@ struct ArgAST* allocNewSumArgTypeList(void) {
 }
 
 static void freeIdentifierArg(struct IdentifierArg* arg) {
-  freeTypeAST(arg->type);
+  if(arg->type) freeTypeAST(arg->type);
   free(arg);
 }
 
