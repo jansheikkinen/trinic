@@ -43,7 +43,8 @@ struct ArgAST* generateExpressionArguments(struct ASTContext* ctx) {
   while(ctx->index < ctx->tokens->length) {
     if(MATCH_TOKEN(ctx, TOKEN_COMMA)) {
       ctx->index += 1;
-      APPEND_ARRAYLIST(args, generateExpression(ctx));
+      expr = generateExpression(ctx);
+      APPEND_ARRAYLIST(args, expr);
     } else return allocNewExprArgList(args);
   }
 

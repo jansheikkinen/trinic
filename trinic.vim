@@ -30,6 +30,7 @@ syn keyword trinicTodo contained TODO FIXME NOTE
 syn match   trinicComment "//.*$" contains=trinicTodo
 syn region  trinicComment start="/\*" end="\*/"
 
+syn region  trinicString start="\"" end="\""
 
 " Statement Repeat String Number Operator Constant Conditional
 " Function Comment Todo Structure Error SpecialChar Identifier

@@ -41,7 +41,8 @@ static struct TypeAST* generatePointerType(struct ASTContext* ctx) {
 static struct TypeAST* generateArrayType(struct ASTContext* ctx) {
   ctx->index += 1;
 
-  struct ExprAST* size = generateExpression(ctx);
+  struct ExprAST* size = NULL;
+  if(!(MATCH_TOKEN(ctx, TOKEN_RIGHT_BRACKET))) size = generateExpression(ctx);
 
   if(MATCH_TOKEN(ctx, TOKEN_RIGHT_BRACKET)) {
     ctx->index += 1;

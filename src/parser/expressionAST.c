@@ -144,6 +144,17 @@ struct ExprAST* allocNewUndefined(void) {
   return ptr;
 }
 
+struct ExprAST* allocNewArray(struct ExprAST* index,
+    struct ExprAST* identifier) {
+  struct ExprAST* ptr = malloc(sizeof(*ptr));
+
+  ptr->type = EXPR_ARRAY;
+  ptr->as.array.index = index;;
+  ptr->as.array.identifier = identifier;
+
+  return ptr;
+}
+
 void printExprAST(const struct ExprAST* ast) {
   switch(ast->type) {
     case EXPR_UNDEFINED: printf("UNDEFINED"); break;
@@ -176,7 +187,12 @@ void printExprAST(const struct ExprAST* ast) {
       printExprAST(ast->as.call.callee);
       printf("(");
       printArgAST(ast->as.call.args);
-      printf(")");
+      printf(")"); break;
+    case EXPR_ARRAY:
+      printf("[");
+      printExprAST(ast->as.array.index);
+      printf("]");
+      printExprAST(ast->as.array.identifier); break;
   }
 }
 
@@ -204,6 +220,9 @@ void freeExprNode(struct ExprAST* expr) {
     case EXPR_CALL:
       freeExprNode(expr->as.call.callee);
       freeArgAST(expr->as.call.args); break;
+    case EXPR_ARRAY:
+      freeExprNode(expr->as.array.index);
+      freeExprNode(expr->as.array.identifier); break;
   }
 
   free(expr);

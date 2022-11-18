@@ -57,10 +57,14 @@ static struct DeclarationAST* genFunctionHeader(struct ASTContext* ctx) {
             struct TypeAST* returns = generateType(ctx);
             struct ArgAST* contracts = NULL, *generics = NULL;
 
-            if(MATCH_TOKEN(ctx, TOKEN_WHERE))
+            if(MATCH_TOKEN(ctx, TOKEN_WHERE)) {
+              ctx->index += 1;
               contracts = generateExpressionArguments(ctx);
-            if(MATCH_TOKEN(ctx, TOKEN_FOR))
+            }
+            if(MATCH_TOKEN(ctx, TOKEN_FOR)) {
+              ctx->index += 1;
               generics = generateGenericArguments(ctx);
+            }
 
             return
               allocNewFunction(name, args, returns, contracts, generics, NULL);

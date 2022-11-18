@@ -24,8 +24,8 @@ struct TestStruct
   f, f2: float32
 end
 
-function testfunc(argc: int32, argv: **char) -> int32 do
-  where argc != 1
+function testfunc(argc: int32, argv: []struct String) -> int32
+  where argc != 1, [1]argv == "cock"
 do /*
   !1 + 2 + (3 - "string" - var * call(arg, 1)).
   print(3).

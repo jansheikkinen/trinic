@@ -15,6 +15,7 @@ enum ExprASTType {
   EXPR_VARIABLE,
   EXPR_GROUPING,
   EXPR_CALL,
+  EXPR_ARRAY,
 };
 
 enum LiteralType {
@@ -67,6 +68,11 @@ struct GroupingExpression {
   struct ExprAST* expression;
 };
 
+struct ArrayExpression {
+  struct ExprAST* index;
+  struct ExprAST* identifier;
+};
+
 struct ExprAST {
   enum ExprASTType type;
   union {
@@ -76,6 +82,7 @@ struct ExprAST {
     struct VariableExpression variable;
     struct CallExpression call;
     struct GroupingExpression grouping;
+    struct ArrayExpression array;
   } as;
 };
 
@@ -85,6 +92,7 @@ struct ExprAST* allocNewBinary(enum TokenType, struct ExprAST*, struct ExprAST*)
 struct ExprAST* allocNewVariable(const char* identifier);
 struct ExprAST* allocNewCall(struct ExprAST*, struct ArgAST*);
 struct ExprAST* allocNewGrouping(struct ExprAST*);
+struct ExprAST* allocNewArray(struct ExprAST*, struct ExprAST*);
 struct ExprAST* allocNewUndefined(void);
 
 #define ALLOC_NEW_LITERAL(type, vtype, value) \

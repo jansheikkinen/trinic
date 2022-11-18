@@ -48,6 +48,16 @@ static struct ExprAST* genPrimaryNode(struct ASTContext* ctx) {
   } else if(MATCH_TOKEN(ctx, TOKEN_IDENTIFIER_LITERAL)) {
     expr = allocNewVariable(GET_CURRENT_TOKEN(ctx).literal);
 
+  } else if(MATCH_TOKEN(ctx, TOKEN_LEFT_BRACKET)) {
+    ctx->index += 1;
+    struct ExprAST* index = generateExpression(ctx);
+    if(MATCH_TOKEN(ctx, TOKEN_RIGHT_BRACKET)) {
+      ctx->index += 1;
+      struct ExprAST* identifier = generateExpression(ctx);
+      ctx->index -= 1;
+      expr = allocNewArray(index, identifier);
+    }
+
   } else if(MATCH_TOKEN(ctx, TOKEN_LEFT_PAREN)) {
     ctx->index += 1;
     struct ExprAST* exprast = generateExpression(ctx);

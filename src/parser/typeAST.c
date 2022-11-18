@@ -52,7 +52,8 @@ void freeTypeAST(struct TypeAST* ast) {
     case TYPE_PTR: break;
     case TYPE_ARRAY:
       freeTypeAST(ast->as.array.type);
-      freeExprNode(ast->as.array.size); break;
+      if(ast->as.array.size) freeExprNode(ast->as.array.size);
+      break;
   }
 
   free(ast);
@@ -69,7 +70,9 @@ void printTypeAST(const struct TypeAST* ast) {
       printf("*"); break;
     case TYPE_ARRAY:
       printTypeAST(ast->as.array.type);
-      printf("["); printExprAST(ast->as.array.size); printf("]"); break;
+      printf("[");
+      if(ast->as.array.size) printExprAST(ast->as.array.size);
+      printf("]"); break;
     case TYPE_STRUCT:
       switch(ast->as.structure.type) {
         case STRUCT_UNDEFINED: printf("UNDEFINED STRUCT"); break;
