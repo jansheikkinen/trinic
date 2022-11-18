@@ -33,7 +33,7 @@ void freeStmtList(struct StmtList* list) {
 
 void printStmtList(const struct StmtList* stmts) {
   for(size_t i = 0; i < stmts->size; i++) {
+    printf("\n  ");
     printStmtAST(stmts->stmts[i]);
-    printf(". ");
   }
 }

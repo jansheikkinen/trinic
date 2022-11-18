@@ -18,11 +18,21 @@ ALLOC_NEW_STRUCTURE(allocNewStruct, DECLARATION_STRUCT)
 ALLOC_NEW_STRUCTURE(allocNewUnion, DECLARATION_UNION)
 ALLOC_NEW_STRUCTURE(allocNewEnum, DECLARATION_ENUM)
 ALLOC_NEW_STRUCTURE(allocNewSum, DECLARATION_SUM)
-ALLOC_NEW_STRUCTURE(allocNewInterface, DECLARATION_INTERFACE)
+
+struct DeclarationAST* allocNewInterface(const char* name,
+    struct DeclarationList* functions) {
+  struct DeclarationAST* ast = malloc(sizeof(*ast));
+
+  ast->type = DECLARATION_INTERFACE;
+  ast->name = name;
+  ast->as.interface = functions;
+
+  return ast;
+}
 
 struct DeclarationAST* allocNewFunction(const char* name, struct ArgAST* args,
     struct TypeAST* returns, struct ArgAST* contracts,
-    struct ArgAST* generics) {
+    struct ArgAST* generics, struct StmtList* body) {
   struct DeclarationAST* ast = malloc(sizeof(*ast));
 
   ast->type = DECLARATION_FUNCTION;
@@ -32,6 +42,7 @@ struct DeclarationAST* allocNewFunction(const char* name, struct ArgAST* args,
   ast->as.function.returns = returns;
   ast->as.function.contracts = contracts;
   ast->as.function.generics = generics;
+  ast->as.function.body = body;
 
   return ast;
 }
@@ -49,7 +60,8 @@ void freeDeclarationAST(struct DeclarationAST* ast) {
       freeArgAST(ast->as.function.args);
       freeArgAST(ast->as.function.contracts);
       freeArgAST(ast->as.function.generics);
-      freeTypeAST(ast->as.function.returns); break;
+      freeTypeAST(ast->as.function.returns);
+      freeStmtList(ast->as.function.body); break;
   }
 
   free(ast);
@@ -91,9 +103,13 @@ void printDeclarationAST(const struct DeclarationAST* ast) {
         printf(" where ");
         printArgAST(ast->as.function.contracts);
       }
+
       if(ast->as.function.generics) {
         printf(" for ");
         printArgAST(ast->as.function.generics);
       }
+
+      if(ast->as.function.body) printStmtList(ast->as.function.body);
+
   }
 }

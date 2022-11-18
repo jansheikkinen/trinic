@@ -39,6 +39,7 @@ enum TokenType {
 
   TOKEN_MINUS,            // -
   TOKEN_MINUS_ASSIGN,     // -=
+  TOKEN_ARROW,            // ->
 
   TOKEN_STAR,             // *
   TOKEN_STAR_ASSIGN,      // *=
@@ -106,6 +107,7 @@ enum TokenType {
 
   TOKEN_FUNCTION,
   TOKEN_INLINE,
+  TOKEN_WHERE,
 
   TOKEN_FOR,
   TOKEN_IN,

@@ -1,8 +1,8 @@
 #ifndef PARSER_H
 #define PARSER_H
 
-#include "stmtlist.h"
+#include "declarationAST.h"
 
-struct StmtList* parseProgram(const char* filename);
+struct DeclarationList* parseProgram(const char* filename);
 
 #endif

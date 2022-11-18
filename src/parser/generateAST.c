@@ -3,19 +3,19 @@
 #include <stdio.h>
 
 #include "ASTContext.h"
-#include "stmtlist.h"
-#include "generateStatementAST.h"
+#include "generateDeclarationAST.h"
 #include "generateAST.h"
 
-struct StmtList* generateAST(const char* filename, struct TokenArray* tokens) {
+struct DeclarationList* generateAST(const char* filename,
+    struct TokenArray* tokens) {
   struct ASTContext* ctx = malloc(sizeof(*ctx));
   *ctx = newASTContext(tokens);
 
-  struct StmtList* stmts = malloc(sizeof(*stmts));
-  *stmts = newStmtList();
+  struct DeclarationList* decls = malloc(sizeof(*decls));
+  NEW_ARRAYLIST(decls);
 
   while(ctx->index < ctx->tokens->length) {
-    appendToStmtList(stmts, generateStatement(ctx));
+    APPEND_ARRAYLIST(decls, generateDeclaration(ctx));
   }
 
   struct ASTErrorList* errors = ctx->errors;
@@ -29,5 +29,5 @@ struct StmtList* generateAST(const char* filename, struct TokenArray* tokens) {
 
   free(errors);
   free(ctx);
-  return stmts;
+  return decls;
 }

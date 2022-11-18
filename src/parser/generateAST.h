@@ -2,8 +2,8 @@
 #define GENERATEAST_H
 
 #include "token.h"
-#include "stmtlist.h"
+#include "declarationAST.h"
 
-struct StmtList* generateAST(const char*, struct TokenArray*);
+struct DeclarationList* generateAST(const char*, struct TokenArray*);
 
 #endif

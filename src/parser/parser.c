@@ -14,7 +14,7 @@
 // caused by previous errors
 
 // In the future, this should return the bytecode representation of the code
-struct StmtList* parseProgram(const char* filename) {
+struct DeclarationList* parseProgram(const char* filename) {
 #ifdef PARSER_DEBUG
   printf("## PARSER ##\nParsing %s...\n", filename);
 #endif
@@ -41,14 +41,13 @@ struct StmtList* parseProgram(const char* filename) {
   printf("\n### AST GENERATION ###\n");
 #endif
 
-  struct StmtList* stmts = generateAST(filename, tokens);
+  struct DeclarationList* decls = generateAST(filename, tokens);
 
 #ifdef VERBOSE_DEBUG
-  for(size_t i = 0; i < stmts->size; i++) {
-    printStmtAST(stmts->stmts[i]);
-    printf("\n");
+  for(size_t i = 0; i < decls->size; i++) {
+    printDeclarationAST(decls->members[i]);
   }
 #endif
 
-  return stmts;
+  return decls;
 }

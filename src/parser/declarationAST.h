@@ -1,6 +1,7 @@
 #ifndef DECLARATION_AST_H
 #define DECLARATION_AST_H
 
+#include "stmtlist.h"
 #include "argumentAST.h"
 
 enum DeclarationTypes {
@@ -23,13 +24,17 @@ struct FunctionAST {
   struct TypeAST* returns;
   struct ArgAST* contracts;
   struct ArgAST* generics;
+  struct StmtList* body;
 };
+
+DEFINE_ARRAYLIST(DeclarationList, struct DeclarationAST*);
 
 struct DeclarationAST {
   enum DeclarationTypes type;
   const char* name;
   union {
     struct StructureAST structure;
+    struct DeclarationList* interface;
     struct FunctionAST function;
   } as;
   struct ArgAST* fields;
@@ -39,10 +44,10 @@ struct DeclarationAST* allocNewStruct(const char*, struct ArgAST*);
 struct DeclarationAST* allocNewUnion(const char*, struct ArgAST*);
 struct DeclarationAST* allocNewEnum(const char*, struct ArgAST*);
 struct DeclarationAST* allocNewSum(const char*, struct ArgAST*);
-struct DeclarationAST* allocNewInterface(const char*, struct ArgAST*);
+struct DeclarationAST* allocNewInterface(const char*, struct DeclarationList*);
 
 struct DeclarationAST* allocNewFunction(const char*, struct ArgAST*,
-    struct TypeAST*, struct ArgAST*, struct ArgAST*);
+    struct TypeAST*, struct ArgAST*, struct ArgAST*, struct StmtList*);
 
 void freeDeclarationAST(struct DeclarationAST*);
 

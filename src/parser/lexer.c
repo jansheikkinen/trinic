@@ -109,8 +109,16 @@ static void lexAmbiguousOperator(struct LexerContext* td) {
       } else newAmbiguousArithOp(td, TOKEN_SLASH);
       break;
 
+    case '-':
+      if(peek(td) == '>') {
+        newNonLiteral(td, TOKEN_ARROW);
+        td->index += 1;
+      } else if(peek(td) == '=') {
+        newNonLiteral(td, TOKEN_MINUS_ASSIGN);
+        td->index += 1;
+      } else newNonLiteral(td, TOKEN_MINUS); break;
+
     case '+': newAmbiguousArithOp(td, TOKEN_ADD);     break;
-    case '-': newAmbiguousArithOp(td, TOKEN_MINUS);   break;
     case '*': newAmbiguousArithOp(td, TOKEN_STAR);    break;
     case '%': newAmbiguousArithOp(td, TOKEN_MOD);     break;
     case '!': newAmbiguousArithOp(td, TOKEN_BANG);    break;
