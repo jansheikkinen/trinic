@@ -2,4 +2,6 @@
 
 # copies local syntax file to a very specific config path
 # TODO: dynamically look for config paths and place it in an existing one
-cp -u trinic.vim ~/.config/nvim/syntax/trinic.vim
+
+VIMPATH=~/.config/nvim
+cp -Ri vim/* $VIMPATH/

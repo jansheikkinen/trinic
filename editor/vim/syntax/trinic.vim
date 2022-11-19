@@ -2,14 +2,19 @@
 " Language: Trinic
 " Maintainer: Jans Heikkinen
 
-" Usage: put this file in with syntax files and put into your vim config:
-" autocmd BufRead,BufNewFile *.tc set filetype=trinic
+" Usage: Simply edit the path in the update-syntax-vim script and run it to
+" automatically place relevant language files in that path. Run the script
+" again any time one of the files is changed. Note that the script will ask you
+" before overwriting any existing files, so please be sure that it isn't
+" overwriting anything important before you confirm it
 
 if exists("b:current_syntax")
   finish
 endif
 
 syn case match
+
+syn region  trinicString start="\"" end="\""
 
 syn match trinicNumber "\<\d\+\>"
 syn match trinicNumber "\<\d\+\.\d*\>"
@@ -21,16 +26,14 @@ syn keyword trinicConstant undefined true false
 syn keyword trinicType int8   int16   int32   int64   isize
                      \ uint8  uint16  uint32  uint64  usize
                      \ float8 float16 float32 float64 fsize
-                     \ byte   bool    char    void
+                     \ byte   bool    char    void    mut
 
 syn keyword trinicStatement if else while loop for do end let where in match
-  \ struct enum union sum interface function
+  \ struct enum union sum interface function return impl
 
 syn keyword trinicTodo contained TODO FIXME NOTE
 syn match   trinicComment "//.*$" contains=trinicTodo
 syn region  trinicComment start="/\*" end="\*/"
-
-syn region  trinicString start="\"" end="\""
 
 " Statement Repeat String Number Operator Constant Conditional
 " Function Comment Todo Structure Error SpecialChar Identifier
