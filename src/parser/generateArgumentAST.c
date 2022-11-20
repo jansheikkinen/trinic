@@ -147,6 +147,7 @@ struct ArgAST* generateGenericArguments(struct ASTContext* ctx) {
 
         if(MATCH_TOKEN(ctx, TOKEN_IDENTIFIER_LITERAL)) {
           identifier = GET_CURRENT_TOKEN(ctx).literal;
+          ctx->index += 1;
           APPEND_ARRAYLIST(&ast->as.generics, identifier);
         }
       } else return ast;

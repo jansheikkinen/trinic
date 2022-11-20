@@ -18,10 +18,21 @@ static struct DeclarationAST* fnname(struct ASTContext* ctx) { \
   if(MATCH_TOKEN(ctx, TOKEN_IDENTIFIER_LITERAL)) { \
     const char* name = GET_CURRENT_TOKEN(ctx).literal; \
     ctx->index += 1; \
+    struct ArgAST* generics = NULL; \
+    if(MATCH_TOKEN(ctx, TOKEN_LEFT_PAREN)) { \
+      ctx->index += 1; \
+      generics = generateGenericArguments(ctx); \
+      if(MATCH_TOKEN(ctx, TOKEN_RIGHT_PAREN)) { \
+        ctx->index += 1; \
+      } else { \
+        APPEND_ASTERROR(ctx, ASTERR_UNCLOSED_PAREN); \
+        return NULL; \
+      } \
+    } \
     struct ArgAST* fields = argfnname(ctx); \
     if(MATCH_TOKEN(ctx, TOKEN_END)) { \
       ctx->index += 1; \
-      return allocfnname(name, fields); \
+      return allocfnname(name, fields, generics); \
     } \
   } else { \
     APPEND_ASTERROR(ctx, ASTERR_EXPECTED_IDENTIFIER); \
@@ -31,8 +42,23 @@ static struct DeclarationAST* fnname(struct ASTContext* ctx) { \
 
 DEFINE_GEN(genStruct, generateIdentifierArguments, allocNewStruct)
 DEFINE_GEN(genUnion,  generateIdentifierArguments, allocNewUnion)
-DEFINE_GEN(genEnum,   generateAssignmentArguments, allocNewEnum)
 DEFINE_GEN(genSum,    generateSumArguments, allocNewSum)
+
+static struct DeclarationAST* genEnum(struct ASTContext* ctx) {
+  ctx->index += 1;
+
+  if(MATCH_TOKEN(ctx, TOKEN_IDENTIFIER_LITERAL)) {
+    const char* name = GET_CURRENT_TOKEN(ctx).literal;
+    ctx->index += 1;
+
+    struct ArgAST* fields = generateAssignmentArguments(ctx);
+    if(MATCH_TOKEN(ctx, TOKEN_END)) {
+      ctx->index += 1;
+      return allocNewEnum(name, fields, NULL);
+    }
+  } else APPEND_ASTERROR(ctx, ASTERR_EXPECTED_IDENTIFIER);
+  return NULL;
+}
 
 static struct DeclarationAST* genFunctionHeader(struct ASTContext* ctx) {
   ctx->index += 1;

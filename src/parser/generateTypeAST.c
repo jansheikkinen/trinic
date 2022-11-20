@@ -29,6 +29,12 @@ static struct TypeAST* generateBaseType(struct ASTContext* ctx,
     }
   }
 
+  if(MATCH_TOKEN(ctx, TOKEN_IDENTIFIER_LITERAL)) {
+    const char* identifier = GET_CURRENT_TOKEN(ctx).literal;
+    ctx->index += 1;
+    return allocNewBaseTypeStr(identifier, ismutable);
+  }
+
   APPEND_ASTERROR(ctx, ASTERR_EXPECTED_TYPE);
   return NULL;
 }

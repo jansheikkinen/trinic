@@ -30,6 +30,20 @@ enum BaseTypes {
   BASETYPE_BOOL,
 };
 
+enum BaseTypeTypes {
+  BTT_UNDEFINED,
+  BTT_IDENTIFIER,
+  BTT_TYPE,
+};
+
+struct BaseType {
+  enum BaseTypeTypes type;
+  union {
+    const char* identifier;
+    enum BaseTypes type;
+  } as;
+};
+
 // int8*
 struct PtrType {
   struct TypeAST* type;
@@ -69,7 +83,7 @@ struct TypeAST {
   enum TypeASTTypes type;
   bool ismutable;
   union {
-    enum BaseTypes base;
+    struct BaseType base;
     struct PtrType pointer;
     struct ArrayType array;
     struct StructType structure;
@@ -77,6 +91,7 @@ struct TypeAST {
 };
 
 struct TypeAST* allocNewBaseType(enum BaseTypes, bool);
+struct TypeAST* allocNewBaseTypeStr(const char*, bool);
 struct TypeAST* allocNewPointerType(struct TypeAST*, bool);
 struct TypeAST* allocNewArrayType(struct TypeAST*, struct ExprAST*, bool);
 struct TypeAST* allocNewStructType(const char*, enum StructTypes, bool);

@@ -1,43 +1,17 @@
+/* test.tc */
 
-enum TestEnum
-  ENUM_A = 0,
-  ENUM_B
-end
+// I've mainly been using this file to write test cases directly related to
+// whatever I'm currently implementing. If I'm being honest, I *should* have
+// been putting copies of this file into tests/, but for now they're just
+// available in the commit history lol
 
+// Parsing of generics
+
+struct TestStruct(T, V) tfield: T, vfield: V end
+union TestUnion(T, V) tfield: T, vfield: V end
+sum TestSum(T, V) tfield(T), vfield(V) end
 interface TestInterface
-  function testfunc(argc: int32, argv: **char) -> int32
-end
-
-sum TestSum
-  Some(T),
-  Sume(T, int32),
-  None
-end
-
-union TestUnion
-  i: int32,
-  f, f2: float32
-end
-
-struct TestStruct
-  i: int32,
-  f, f2: float32
-end
-
-function testfunc(argc: int32, argv: []struct String) -> int32
-  where argc != 1, [1]argv == "cock"
-do
-  !1 + 2 + (3 - "string" - var * call(arg, 1)).
-  print(3).
-  let a: int8, b: [2]int8, c: *int8 = undefined, 2.
-  let d: struct Test, e: union Test, f: enum Test = undefined.
-  let g: sum Test, h: interface Test = undefined.
-  let i: *int8, j: mut *int8, k: *mut int8, l: mut *mut int8 = undefined.
-  a = 4.
-  if x do y. end
-  if x do y. else z. end
-  if x do y. else if z do a. end
-  if x do y. else if z do a. else b. end
-  loop x. end
-  while x do y. end
+  function testFunction(x: T, y: V, z: Q) -> V
+    where y != 0
+//    for T + V: Div + Display, Q: Display
 end

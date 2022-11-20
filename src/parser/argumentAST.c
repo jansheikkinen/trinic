@@ -215,6 +215,6 @@ void printArgAST(const struct ArgAST* args) {
     case ARG_GENERIC:
       for(size_t i = 0; i < args->as.generics.size; i++) {
         printf("%s, ", args->as.generics.members[i]);
-      } printf("\b\b \b\b"); break;
+      } printf("\b\b  \b\b"); break;
   }
 }

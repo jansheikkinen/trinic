@@ -10,7 +10,19 @@ struct TypeAST* allocNewBaseType(enum BaseTypes type, bool mutable) {
 
   ast->type = TYPE_BASE;
   ast->ismutable = mutable;
-  ast->as.base = type;
+  ast->as.base.type = BTT_TYPE;
+  ast->as.base.as.type = type;
+
+  return ast;
+}
+
+struct TypeAST* allocNewBaseTypeStr(const char* name, bool mutable) {
+  struct TypeAST* ast = malloc(sizeof(*ast));
+
+  ast->type = TYPE_BASE;
+  ast->ismutable = mutable;
+  ast->as.base.type = BTT_IDENTIFIER;
+  ast->as.base.as.identifier = name;
 
   return ast;
 }
@@ -54,8 +66,8 @@ void freeTypeAST(struct TypeAST* ast) {
   switch(ast->type) {
     case TYPE_UNDEFINED:
     case TYPE_BASE:
-    case TYPE_STRUCT:
-    case TYPE_PTR: break;
+    case TYPE_STRUCT: break;
+    case TYPE_PTR: freeTypeAST(ast->as.pointer.type); break;
     case TYPE_ARRAY:
       freeTypeAST(ast->as.array.type);
       if(ast->as.array.size) freeExprNode(ast->as.array.size);
@@ -71,7 +83,14 @@ void printTypeAST(const struct TypeAST* ast) {
     case TYPE_UNDEFINED:
       printf("(UNDEFINED TYPE)"); break;
     case TYPE_BASE:
-      printf("%s", getTokenName(TOKEN_FALSE + ast->as.base)); break;
+      switch(ast->as.base.type) {
+        case BTT_UNDEFINED:
+          printf("UNDEFINED BASE TYPE"); break;
+        case BTT_IDENTIFIER:
+          printf("%s", ast->as.base.as.identifier); break;
+        case BTT_TYPE:
+          printf("%s", getTokenName(TOKEN_FALSE + ast->as.base.as.type)); break;
+      } break;
     case TYPE_PTR:
       printf("*");
       printTypeAST(ast->as.pointer.type);

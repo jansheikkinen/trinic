@@ -6,18 +6,19 @@
 
 #define ALLOC_NEW_STRUCTURE(structuren, enum) \
   struct DeclarationAST* structuren(const char* name, \
-      struct ArgAST* fields) { \
+      struct ArgAST* fields, struct ArgAST* generics) { \
     struct DeclarationAST* ast = malloc(sizeof(*ast)); \
     ast->type = enum; \
     ast->name = name; \
     ast->as.structure.fields = fields; \
+    ast->as.structure.generics = generics; \
     return ast; \
   }
 
 ALLOC_NEW_STRUCTURE(allocNewStruct, DECLARATION_STRUCT)
 ALLOC_NEW_STRUCTURE(allocNewUnion, DECLARATION_UNION)
-ALLOC_NEW_STRUCTURE(allocNewEnum, DECLARATION_ENUM)
-ALLOC_NEW_STRUCTURE(allocNewSum, DECLARATION_SUM)
+ALLOC_NEW_STRUCTURE(allocNewEnum, DECLARATION_ENUM) // too lazy to fix but enum
+ALLOC_NEW_STRUCTURE(allocNewSum, DECLARATION_SUM) // should never have generics
 
 struct DeclarationAST* allocNewInterface(const char* name,
     struct DeclarationList* functions) {
@@ -55,6 +56,7 @@ void freeDeclarationAST(struct DeclarationAST* ast) {
     case DECLARATION_ENUM:
     case DECLARATION_SUM:
       if(ast->as.structure.fields) freeArgAST(ast->as.structure.fields);
+      if(ast->as.structure.generics) freeArgAST(ast->as.structure.generics);
       break;
     case DECLARATION_INTERFACE:
       FREE_SELF_AND_MEMBERS(ast->as.interface, freeDeclarationAST); break;
@@ -80,19 +82,34 @@ void printDeclarationAST(const struct DeclarationAST* ast) {
     case DECLARATION_UNDEFINED: printf("DECL_UNDEFINED"); break;
     case DECLARATION_STRUCT:
       printf("struct %s ", ast->name);
-      printArgAST(ast->as.structure.fields);
+      if(ast->as.structure.generics) {
+        printf("\b(");
+        printArgAST(ast->as.structure.generics);
+        printf(") ");
+      }
+      if(ast->as.structure.fields) printArgAST(ast->as.structure.fields);
       printf(" end\n\n"); break;
     case DECLARATION_UNION:
       printf("union %s ", ast->name);
-      printArgAST(ast->as.structure.fields);
+      if(ast->as.structure.generics) {
+        printf("\b(");
+        printArgAST(ast->as.structure.generics);
+        printf(") ");
+      }
+      if(ast->as.structure.fields) printArgAST(ast->as.structure.fields);
       printf(" end\n\n"); break;
     case DECLARATION_ENUM:
       printf("enum %s ", ast->name);
-      printArgAST(ast->as.structure.fields);
+      if(ast->as.structure.fields) printArgAST(ast->as.structure.fields);
       printf(" end\n\n"); break;
     case DECLARATION_SUM:
       printf("sum %s ", ast->name);
-      printArgAST(ast->as.structure.fields);
+      if(ast->as.structure.generics) {
+        printf("\b(");
+        printArgAST(ast->as.structure.generics);
+        printf(") ");
+      }
+      if(ast->as.structure.fields) printArgAST(ast->as.structure.fields);
       printf(" end\n\n"); break;
     case DECLARATION_INTERFACE:
       printf("interface %s\n  ", ast->name);

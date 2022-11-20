@@ -17,6 +17,7 @@ enum DeclarationTypes {
 // Includes struct, union, enum, sum, interface
 struct StructureAST {
   struct ArgAST* fields;
+  struct ArgAST* generics;
 };
 
 struct FunctionAST {
@@ -40,10 +41,14 @@ struct DeclarationAST {
   struct ArgAST* fields;
 };
 
-struct DeclarationAST* allocNewStruct(const char*, struct ArgAST*);
-struct DeclarationAST* allocNewUnion(const char*, struct ArgAST*);
-struct DeclarationAST* allocNewEnum(const char*, struct ArgAST*);
-struct DeclarationAST* allocNewSum(const char*, struct ArgAST*);
+struct DeclarationAST* allocNewStruct(const char*, struct ArgAST*,
+    struct ArgAST*);
+struct DeclarationAST* allocNewUnion(const char*, struct ArgAST*,
+    struct ArgAST*);
+struct DeclarationAST* allocNewEnum(const char*, struct ArgAST*,
+    struct ArgAST*);
+struct DeclarationAST* allocNewSum(const char*, struct ArgAST*,
+    struct ArgAST*);
 struct DeclarationAST* allocNewInterface(const char*, struct DeclarationList*);
 
 struct DeclarationAST* allocNewFunction(const char*, struct ArgAST*,
