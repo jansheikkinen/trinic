@@ -15,6 +15,7 @@ enum ExprASTType {
   EXPR_VARIABLE,
   EXPR_GROUPING,
   EXPR_CALL,
+  EXPR_GET,
   EXPR_ARRAY,
 };
 
@@ -64,6 +65,12 @@ struct CallExpression {
   struct ArgAST* args;
 };
 
+struct GetExpression {
+  bool isPointer;
+  const char* name;
+  struct ExprAST* expression;
+};
+
 struct GroupingExpression {
   struct ExprAST* expression;
 };
@@ -81,6 +88,7 @@ struct ExprAST {
     struct BinaryExpression  binary;
     struct VariableExpression variable;
     struct CallExpression call;
+    struct GetExpression get;
     struct GroupingExpression grouping;
     struct ArrayExpression array;
   } as;
@@ -91,6 +99,7 @@ struct ExprAST* allocNewUnary(enum TokenType, struct ExprAST*);
 struct ExprAST* allocNewBinary(enum TokenType, struct ExprAST*, struct ExprAST*);
 struct ExprAST* allocNewVariable(const char* identifier);
 struct ExprAST* allocNewCall(struct ExprAST*, struct ArgAST*);
+struct ExprAST* allocNewGet(bool, const char*, struct ExprAST*);
 struct ExprAST* allocNewGrouping(struct ExprAST*);
 struct ExprAST* allocNewArray(struct ExprAST*, struct ExprAST*);
 struct ExprAST* allocNewUndefined(void);

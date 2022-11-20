@@ -130,6 +130,18 @@ struct ExprAST* allocNewCall(struct ExprAST* callee, struct ArgAST* args) {
   return ptr;
 }
 
+struct ExprAST* allocNewGet(bool isPointer, const char* name,
+    struct ExprAST* expr) {
+  struct ExprAST* ptr = malloc(sizeof(*ptr));
+
+  ptr->type = EXPR_GET;
+  ptr->as.get.isPointer = isPointer;
+  ptr->as.get.name = name;
+  ptr->as.get.expression = expr;
+
+  return ptr;
+}
+
 struct ExprAST* allocNewGrouping(struct ExprAST* expr) {
   struct ExprAST* ptr = malloc(sizeof(*ptr));
   if(ptr) *ptr = newGrouping(expr);
@@ -188,6 +200,10 @@ void printExprAST(const struct ExprAST* ast) {
       printf("(");
       printArgAST(ast->as.call.args);
       printf(")"); break;
+    case EXPR_GET:
+      printExprAST(ast->as.get.expression);
+      if(ast->as.get.isPointer) printf("->"); else printf(".");
+      printf("%s", ast->as.get.name); break;
     case EXPR_ARRAY:
       printf("[");
       printExprAST(ast->as.array.index);
@@ -220,6 +236,8 @@ void freeExprNode(struct ExprAST* expr) {
     case EXPR_CALL:
       freeExprNode(expr->as.call.callee);
       freeArgAST(expr->as.call.args); break;
+    case EXPR_GET:
+      freeExprNode(expr->as.get.expression); break;
     case EXPR_ARRAY:
       freeExprNode(expr->as.array.index);
       freeExprNode(expr->as.array.identifier); break;

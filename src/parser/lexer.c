@@ -27,17 +27,18 @@ static void newNonLiteral(struct LexerContext* td, enum TokenType tt) {
 // *only* be just '#', but '+' is ambiguous because it could be '+' or '+='.
 static void lexUnambiguousOperator(struct LexerContext* td) {
   switch(td->program[td->index]) {
-    case '(': newNonLiteral(td, TOKEN_LEFT_PAREN);     break;
-    case ')': newNonLiteral(td, TOKEN_RIGHT_PAREN);    break;
-    case '[': newNonLiteral(td, TOKEN_LEFT_BRACKET);   break;
-    case ']': newNonLiteral(td, TOKEN_RIGHT_BRACKET);  break;
-    case ',': newNonLiteral(td, TOKEN_COMMA);          break;
-    case '.': newNonLiteral(td, TOKEN_DOT);            break;
-    case '?': newNonLiteral(td, TOKEN_QUESTION);       break;
-    case '@': newNonLiteral(td, TOKEN_AT);             break;
-    case '#': newNonLiteral(td, TOKEN_HASHTAG);        break;
-    case '~': newNonLiteral(td, TOKEN_TILDE);          break;
-    case ':': newNonLiteral(td, TOKEN_COLON);          break;
+    case '(': newNonLiteral(td, TOKEN_LEFT_PAREN);    break;
+    case ')': newNonLiteral(td, TOKEN_RIGHT_PAREN);   break;
+    case '[': newNonLiteral(td, TOKEN_LEFT_BRACKET);  break;
+    case ']': newNonLiteral(td, TOKEN_RIGHT_BRACKET); break;
+    case ',': newNonLiteral(td, TOKEN_COMMA);         break;
+    case '.': newNonLiteral(td, TOKEN_DOT);           break;
+    case '?': newNonLiteral(td, TOKEN_QUESTION);      break;
+    case '@': newNonLiteral(td, TOKEN_AT);            break;
+    case '#': newNonLiteral(td, TOKEN_HASHTAG);       break;
+    case '~': newNonLiteral(td, TOKEN_TILDE);         break;
+    case ':': newNonLiteral(td, TOKEN_COLON);         break;
+    case ';': newNonLiteral(td, TOKEN_SEMICOLON);     break;
   }
 }
 

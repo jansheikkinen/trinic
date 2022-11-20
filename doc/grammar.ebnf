@@ -29,7 +29,7 @@ type        = "mut" (basetype | arraytype | pointertype | enumtype |
               ((structtype | uniontype | sumtype | traittype)
                ("(" sumlist ")")?) ;
 
-statement   = (expression | assignment | vardecl | conditional) "." ;
+statement   = (expression | assignment | vardecl | conditional) ";" ;
 builtin     = ("print") "(" expression ")" ;
 vardecl     = "let" idargs "=" exprargs ;
 assignment  = exprargs "=" exprargs ;
@@ -48,8 +48,8 @@ compare    = bitwise  ( (">" | ">=" | "<" | "<=")       bitwise  )*  ;
 bitwise    = term     ( ("&" | "|" | "^" | "<<" | ">>") term     )*  ;
 term       = factor   ( ("+" | "-")                     factor   )*  ;
 factor     = unary    ( ("*" | "/")                     unary    )*  ;
-unary      =            ("~" | "!" | "not" | "-")       unary | call ;
-call       = primary ("(" arguments? ")" | ("." | "->") IDENTIFIER)  ;
+unary      =            ("~" | "!" | "not" | "-" | "*") unary | call ;
+call       = primary ("(" arguments? ")" | ("." | "->") IDENTIFIER)*  ;
 primary    = "(" expression ")" | NUMBER | STRING | IDENTIFIER
             | "true" | "false" | "[" expression "]" expression;
 

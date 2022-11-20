@@ -180,13 +180,14 @@ static struct StmtAST* genStmtNode(struct ASTContext* ctx) {
   else if(MATCH_TOKEN(ctx, TOKEN_LOOP)) stmt = genLoopNode(ctx);
   else if(MATCH_TOKEN(ctx, TOKEN_WHILE)) stmt = genWhileNode(ctx);
   else {
-    // Everything in this branch must end with a .
+    // These ones use . or ; as explicit terminator(not sure which yet)
     if(MATCH_TOKEN(ctx, TOKEN_PRINT)) stmt = genBuiltinNode(ctx);
     else if(MATCH_TOKEN(ctx, TOKEN_LET)) stmt = genVarDeclNode(ctx);
     else stmt = genAssignmentNode(ctx); // THIS MUST BE LAST
 
-    if(MATCH_TOKEN(ctx, TOKEN_DOT)) ctx->index += 1;
-    else APPEND_ASTERROR(ctx, ASTERR_STMT_END);
+    if(MATCH_TOKEN(ctx, TOKEN_SEMICOLON)) ctx->index += 1;
+    // TODO: Make sure not appending an error is actually ok
+    //else APPEND_ASTERROR(ctx, ASTERR_STMT_END);
   }
 
   return stmt;

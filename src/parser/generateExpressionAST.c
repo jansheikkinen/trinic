@@ -87,6 +87,15 @@ static struct ExprAST* genCallNode(struct ASTContext* ctx) {
       APPEND_ASTERROR(ctx, ASTERR_UNCLOSED_PAREN);
       freeArgAST(args);
     }
+  } else if(MATCH_TOKEN(ctx, TOKEN_DOT) || MATCH_TOKEN(ctx, TOKEN_ARROW)) {
+    bool isPointer = MATCH_TOKEN(ctx, TOKEN_ARROW);
+    ctx->index += 1;
+
+    if(MATCH_TOKEN(ctx, TOKEN_IDENTIFIER_LITERAL)) {
+      const char* identifier = GET_CURRENT_TOKEN(ctx).literal;
+      ctx->index += 1;
+      return allocNewGet(isPointer, identifier, primary);
+    }
   }
   return primary;
 }

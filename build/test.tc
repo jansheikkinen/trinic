@@ -20,5 +20,7 @@ sum TestSum(T, V) tfield(T), vfield(V) end
 function main(argc: usize, argv: []struct String) -> usize do
   let x: struct TestStruct(int32, int8),
       y: union TestUnion(int32, int8),
-      z: sum TestSum(int32, int8) = undefined.
+      z: sum TestSum(int32, int8) = undefined;
+
+  x.tfield, y.vfield = 3, 4;
 end

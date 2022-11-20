@@ -18,6 +18,7 @@ enum TokenType {
   TOKEN_HASHTAG,  // #
   TOKEN_TILDE,    // ~
   TOKEN_COLON,    // :
+  TOKEN_SEMICOLON,// ;
 
   // Ambiguous single and multi-character tokens
   TOKEN_LEFT_DIAMOND,     // <
