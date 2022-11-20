@@ -7,10 +7,10 @@
 
 // Parsing of generics
 
-interface TestInterface
+trait TestTrait
   function testFunction(x: T, y: V, z: Q) -> V
     where y != 0
-    for T + V: interface Div + interface Display, Q: interface Display
+    for T + V: trait Div + trait Display, Q: trait Display
 end
 
 struct TestStruct(T, V) tfield: T, vfield: V end

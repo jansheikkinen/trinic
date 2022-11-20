@@ -112,7 +112,7 @@ void printDeclarationAST(const struct DeclarationAST* ast) {
       if(ast->as.structure.fields) printArgAST(ast->as.structure.fields);
       printf(" end\n\n"); break;
     case DECLARATION_INTERFACE:
-      printf("interface %s\n  ", ast->name);
+      printf("trait %s\n  ", ast->name);
       for(size_t i = 0; i < ast->as.interface->size; i++) {
         printDeclarationAST(ast->as.interface->members[i]);
         printf("\n  ");

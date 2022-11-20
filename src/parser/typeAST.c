@@ -140,7 +140,7 @@ void printTypeAST(const struct TypeAST* ast) {
           }
           break;
         case STRUCT_INTERFACE:
-          printf("interface %s", ast->as.structure.name); break;
+          printf("trait %s", ast->as.structure.name); break;
       }
       break;
   }

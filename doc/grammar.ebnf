@@ -4,12 +4,12 @@
 program = declaration* EOF ;
 
 declaration = structdecl | uniondecl | enumdecl | sumdecl
-            | intrfcdecl | funcdecl  | vardecl  ;
+            | traitdecl | funcdecl  | vardecl  ;
 structdecl  = structtype genericlist? idargs      "end" ;
 uniondecl   = uniontype  genericlist? idargs      "end" ;
 enumdecl    = enumtype                assignargs  "end" ;
 sumdecl     = sumtype    genericlist? sumargs     "end" ;
-intrfcdecl  = intrfctype genericlist? function*   "end" ;
+traitdecl  = traittype genericlist? function*   "end" ;
 funcdecl    = "function" function "do" statement* "end" ;
 function    = IDENTIFIER "(" (idargs | "void") ")" "->" ( type | IDENTIFIER )
               ("where" exprargs)? ("for" genericdefs)? ;
@@ -24,9 +24,9 @@ structtype  = "struct"    IDENTIFIER ;
 uniontype   = "union"     IDENTIFIER ;
 enumtype    = "enum"      IDENTIFIER ;
 sumtype     = "sum"       IDENTIFIER ;
-intrfctype  = "interface" IDENTIFIER ;
+traittype   = "trait"     IDENTIFIER ;
 type        = "mut" (basetype | arraytype | pointertype | enumtype |
-              ((structtype | uniontype | sumtype | intrfctype)
+              ((structtype | uniontype | sumtype | traittype)
                ("(" sumlist ")")?) ;
 
 statement   = (expression | assignment | vardecl | conditional) "." ;
@@ -56,7 +56,7 @@ primary    = "(" expression ")" | NUMBER | STRING | IDENTIFIER
 genericdefs = genericdef  ( "," genericdef  )* ;
 genericdef  = genericdefl ( ":" genericdefr )  ;
 genericdefl = IDENTIFIER  ( "+" IDENTIFIER  )* ;
-genericdefr = intrfctype  ( "+" intrfctype  )* ;
+genericdefr = traittype  ( "+" traittype  )* ;
 
 genericlist = "(" identifiers* ")" ;
 identifiers = IDENTIFIER ( "," IDENTIFIER )* ;
