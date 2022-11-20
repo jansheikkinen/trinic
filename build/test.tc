@@ -7,11 +7,18 @@
 
 // Parsing of generics
 
-struct TestStruct(T, V) tfield: T, vfield: V end
-union TestUnion(T, V) tfield: T, vfield: V end
-sum TestSum(T, V) tfield(T), vfield(V) end
 interface TestInterface
   function testFunction(x: T, y: V, z: Q) -> V
     where y != 0
-//    for T + V: Div + Display, Q: Display
+    for T + V: interface Div + interface Display, Q: interface Display
+end
+
+struct TestStruct(T, V) tfield: T, vfield: V end
+union TestUnion(T, V) tfield: T, vfield: V end
+sum TestSum(T, V) tfield(T), vfield(V) end
+
+function main(argc: usize, argv: []struct String) -> usize do
+  let x: struct TestStruct(int32, int8),
+      y: union TestUnion(int32, int8),
+      z: sum TestSum(int32, int8) = undefined.
 end

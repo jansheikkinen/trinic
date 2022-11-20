@@ -157,7 +157,7 @@ struct ArgAST* generateGenericArguments(struct ASTContext* ctx) {
   return NULL;
 }
 
-static struct ArgAST* genSumTypes(struct ASTContext* ctx) {
+struct ArgAST* genSumTypes(struct ASTContext* ctx) {
   struct ArgAST* ast = allocNewSumArgTypeList();
   const char* identifier;
   struct TypeAST* type;
@@ -224,6 +224,75 @@ struct ArgAST* generateSumArguments(struct ASTContext* ctx) {
         }
       } else return ast;
     }
+  }
+
+  return NULL;
+}
+
+static struct ArgAST* generateGenericDefLeft(struct ASTContext* ctx) {
+  struct ArgAST* ast = allocNewGenericDefLeft();
+
+  if(MATCH_TOKEN(ctx, TOKEN_IDENTIFIER_LITERAL)) {
+    const char* identifier = GET_CURRENT_TOKEN(ctx).literal;
+    ctx->index += 1;
+    APPEND_ARRAYLIST(&ast->as.genleft, identifier);
+  }
+  while(ctx->index < ctx->tokens->length) {
+    if(MATCH_TOKEN(ctx, TOKEN_ADD)) {
+      ctx->index += 1;
+
+      if(MATCH_TOKEN(ctx, TOKEN_IDENTIFIER_LITERAL)) {
+        const char* identifier = GET_CURRENT_TOKEN(ctx).literal;
+        ctx->index += 1;
+        APPEND_ARRAYLIST(&ast->as.genleft, identifier);
+      }
+    } else return ast;
+  }
+
+  return NULL;
+}
+
+static struct ArgAST* generateGenericDefRight(struct ASTContext* ctx) {
+  struct ArgAST* ast = allocNewGenericDefRight();
+
+  struct TypeAST* type = generateType(ctx);
+  APPEND_ARRAYLIST(&ast->as.genright, type);
+
+  while(ctx->index < ctx->tokens->length) {
+    if(MATCH_TOKEN(ctx, TOKEN_ADD)) {
+      ctx->index += 1;
+
+      type = generateType(ctx);
+      APPEND_ARRAYLIST(&ast->as.genright, type);
+    } else return ast;
+  }
+
+  return NULL;
+}
+
+struct ArgAST* generateGenericDefs(struct ASTContext* ctx) {
+  struct ArgAST* ast = allocNewGenericDefs();
+
+  struct ArgAST* gendefl = generateGenericDefLeft(ctx);
+
+  if(MATCH_TOKEN(ctx, TOKEN_COLON)) {
+    ctx->index += 1;
+    struct ArgAST* gendefr = generateGenericDefRight(ctx);
+    APPEND_ARRAYLIST(&ast->as.gendefs, allocNewGenericDef(gendefl, gendefr));
+  }
+
+  while(ctx->index < ctx->tokens->length) {
+    if(MATCH_TOKEN(ctx, TOKEN_COMMA)) {
+      ctx->index += 1;
+      gendefl = generateGenericDefLeft(ctx);
+
+      if(MATCH_TOKEN(ctx, TOKEN_COLON)) {
+        ctx->index += 1;
+        struct ArgAST* gendefr = generateGenericDefRight(ctx);
+        APPEND_ARRAYLIST(&ast->as.gendefs,
+            allocNewGenericDef(gendefl, gendefr));
+      }
+    } else return ast;
   }
 
   return NULL;

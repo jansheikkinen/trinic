@@ -3,6 +3,7 @@
 #include "generateExpressionAST.h"
 #include "token.h"
 #include "generateTypeAST.h"
+#include "generateArgumentAST.h"
 
 #define GET_CURRENT_TOKEN(ctx) ctx->tokens->tokens[ctx->index]
 #define MATCH_TOKEN(ctx, token) GET_CURRENT_TOKEN(ctx).type == token
@@ -10,14 +11,24 @@
 static struct TypeAST* generateStructType(struct ASTContext* ctx,
     enum StructTypes type, bool ismutable) {
   ctx->index += 1;
+
   if(MATCH_TOKEN(ctx, TOKEN_IDENTIFIER_LITERAL)) {
     const char* identifier = GET_CURRENT_TOKEN(ctx).literal;
     ctx->index += 1;
-    return allocNewStructType(identifier, type, ismutable);
+
+    if(MATCH_TOKEN(ctx, TOKEN_LEFT_PAREN)) {
+      ctx->index += 1;
+      struct ArgAST* generics = genSumTypes(ctx);
+
+      if(MATCH_TOKEN(ctx, TOKEN_RIGHT_PAREN)) {
+        ctx->index += 1;
+        return allocNewStructType(identifier, type, generics, ismutable);
+      }
+    } else return allocNewStructType(identifier, type, NULL, ismutable);
   } else {
     APPEND_ASTERROR(ctx, ASTERR_EXPECTED_IDENTIFIER);
-    return NULL;
   }
+  return NULL;
 }
 
 static struct TypeAST* generateBaseType(struct ASTContext* ctx,

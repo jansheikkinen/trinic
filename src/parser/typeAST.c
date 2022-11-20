@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 
+#include "argumentAST.h"
 #include "token.h"
 #include "typeAST.h"
 
@@ -51,13 +52,14 @@ struct TypeAST* allocNewArrayType(struct TypeAST* type, struct ExprAST* size,
 }
 
 struct TypeAST* allocNewStructType(const char* name, enum StructTypes type,
-    bool mutable) {
+    struct ArgAST* generics, bool mutable) {
   struct TypeAST* ast = malloc(sizeof(*ast));
 
   ast->type = TYPE_STRUCT;
   ast->ismutable = mutable;
   ast->as.structure.name = name;
   ast->as.structure.type = type;
+  ast->as.structure.generics = generics;
 
   return ast;
 }
@@ -65,8 +67,10 @@ struct TypeAST* allocNewStructType(const char* name, enum StructTypes type,
 void freeTypeAST(struct TypeAST* ast) {
   switch(ast->type) {
     case TYPE_UNDEFINED:
-    case TYPE_BASE:
-    case TYPE_STRUCT: break;
+    case TYPE_BASE: break;
+    case TYPE_STRUCT:
+      if(ast->as.structure.generics) freeArgAST(ast->as.structure.generics);
+      break;
     case TYPE_PTR: freeTypeAST(ast->as.pointer.type); break;
     case TYPE_ARRAY:
       freeTypeAST(ast->as.array.type);
@@ -104,15 +108,40 @@ void printTypeAST(const struct TypeAST* ast) {
       switch(ast->as.structure.type) {
         case STRUCT_UNDEFINED: printf("UNDEFINED STRUCT"); break;
         case STRUCT_STRUCT:
-          printf("struct %s", ast->as.structure.name); break;
+          printf("struct %s", ast->as.structure.name);
+          if(ast->as.structure.generics) {
+            printf("(");
+            printArgAST(ast->as.structure.generics);
+            printf(")");
+          }
+          break;
         case STRUCT_UNION:
-          printf("union %s", ast->as.structure.name); break;
+          printf("union %s", ast->as.structure.name);
+          if(ast->as.structure.generics) {
+            printf("(");
+            printArgAST(ast->as.structure.generics);
+            printf(")");
+          }
+          break;
         case STRUCT_ENUM:
-          printf("enum %s", ast->as.structure.name); break;
+          printf("enum %s", ast->as.structure.name);
+          if(ast->as.structure.generics) {
+            printf("(");
+            printArgAST(ast->as.structure.generics);
+            printf(")");
+          }
+          break;
         case STRUCT_SUM:
-          printf("sum %s", ast->as.structure.name); break;
+          printf("sum %s", ast->as.structure.name);
+          if(ast->as.structure.generics) {
+            printf("(");
+            printArgAST(ast->as.structure.generics);
+            printf(")");
+          }
+          break;
         case STRUCT_INTERFACE:
           printf("interface %s", ast->as.structure.name); break;
       }
+      break;
   }
 }

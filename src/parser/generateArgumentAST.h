@@ -11,6 +11,7 @@ struct ArgAST* generateExpressionArgumentsWithFirst(struct ASTContext*,
 struct ArgAST* generateAssignmentArguments(struct ASTContext*);
 struct ArgAST* generateGenericArguments(struct ASTContext*);
 struct ArgAST* generateSumArguments(struct ASTContext*);
-// no generateSumArgTypes since it'd only be called by ^
+struct ArgAST* genSumTypes(struct ASTContext*);
+struct ArgAST* generateGenericDefs(struct ASTContext*);
 
 #endif

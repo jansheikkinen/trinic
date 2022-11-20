@@ -79,7 +79,6 @@ static struct DeclarationAST* genFunctionHeader(struct ASTContext* ctx) {
           if(MATCH_TOKEN(ctx, TOKEN_ARROW)) {
             ctx->index += 1;
 
-            // TODO: implement returning generics
             struct TypeAST* returns = generateType(ctx);
             struct ArgAST* contracts = NULL, *generics = NULL;
 
@@ -89,7 +88,7 @@ static struct DeclarationAST* genFunctionHeader(struct ASTContext* ctx) {
             }
             if(MATCH_TOKEN(ctx, TOKEN_FOR)) {
               ctx->index += 1;
-              generics = generateGenericArguments(ctx);
+              generics = generateGenericDefs(ctx);
             }
 
             return

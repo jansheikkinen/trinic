@@ -68,6 +68,7 @@ enum StructTypes {
 struct StructType {
   enum StructTypes type;
   const char* name;
+  struct ArgAST* generics;
 };
 
 enum TypeASTTypes {
@@ -94,7 +95,8 @@ struct TypeAST* allocNewBaseType(enum BaseTypes, bool);
 struct TypeAST* allocNewBaseTypeStr(const char*, bool);
 struct TypeAST* allocNewPointerType(struct TypeAST*, bool);
 struct TypeAST* allocNewArrayType(struct TypeAST*, struct ExprAST*, bool);
-struct TypeAST* allocNewStructType(const char*, enum StructTypes, bool);
+struct TypeAST* allocNewStructType(const char*, enum StructTypes,
+    struct ArgAST*, bool);
 
 void freeTypeAST(struct TypeAST*);
 

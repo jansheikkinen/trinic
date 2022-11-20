@@ -7,6 +7,7 @@
 #include <stdio.h>
 
 #include "argumentAST.h"
+#include "declarationAST.h"
 #include "expressionAST.h"
 
 struct ArgAST* allocNewExprArgList(struct ExprList* args) {
@@ -65,6 +66,15 @@ struct SumArgType* allocNewSumArgTypeStr(const char* name) {
   return arg;
 }
 
+struct GenericDef* allocNewGenericDef(struct ArgAST* lv, struct ArgAST* rv) {
+  struct GenericDef* arg = malloc(sizeof(*arg));
+
+  arg->lvalue = lv;
+  arg->rvalue = rv;
+
+  return arg;
+}
+
 struct ArgAST* allocNewIdentifierArgList(void) {
   struct ArgAST* argast = malloc(sizeof(*argast));
 
@@ -110,6 +120,33 @@ struct ArgAST* allocNewSumArgTypeList(void) {
   return argast;
 }
 
+struct ArgAST* allocNewGenericDefLeft(void) {
+  struct ArgAST* argast = malloc(sizeof(*argast));
+
+  argast->type = ARG_GENERIC_DEFL;
+  NEW_ARRAYLIST(&argast->as.genleft);
+
+  return argast;
+}
+
+struct ArgAST* allocNewGenericDefRight(void) {
+  struct ArgAST* argast = malloc(sizeof(*argast));
+
+  argast->type = ARG_GENERIC_DEFR;
+  NEW_ARRAYLIST(&argast->as.genright);
+
+  return argast;
+}
+
+struct ArgAST* allocNewGenericDefs(void) {
+  struct ArgAST* argast = malloc(sizeof(*argast));
+
+  argast->type = ARG_GENERIC_DEFS;
+  NEW_ARRAYLIST(&argast->as.gendefs);
+
+  return argast;
+}
+
 static void freeIdentifierArg(struct IdentifierArg* arg) {
   if(arg->type) freeTypeAST(arg->type);
   free(arg);
@@ -132,6 +169,12 @@ static void freeSumArgType(struct SumArgType* arg) {
 
 static void freeSumArg(struct SumArg* arg) {
   if(arg->fields) freeArgAST(arg->fields);
+  free(arg);
+}
+
+static void freeGenDef(struct GenericDef* arg) {
+  if(arg->lvalue) freeArgAST(arg->lvalue);
+  if(arg->rvalue) freeArgAST(arg->rvalue);
   free(arg);
 }
 
@@ -166,9 +209,16 @@ static void printSumArg(const struct SumArg* arg) {
   }
 }
 
+static void printGenDef(const struct GenericDef* arg) {
+  if(arg->lvalue) printArgAST(arg->lvalue);
+  printf(": ");
+  if(arg->rvalue) printArgAST(arg->rvalue);
+}
+
 void freeArgAST(struct ArgAST* args) {
   switch(args->type) {
     case ARG_UNDEFINED:
+    case ARG_GENERIC_DEFL:
     case ARG_GENERIC: break;
     case ARG_EXPR:
       FREE_SELF_AND_MEMBERS(args->as.exprargs.args, freeExprNode); break;
@@ -180,6 +230,10 @@ void freeArgAST(struct ArgAST* args) {
       FREE_MEMBERS(&args->as.sums, freeSumArg); break;
     case ARG_SUMARGTYPE:
       FREE_MEMBERS(&args->as.sumtypes, freeSumArgType); break;
+    case ARG_GENERIC_DEFR:
+      FREE_MEMBERS(&args->as.genright, freeTypeAST); break;
+    case ARG_GENERIC_DEFS:
+      FREE_MEMBERS(&args->as.gendefs, freeGenDef); break;
   }
   free(args);
 }
@@ -215,6 +269,20 @@ void printArgAST(const struct ArgAST* args) {
     case ARG_GENERIC:
       for(size_t i = 0; i < args->as.generics.size; i++) {
         printf("%s, ", args->as.generics.members[i]);
+      } printf("\b\b  \b\b"); break;
+    case ARG_GENERIC_DEFL:
+      for(size_t i = 0; i < args->as.genleft.size; i++) {
+        printf("%s + ", args->as.genleft.members[i]);
+      } printf("\b\b\b   \b\b\b"); break;
+    case ARG_GENERIC_DEFR:
+      for(size_t i = 0; i < args->as.genright.size; i++) {
+        printTypeAST(args->as.genright.members[i]);
+        printf(" + ");
+      } printf("\b\b\b   \b\b\b"); break;
+    case ARG_GENERIC_DEFS:
+      for(size_t i = 0; i < args->as.gendefs.size; i++) {
+        printGenDef(args->as.gendefs.members[i]);
+        printf(", ");
       } printf("\b\b  \b\b"); break;
   }
 }

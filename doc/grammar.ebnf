@@ -53,10 +53,10 @@ call       = primary ("(" arguments? ")" | ("." | "->") IDENTIFIER)  ;
 primary    = "(" expression ")" | NUMBER | STRING | IDENTIFIER
             | "true" | "false" | "[" expression "]" expression;
 
-genericdefs = genericdef ( "," genericdef )* ;
-genericdef  = genericdefl  ":" genericdefr   ;
-genericdefl = IDENTIFIER ( "+" IDENTIFIER )* ;
-genericdefr = intrfctype ( "+" intrfctype )* ;
+genericdefs = genericdef  ( "," genericdef  )* ;
+genericdef  = genericdefl ( ":" genericdefr )  ;
+genericdefl = IDENTIFIER  ( "+" IDENTIFIER  )* ;
+genericdefr = intrfctype  ( "+" intrfctype  )* ;
 
 genericlist = "(" identifiers* ")" ;
 identifiers = IDENTIFIER ( "," IDENTIFIER )* ;
