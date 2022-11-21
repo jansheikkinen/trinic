@@ -10,26 +10,20 @@
 #define GET_CURRENT_TOKEN(ctx) ctx->tokens->tokens[ctx->index]
 #define MATCH_TOKEN(ctx, token) GET_CURRENT_TOKEN(ctx).type == token
 
-static struct StmtAST* genBuiltinNode(struct ASTContext* ctx) {
+static struct StmtAST* genBuiltinNode(struct ASTContext* ctx,
+    enum BuiltinType builtin) {
+  ctx->index += 1;
   struct StmtAST* stmt = NULL;
 
-  if(MATCH_TOKEN(ctx, TOKEN_PRINT)) {
+  struct ExprAST* parameter = NULL;
+  if(MATCH_TOKEN(ctx, TOKEN_LEFT_PAREN)) {
     ctx->index += 1;
-    if(MATCH_TOKEN(ctx, TOKEN_LEFT_PAREN)) {
-      ctx->index += 1;
-      struct ExprAST* parameter = generateExpression(ctx);
-
-      if(MATCH_TOKEN(ctx, TOKEN_RIGHT_PAREN)) {
-        ctx->index += 1;
-        stmt = allocNewBuiltin(BUILTIN_PRINT, parameter);
-      } else {
-        APPEND_ASTERROR(ctx, ASTERR_UNCLOSED_PAREN);
-      }
-    } else {
-      APPEND_ASTERROR(ctx, ASTERR_FUNC_NO_LEFT_PAREN);
-    }
+    parameter = generateExpression(ctx);
+    if(MATCH_TOKEN(ctx, TOKEN_RIGHT_PAREN)) ctx->index += 1;
+    else APPEND_ASTERROR(ctx, ASTERR_UNCLOSED_PAREN);
   }
 
+  stmt = allocNewBuiltin(builtin, parameter);
   return stmt;
 }
 
@@ -192,8 +186,16 @@ static struct StmtAST* genStmtNode(struct ASTContext* ctx) {
   else if(MATCH_TOKEN(ctx, TOKEN_WHILE)) stmt = genWhileNode(ctx);
   else {
     // These ones use . or ; as explicit terminator(not sure which yet)
-    if(MATCH_TOKEN(ctx, TOKEN_PRINT)) stmt = genBuiltinNode(ctx);
-    else if(MATCH_TOKEN(ctx, TOKEN_LET)) stmt = genVarDeclNode(ctx);
+    if(MATCH_TOKEN(ctx, TOKEN_PRINT))
+      stmt = genBuiltinNode(ctx, BUILTIN_PRINT);
+    else if(MATCH_TOKEN(ctx, TOKEN_RETURN))
+      stmt = genBuiltinNode(ctx, BUILTIN_RETURN);
+    else if(MATCH_TOKEN(ctx, TOKEN_CONTINUE))
+      stmt = genBuiltinNode(ctx, BUILTIN_CONTINUE);
+    else if(MATCH_TOKEN(ctx, TOKEN_BREAK))
+      stmt = genBuiltinNode(ctx, BUILTIN_BREAK);
+    else if(MATCH_TOKEN(ctx, TOKEN_LET))
+      stmt = genVarDeclNode(ctx);
     else stmt = genAssignmentNode(ctx); // THIS MUST BE LAST
 
     if(MATCH_TOKEN(ctx, TOKEN_SEMICOLON)) ctx->index += 1;

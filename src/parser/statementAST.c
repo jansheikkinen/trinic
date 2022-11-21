@@ -5,6 +5,11 @@
 #include "../error/panic.h"
 #include "statementAST.h"
 
+const char* builtinNames[] = {
+  "UNDEFINED BUILTIN",
+  "print", "return", "continue", "break"
+};
+
 static struct StmtAST newExpression(struct ExprAST* expr) {
   struct StmtAST stmt;
 
@@ -147,9 +152,10 @@ void printStmtAST(const struct StmtAST* stmt) {
     case STMT_EXPRESSION:
       printExprAST(stmt->as.expression.expression); break;
     case STMT_BUILTIN:
-      printf("BUILTIN_%d(", stmt->as.builtin.type);
-      printExprAST(stmt->as.builtin.parameter);
-      printf(")"); break;
+      printf("%s", builtinNames[stmt->as.builtin.type]);
+      if(stmt->as.builtin.parameter) {
+        printf("("); printExprAST(stmt->as.builtin.parameter); printf(")");
+      } break;
     case STMT_VARDECL:
       printf("let ");
       printArgAST(stmt->as.vardecl.lvalue);
@@ -198,7 +204,9 @@ void freeStmtNode(struct StmtAST* stmt) {
     case STMT_EXPRESSION:
       freeExprNode(stmt->as.expression.expression); break;
     case STMT_BUILTIN:
-      freeExprNode(stmt->as.builtin.parameter); break;
+      if(stmt->as.builtin.parameter)
+        freeExprNode(stmt->as.builtin.parameter);
+      break;
     case STMT_VARDECL:
       freeArgAST(stmt->as.vardecl.lvalue);
       freeArgAST(stmt->as.vardecl.rvalue); break;

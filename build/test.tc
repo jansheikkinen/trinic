@@ -5,7 +5,7 @@
 // been putting copies of this file into tests/, but for now they're just
 // available in the commit history lol
 
-/* Void Functions */
+/* Builtins */
 
 let x, y: int8 = 1, undefined
 
@@ -24,4 +24,6 @@ function voidfn(void) -> void do end
 function main(argc: usize, argv: ..struct String) -> usize do
   let x, y: int32 = 34, 35;
   1 + 2 * 3;
+  print; return; continue; break;
+  print("bals"); return(3); continue(1); break(0);
 end

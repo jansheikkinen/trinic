@@ -31,7 +31,7 @@ type        = "mut"? (basetype | variadtype| arraytype | pointertype
                ("(" sumlist ")")?) ;
 
 statement   = (expression | assignment | vardecl | conditional) ";" ;
-builtin     = ("print") "(" expression ")" ;
+builtin     = ("print" | "return" | "continue" | "break") ("("expression")")? ;
 vardecl     = "let" idargs "=" exprargs ;
 assignment  = exprargs assignops exprargs ;
 assignops   = "="  | "+="  | "-=" | "*="  | "/=" | "%="

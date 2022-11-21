@@ -10,10 +10,15 @@ struct ExprStmt {
   struct ExprAST* expression;
 };
 
-// TODO: Built-ins should be deleted later
 enum BuiltinType {
-  BUILTIN_PRINT,
+  BUILTIN_UNDEFINED,
+  BUILTIN_PRINT, // TODO: `print` should be part of std, not builtin
+  BUILTIN_RETURN,
+  BUILTIN_BREAK,
+  BUILTIN_CONTINUE,
 };
+
+extern const char* builtinNames[];
 
 // Built-ins only take a single argument
 struct BuiltinStmt {
