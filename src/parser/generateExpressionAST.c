@@ -47,7 +47,8 @@ static struct ExprAST* genPrimaryNode(struct ASTContext* ctx) {
         GET_CURRENT_TOKEN(ctx).literal);
   } else if(MATCH_TOKEN(ctx, TOKEN_IDENTIFIER_LITERAL)) {
     expr = allocNewVariable(GET_CURRENT_TOKEN(ctx).literal);
-
+  } else if(MATCH_TOKEN(ctx, TOKEN_RETURN)) {
+    expr = allocNewVariable("return");
   } else if(MATCH_TOKEN(ctx, TOKEN_LEFT_BRACKET)) {
     ctx->index += 1;
     struct ExprAST* index = generateExpression(ctx);

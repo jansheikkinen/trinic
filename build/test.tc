@@ -5,13 +5,13 @@
 // been putting copies of this file into tests/, but for now they're just
 // available in the commit history lol
 
-/* Builtins */
+/* Return contracts */
 
 let x, y: int8 = 1, undefined
 
 trait TestTrait
   function testFunction(x: T, y: V, z: Q) -> V
-    where y != 0
+    where y != 0, return > 5
     for T + V: trait Div + trait Display, Q: trait Display
 end
 

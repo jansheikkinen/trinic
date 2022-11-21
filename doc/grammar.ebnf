@@ -54,7 +54,8 @@ factor     = unary    ( ("*" | "/")                     unary    )*  ;
 unary      =      ("~" | "!" | "not" | "-" | "*" | "&") unary | call ;
 call       = primary ("(" arguments? ")" | ("." | "->") IDENTIFIER)*  ;
 primary    = "(" expression ")" | NUMBER | STRING | IDENTIFIER
-            | "true" | "false" | "[" expression "]" expression;
+            | "true" | "false" | "[" expression "]" expression
+            | "return" ; # only in function contracts, though
 
 genericdefs = genericdef  ( "," genericdef  )* ;
 genericdef  = genericdefl ( ":" genericdefr )  ;
