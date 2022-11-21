@@ -1,3 +1,28 @@
-function main(argc: usize) ->usize do
-  x->p = x<=cum
+/* test.tc */
+
+// I've mainly been using this file to write test cases directly related to
+// whatever I'm currently implementing. If I'm being honest, I *should* have
+// been putting copies of this file into tests/, but for now they're just
+// available in the commit history lol
+
+// Parsing of generics
+
+let x, y: int8 = 1, undefined
+
+trait TestTrait
+  function testFunction(x: T, y: V, z: Q) -> V
+    where y != 0
+    for T + V: trait Div + trait Display, Q: trait Display
+end
+
+struct TestStruct(T, V) tfield: T, vfield: V end
+union TestUnion(T, V) tfield: T, vfield: V end
+sum TestSum(T, V) tfield(T), vfield(V) end
+
+function main(argc: usize, argv: []struct String) -> usize do
+  let x: struct TestStruct(int32, int8),
+      y: union TestUnion(int32, int8),
+      z: sum TestSum(int32, int8) = undefined;
+  x(1 + 2)(3);
+  x.tfield->p, y.vfield = 3, 4;
 end

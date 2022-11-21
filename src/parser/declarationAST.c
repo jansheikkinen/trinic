@@ -48,6 +48,15 @@ struct DeclarationAST* allocNewFunction(const char* name, struct ArgAST* args,
   return ast;
 }
 
+struct DeclarationAST* allocNewVarDeclDecl(struct StmtAST* stmt) {
+  struct DeclarationAST* ast = malloc(sizeof(*ast));
+
+  ast->type = DECLARATION_VARIABLE;
+  ast->as.vardecl = stmt;
+
+  return ast;
+}
+
 void freeDeclarationAST(struct DeclarationAST* ast) {
   switch(ast->type) {
     case DECLARATION_UNDEFINED: break;
@@ -72,6 +81,8 @@ void freeDeclarationAST(struct DeclarationAST* ast) {
       if(ast->as.function.body)
         freeStmtList(ast->as.function.body);
       break;
+    case DECLARATION_VARIABLE:
+      freeStmtNode(ast->as.vardecl); break;
   }
 
   free(ast);
@@ -140,6 +151,8 @@ void printDeclarationAST(const struct DeclarationAST* ast) {
         printf(" do\n  ");
         printStmtList(ast->as.function.body);
         printf("\b\bend\n\n");
-      }
+      } break;
+    case DECLARATION_VARIABLE:
+      printStmtAST(ast->as.vardecl); printf("\n\n"); break;
   }
 }

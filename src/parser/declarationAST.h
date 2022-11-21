@@ -3,6 +3,7 @@
 
 #include "stmtlist.h"
 #include "argumentAST.h"
+#include "statementAST.h"
 
 enum DeclarationTypes {
   DECLARATION_UNDEFINED,
@@ -12,6 +13,7 @@ enum DeclarationTypes {
   DECLARATION_SUM,
   DECLARATION_INTERFACE,
   DECLARATION_FUNCTION,
+  DECLARATION_VARIABLE,
 };
 
 // Includes struct, union, enum, sum, interface
@@ -37,6 +39,7 @@ struct DeclarationAST {
     struct StructureAST structure;
     struct DeclarationList* interface;
     struct FunctionAST function;
+    struct StmtAST* vardecl;
   } as;
   struct ArgAST* fields;
 };
@@ -50,6 +53,7 @@ struct DeclarationAST* allocNewEnum(const char*, struct ArgAST*,
 struct DeclarationAST* allocNewSum(const char*, struct ArgAST*,
     struct ArgAST*);
 struct DeclarationAST* allocNewInterface(const char*, struct DeclarationList*);
+struct DeclarationAST* allocNewVarDeclDecl(struct StmtAST*);
 
 struct DeclarationAST* allocNewFunction(const char*, struct ArgAST*,
     struct TypeAST*, struct ArgAST*, struct ArgAST*, struct StmtList*);

@@ -153,5 +153,7 @@ struct DeclarationAST* generateDeclaration(struct ASTContext* ctx) {
   else if(MATCH_TOKEN(ctx, TOKEN_SUM)) return genSum(ctx);
   else if(MATCH_TOKEN(ctx, TOKEN_INTERFACE)) return genInterface(ctx);
   else if(MATCH_TOKEN(ctx, TOKEN_FUNCTION)) return genFunction(ctx);
+  else if(MATCH_TOKEN(ctx, TOKEN_LET))
+    return allocNewVarDeclDecl(generateStatement(ctx));
   else return NULL;
 }
