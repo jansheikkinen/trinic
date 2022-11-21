@@ -6,7 +6,10 @@ SRC = $(wildcard src/*.c) $(wildcard src/**/*.c)
 OBJ = $(SRC:.c=.o)
 BUILD = build
 
-all: dirs tc
+intercept: clean
+	intercept-build --append make tc
+
+all: clear dirs clean run
 
 dirs:
 	mkdir -p $(BUILD) src tests
@@ -23,3 +26,6 @@ tc: $(OBJ)
 clean:
 	find build/ -type f ! -name '*.tc' -delete
 	rm -Rf $(OBJ)
+
+clear:
+	clear

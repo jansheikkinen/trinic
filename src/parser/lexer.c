@@ -119,7 +119,7 @@ static void lexAmbiguousOperator(struct LexerContext* td) {
 
         td->index += 1;
         nextToken(td);
-      } else newAmbiguousArithOp(td, '/', TOKEN_SLASH);
+      } else newAmbiguousArithOp(td, '=', TOKEN_SLASH);
       break;
 
     case '-':

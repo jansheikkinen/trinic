@@ -43,10 +43,12 @@ static struct StmtAST newVarDecl(struct ArgAST* lvalue, struct ArgAST* rvalue) {
   return stmt;
 }
 
-static struct StmtAST newAssign(struct ArgAST* lvalue, struct ArgAST* rvalue) {
+static struct StmtAST newAssign(enum TokenType op, struct ArgAST* lvalue,
+    struct ArgAST* rvalue) {
   struct StmtAST stmt;
 
   struct VarAssignStmt assign;
+  assign.op = op;
   assign.lvalue = lvalue;
   assign.rvalue = rvalue;
 
@@ -118,8 +120,9 @@ struct StmtAST* allocNewVarDecl(struct ArgAST* lvalue, struct ArgAST* rvalue) {
   ALLOC_NODE(newVarDecl, lvalue, rvalue);
 }
 
-struct StmtAST* allocNewAssign(struct ArgAST* lvalue, struct ArgAST* rvalue) {
-  ALLOC_NODE(newAssign, lvalue, rvalue);
+struct StmtAST* allocNewAssign(enum TokenType op, struct ArgAST* lvalue,
+    struct ArgAST* rvalue) {
+  ALLOC_NODE(newAssign, op, lvalue, rvalue);
 }
 
 struct StmtAST* allocNewConditional(struct ExprAST* condition,
@@ -155,7 +158,7 @@ void printStmtAST(const struct StmtAST* stmt) {
       break;
     case STMT_VARASSIGN:
       printArgAST(stmt->as.assignment.lvalue);
-      printf(" = ");
+      printf(" %s ", getTokenName(stmt->as.assignment.op));
       printArgAST(stmt->as.assignment.rvalue);
       break;
     case STMT_CONDITIONAL:

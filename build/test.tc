@@ -5,7 +5,7 @@
 // been putting copies of this file into tests/, but for now they're just
 // available in the commit history lol
 
-/* Reference, Dereference, and Variadic Operators */
+/* OP Assign Syntax(i.e. x += 1) */
 
 let x, y: int8 = 1, undefined
 
@@ -20,7 +20,16 @@ union TestUnion(T, V) tfield: T, vfield: V end
 sum TestSum(T, V) tfield(T), vfield(V) end
 
 function main(argc: usize, argv: ..struct String) -> usize do
-  let x: struct TestStruct = undefined;
-  let y: *struct TestStruct = &x;
-  let z: struct TestStruct = *y;
+  let x, y: int32 = 34, 35;
+  x += y;
+  x, y -= y, x;
+  x, y *= y, x;
+  x, y /= y, x;
+  x, y %= y, x;
+  x, y &= y, x;
+  x, y |= y, x;
+  x, y ^= y, x;
+  x, y <<= y, x;
+  x, y >>= y, x;
+  x, y = y, x;
 end

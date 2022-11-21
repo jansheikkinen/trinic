@@ -58,11 +58,22 @@ static struct StmtAST* genAssignmentNode(struct ASTContext* ctx) {
   struct ExprAST* expr = generateExpression(ctx);
   struct ArgAST* lvalue = generateExpressionArgumentsWithFirst(ctx, expr);
 
-  if(MATCH_TOKEN(ctx, TOKEN_ASSIGN)) {
+  if(MATCH_TOKEN(ctx, TOKEN_ASSIGN)
+      || MATCH_TOKEN(ctx, TOKEN_ADD_ASSIGN)
+      || MATCH_TOKEN(ctx, TOKEN_MINUS_ASSIGN)
+      || MATCH_TOKEN(ctx, TOKEN_STAR_ASSIGN)
+      || MATCH_TOKEN(ctx, TOKEN_SLASH_ASSIGN)
+      || MATCH_TOKEN(ctx, TOKEN_MOD_ASSIGN)
+      || MATCH_TOKEN(ctx, TOKEN_BIT_AND_ASSIGN)
+      || MATCH_TOKEN(ctx, TOKEN_BIT_OR_ASSIGN)
+      || MATCH_TOKEN(ctx, TOKEN_BIT_XOR_ASSIGN)
+      || MATCH_TOKEN(ctx, TOKEN_BIT_LEFT_ASSIGN)
+      || MATCH_TOKEN(ctx, TOKEN_BIT_RIGHT_ASSIGN)) {
+    enum TokenType op = GET_CURRENT_TOKEN(ctx).type;
     ctx->index += 1;
 
     struct ArgAST* rvalue = generateExpressionArguments(ctx);
-    stmt = allocNewAssign(lvalue, rvalue);
+    stmt = allocNewAssign(op, lvalue, rvalue);
   } else return allocNewExpression(expr);
 
   return stmt;

@@ -33,7 +33,9 @@ type        = "mut"? (basetype | variadtype| arraytype | pointertype
 statement   = (expression | assignment | vardecl | conditional) ";" ;
 builtin     = ("print") "(" expression ")" ;
 vardecl     = "let" idargs "=" exprargs ;
-assignment  = exprargs "=" exprargs ;
+assignment  = exprargs assignops exprargs ;
+assignops   = "="  | "+="  | "-=" | "*="  | "/=" | "%="
+            | "&=" | "|=", | "^=" | "<<=" | ">>=" ;
 conditional = "if" expression "do" statement*
               ( "end" | "else" (statement* "end" | conditional) ) ;
 loop        = "loop" statement* "end" ;
