@@ -70,30 +70,30 @@ static struct DeclarationAST* genFunctionHeader(struct ASTContext* ctx) {
     if(MATCH_TOKEN(ctx, TOKEN_LEFT_PAREN)) {
       ctx->index += 1;
 
-      if(!MATCH_TOKEN(ctx, TOKEN_VOID)) {
-        struct ArgAST* args = generateIdentifierArguments(ctx);
+      struct ArgAST* args = NULL;
+      if(MATCH_TOKEN(ctx, TOKEN_VOID)) ctx->index += 1;
+      else args = generateIdentifierArguments(ctx);
 
-        if(MATCH_TOKEN(ctx, TOKEN_RIGHT_PAREN)) {
+      if(MATCH_TOKEN(ctx, TOKEN_RIGHT_PAREN)) {
+        ctx->index += 1;
+
+        if(MATCH_TOKEN(ctx, TOKEN_ARROW)) {
           ctx->index += 1;
 
-          if(MATCH_TOKEN(ctx, TOKEN_ARROW)) {
+          struct TypeAST* returns = generateType(ctx);
+          struct ArgAST* contracts = NULL, *generics = NULL;
+
+          if(MATCH_TOKEN(ctx, TOKEN_WHERE)) {
             ctx->index += 1;
-
-            struct TypeAST* returns = generateType(ctx);
-            struct ArgAST* contracts = NULL, *generics = NULL;
-
-            if(MATCH_TOKEN(ctx, TOKEN_WHERE)) {
-              ctx->index += 1;
-              contracts = generateExpressionArguments(ctx);
-            }
-            if(MATCH_TOKEN(ctx, TOKEN_FOR)) {
-              ctx->index += 1;
-              generics = generateGenericDefs(ctx);
-            }
-
-            return
-              allocNewFunction(name, args, returns, contracts, generics, NULL);
+            contracts = generateExpressionArguments(ctx);
           }
+          if(MATCH_TOKEN(ctx, TOKEN_FOR)) {
+            ctx->index += 1;
+            generics = generateGenericDefs(ctx);
+          }
+
+          return
+            allocNewFunction(name, args, returns, contracts, generics, NULL);
         }
       }
     }

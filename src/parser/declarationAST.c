@@ -133,7 +133,7 @@ void printDeclarationAST(const struct DeclarationAST* ast) {
       printf("function %s(", ast->name);
 
       if(ast->as.function.args) printArgAST(ast->as.function.args);
-      else printf("void");
+      else printf("VOID");
 
       printf(") -> ");
       if(ast->as.function.returns) printTypeAST(ast->as.function.returns);

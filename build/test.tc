@@ -5,7 +5,7 @@
 // been putting copies of this file into tests/, but for now they're just
 // available in the commit history lol
 
-/* OP Assign Syntax(i.e. x += 1) */
+/* Void Functions */
 
 let x, y: int8 = 1, undefined
 
@@ -19,17 +19,9 @@ struct TestStruct(T, V) tfield: T, vfield: V end
 union TestUnion(T, V) tfield: T, vfield: V end
 sum TestSum(T, V) tfield(T), vfield(V) end
 
+function voidfn(void) -> void do end
+
 function main(argc: usize, argv: ..struct String) -> usize do
   let x, y: int32 = 34, 35;
-  x += y;
-  x, y -= y, x;
-  x, y *= y, x;
-  x, y /= y, x;
-  x, y %= y, x;
-  x, y &= y, x;
-  x, y |= y, x;
-  x, y ^= y, x;
-  x, y <<= y, x;
-  x, y >>= y, x;
-  x, y = y, x;
+  1 + 2 * 3;
 end

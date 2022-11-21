@@ -186,9 +186,11 @@ void printExprAST(const struct ExprAST* ast) {
       printf("%s", getTokenName(ast->as.unary.operation));
       printExprAST(ast->as.unary.operand); break;
     case EXPR_BINARY:
+      printf("(");
       printExprAST(ast->as.binary.left);
       printf(" %s ", getTokenName(ast->as.binary.operation));
-      printExprAST(ast->as.binary.right); break;
+      printExprAST(ast->as.binary.right);
+      printf(")"); break;
     case EXPR_VARIABLE:
       printf("%s", ast->as.variable.identifier); break;
     case EXPR_GROUPING:
