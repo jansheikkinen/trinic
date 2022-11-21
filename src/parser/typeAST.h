@@ -44,6 +44,11 @@ struct BaseType {
   } as;
 };
 
+// ..int8
+struct VariadicType {
+  struct TypeAST* type;
+};
+
 // int8*
 struct PtrType {
   struct TypeAST* type;
@@ -74,17 +79,18 @@ struct StructType {
 enum TypeASTTypes {
   TYPE_UNDEFINED,
   TYPE_BASE,
+  TYPE_VARIADIC,
   TYPE_ARRAY,
   TYPE_PTR,
   TYPE_STRUCT
 };
 
-// TODO: char** is broken
 struct TypeAST {
   enum TypeASTTypes type;
   bool ismutable;
   union {
     struct BaseType base;
+    struct VariadicType variadic;
     struct PtrType pointer;
     struct ArrayType array;
     struct StructType structure;
@@ -93,6 +99,7 @@ struct TypeAST {
 
 struct TypeAST* allocNewBaseType(enum BaseTypes, bool);
 struct TypeAST* allocNewBaseTypeStr(const char*, bool);
+struct TypeAST* allocNewVariadicType(struct TypeAST*, bool);
 struct TypeAST* allocNewPointerType(struct TypeAST*, bool);
 struct TypeAST* allocNewArrayType(struct TypeAST*, struct ExprAST*, bool);
 struct TypeAST* allocNewStructType(const char*, enum StructTypes,

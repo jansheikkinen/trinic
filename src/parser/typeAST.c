@@ -28,6 +28,16 @@ struct TypeAST* allocNewBaseTypeStr(const char* name, bool mutable) {
   return ast;
 }
 
+struct TypeAST* allocNewVariadicType(struct TypeAST* base, bool mutable) {
+  struct TypeAST* ast = malloc(sizeof(*ast));
+
+  ast->type = TYPE_VARIADIC;
+  ast->ismutable = mutable;
+  ast->as.variadic.type = base;
+
+  return ast;
+}
+
 struct TypeAST* allocNewPointerType(struct TypeAST* base, bool mutable) {
   struct TypeAST* ast = malloc(sizeof(*ast));
 
@@ -68,6 +78,8 @@ void freeTypeAST(struct TypeAST* ast) {
   switch(ast->type) {
     case TYPE_UNDEFINED:
     case TYPE_BASE: break;
+    case TYPE_VARIADIC:
+      freeTypeAST(ast->as.variadic.type); break;
     case TYPE_STRUCT:
       if(ast->as.structure.generics) freeArgAST(ast->as.structure.generics);
       break;
@@ -95,6 +107,8 @@ void printTypeAST(const struct TypeAST* ast) {
         case BTT_TYPE:
           printf("%s", getTokenName(TOKEN_FALSE + ast->as.base.as.type)); break;
       } break;
+    case TYPE_VARIADIC:
+      printf(".."); printTypeAST(ast->as.variadic.type); break;
     case TYPE_PTR:
       printf("*");
       printTypeAST(ast->as.pointer.type);

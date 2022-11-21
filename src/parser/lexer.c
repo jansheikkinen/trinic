@@ -32,7 +32,6 @@ static void lexUnambiguousOperator(struct LexerContext* td) {
     case '[': newNonLiteral(td, TOKEN_LEFT_BRACKET);  break;
     case ']': newNonLiteral(td, TOKEN_RIGHT_BRACKET); break;
     case ',': newNonLiteral(td, TOKEN_COMMA);         break;
-    case '.': newNonLiteral(td, TOKEN_DOT);           break;
     case '?': newNonLiteral(td, TOKEN_QUESTION);      break;
     case '@': newNonLiteral(td, TOKEN_AT);            break;
     case '#': newNonLiteral(td, TOKEN_HASHTAG);       break;
@@ -45,9 +44,11 @@ static void lexUnambiguousOperator(struct LexerContext* td) {
 // THIS DEPENDS ON THE ENUM ORDERING THE TWO TOKEN TYPES AS:
 // OP, OP_ASSIGN,
 // DO NOT FUCK THAT UP
-static void newAmbiguousArithOp(struct LexerContext* td, enum TokenType tokenType) {
-  if(peek(td) == '=') { newNonLiteral(td, tokenType + 1); td->index += 1; }
-  else newNonLiteral(td, tokenType);
+static void newAmbiguousArithOp(struct LexerContext* td, char next,
+    enum TokenType tokenType) {
+  if(peek(td) == next) {
+    newNonLiteral(td, tokenType + 1); td->index += 1;  td->tokenStart += 1;
+  } else newNonLiteral(td, tokenType);
 }
 
 // Tokens that correspond to operators that *are* ambiguous just from
@@ -118,7 +119,7 @@ static void lexAmbiguousOperator(struct LexerContext* td) {
 
         td->index += 1;
         nextToken(td);
-      } else newAmbiguousArithOp(td, TOKEN_SLASH);
+      } else newAmbiguousArithOp(td, '/', TOKEN_SLASH);
       break;
 
     case '-':
@@ -130,13 +131,14 @@ static void lexAmbiguousOperator(struct LexerContext* td) {
         td->index += 1; td->tokenStart += 1;
       } else newNonLiteral(td, TOKEN_MINUS); break;
 
-    case '+': newAmbiguousArithOp(td, TOKEN_ADD);     break;
-    case '*': newAmbiguousArithOp(td, TOKEN_STAR);    break;
-    case '%': newAmbiguousArithOp(td, TOKEN_MOD);     break;
-    case '!': newAmbiguousArithOp(td, TOKEN_BANG);    break;
-    case '&': newAmbiguousArithOp(td, TOKEN_BIT_AND); break;
-    case '|': newAmbiguousArithOp(td, TOKEN_BIT_OR);  break;
-    case '^': newAmbiguousArithOp(td, TOKEN_BIT_XOR); break;
+    case '+': newAmbiguousArithOp(td, '=', TOKEN_ADD);     break;
+    case '.': newAmbiguousArithOp(td, '.', TOKEN_DOT);     break;
+    case '*': newAmbiguousArithOp(td, '=', TOKEN_STAR);    break;
+    case '%': newAmbiguousArithOp(td, '=', TOKEN_MOD);     break;
+    case '!': newAmbiguousArithOp(td, '=', TOKEN_BANG);    break;
+    case '&': newAmbiguousArithOp(td, '=', TOKEN_BIT_AND); break;
+    case '|': newAmbiguousArithOp(td, '=', TOKEN_BIT_OR);  break;
+    case '^': newAmbiguousArithOp(td, '=', TOKEN_BIT_XOR); break;
   }
 }
 

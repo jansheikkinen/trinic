@@ -50,6 +50,12 @@ static struct TypeAST* generateBaseType(struct ASTContext* ctx,
   return NULL;
 }
 
+static struct TypeAST* generateVariadicType(struct ASTContext* ctx,
+    bool ismutable) {
+  ctx->index += 1;
+  return allocNewVariadicType(generateType(ctx), ismutable);
+}
+
 static struct TypeAST* generatePointerType(struct ASTContext* ctx,
     bool ismutable) {
   ctx->index += 1;
@@ -90,6 +96,8 @@ struct TypeAST* generateType(struct ASTContext* ctx) {
     return generateStructType(ctx, STRUCT_SUM, ismutable);
   else if(MATCH_TOKEN(ctx, TOKEN_INTERFACE))
     return generateStructType(ctx, STRUCT_INTERFACE, ismutable);
+  else if(MATCH_TOKEN(ctx, TOKEN_DOT_DOT))
+    return generateVariadicType(ctx, ismutable);
   else if(MATCH_TOKEN(ctx, TOKEN_STAR))
     return generatePointerType(ctx, ismutable);
   else if(MATCH_TOKEN(ctx, TOKEN_LEFT_BRACKET))

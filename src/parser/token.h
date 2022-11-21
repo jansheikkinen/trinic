@@ -12,7 +12,6 @@ enum TokenType {
   TOKEN_LEFT_BRACKET,  // [
   TOKEN_RIGHT_BRACKET, // ]
   TOKEN_COMMA,    // ,
-  TOKEN_DOT,      // .
   TOKEN_QUESTION, // ?
   TOKEN_AT,       // @
   TOKEN_HASHTAG,  // #
@@ -37,6 +36,9 @@ enum TokenType {
 
   TOKEN_ADD,              // +
   TOKEN_ADD_ASSIGN,       // +=
+
+  TOKEN_DOT,              // .
+  TOKEN_DOT_DOT,          // ..
 
   TOKEN_MINUS,            // -
   TOKEN_MINUS_ASSIGN,     // -=

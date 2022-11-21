@@ -106,7 +106,9 @@ static struct ExprAST* genUnaryNode(struct ASTContext* ctx) {
   if(MATCH_TOKEN(ctx, TOKEN_TILDE)
       || MATCH_TOKEN(ctx, TOKEN_BANG)
       || MATCH_TOKEN(ctx, TOKEN_NOT)
-      || MATCH_TOKEN(ctx, TOKEN_MINUS)) {
+      || MATCH_TOKEN(ctx, TOKEN_MINUS)
+      || MATCH_TOKEN(ctx, TOKEN_STAR)
+      || MATCH_TOKEN(ctx, TOKEN_BIT_AND)) {
     enum TokenType operator = GET_CURRENT_TOKEN(ctx).type;
     ctx->index += 1;
     struct ExprAST* operand = genUnaryNode(ctx);
