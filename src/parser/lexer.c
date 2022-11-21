@@ -58,27 +58,38 @@ static void lexAmbiguousOperator(struct LexerContext* td) {
     case '<':
       if(peek(td) == '<') {
         if(over(td) == '=') {
-          newNonLiteral(td, TOKEN_BIT_LEFT_ASSIGN); td->index += 2;
-        } else { newNonLiteral(td, TOKEN_BIT_LEFT); td->index += 1; }
-      } else if(peek(td) == '=') { newNonLiteral(td, TOKEN_LESS_EQ); td->index += 1; }
-      else newNonLiteral(td, TOKEN_LEFT_DIAMOND);
+          newNonLiteral(td, TOKEN_BIT_LEFT_ASSIGN);
+          td->index += 2; td->tokenStart += 2;
+        } else {
+          newNonLiteral(td, TOKEN_BIT_LEFT);
+          td->index += 1; td->tokenStart += 1;
+        }
+      } else if(peek(td) == '=') {
+        newNonLiteral(td, TOKEN_LESS_EQ); td->index += 1; td->tokenStart += 1;
+      } else newNonLiteral(td, TOKEN_LEFT_DIAMOND);
       break;
     case '>':
       if(peek(td) == '>') {
         if(over(td) == '=') {
-          newNonLiteral(td, TOKEN_BIT_RIGHT_ASSIGN); td->index += 2;
-        } else { newNonLiteral(td, TOKEN_BIT_RIGHT); td->index += 1; }
-      } else if(peek(td) == '=') newNonLiteral(td, TOKEN_GREATER_EQ);
-      else newNonLiteral(td, TOKEN_RIGHT_DIAMOND);
+          newNonLiteral(td, TOKEN_BIT_RIGHT_ASSIGN);
+          td->index += 2; td->tokenStart += 2;
+        } else {
+          newNonLiteral(td, TOKEN_BIT_RIGHT);
+          td->index += 1; td->tokenStart += 1;
+        }
+      } else if(peek(td) == '=') {
+        newNonLiteral(td, TOKEN_GREATER_EQ);
+        td->index += 1; td->tokenStart += 1;
+      } else newNonLiteral(td, TOKEN_RIGHT_DIAMOND);
       break;
 
     case '=':
       if(peek(td) == '=') {
         newNonLiteral(td, TOKEN_EQUAL);
-        td->index += 1;
+        td->index += 1; td->tokenStart += 1;
       } else if(peek(td) == '>') {
         newNonLiteral(td, TOKEN_MATCH_ARROW);
-        td->index += 1;
+        td->index += 1; td->tokenStart += 1;
       } else newNonLiteral(td, TOKEN_ASSIGN);
       break;
 
@@ -113,10 +124,10 @@ static void lexAmbiguousOperator(struct LexerContext* td) {
     case '-':
       if(peek(td) == '>') {
         newNonLiteral(td, TOKEN_ARROW);
-        td->index += 1;
+        td->index += 1; td->tokenStart += 1;
       } else if(peek(td) == '=') {
         newNonLiteral(td, TOKEN_MINUS_ASSIGN);
-        td->index += 1;
+        td->index += 1; td->tokenStart += 1;
       } else newNonLiteral(td, TOKEN_MINUS); break;
 
     case '+': newAmbiguousArithOp(td, TOKEN_ADD);     break;

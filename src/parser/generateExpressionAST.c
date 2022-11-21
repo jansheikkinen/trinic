@@ -74,30 +74,32 @@ static struct ExprAST* genPrimaryNode(struct ASTContext* ctx) {
 }
 
 static struct ExprAST* genCallNode(struct ASTContext* ctx) {
-  struct ExprAST* primary = genPrimaryNode(ctx);
+  struct ExprAST* expr = genPrimaryNode(ctx);
 
-  if(MATCH_TOKEN(ctx, TOKEN_LEFT_PAREN)) {
-    ctx->index += 1;
-    struct ArgAST* args = generateExpressionArguments(ctx);
-
-    if(MATCH_TOKEN(ctx, TOKEN_RIGHT_PAREN)) {
+  while(ctx->index < ctx->tokens->length) {
+    if(MATCH_TOKEN(ctx, TOKEN_LEFT_PAREN)) {
       ctx->index += 1;
-      return allocNewCall(primary, args);
-    } else {
-      APPEND_ASTERROR(ctx, ASTERR_UNCLOSED_PAREN);
-      freeArgAST(args);
-    }
-  } else if(MATCH_TOKEN(ctx, TOKEN_DOT) || MATCH_TOKEN(ctx, TOKEN_ARROW)) {
-    bool isPointer = MATCH_TOKEN(ctx, TOKEN_ARROW);
-    ctx->index += 1;
+      struct ArgAST* args = generateExpressionArguments(ctx);
 
-    if(MATCH_TOKEN(ctx, TOKEN_IDENTIFIER_LITERAL)) {
-      const char* identifier = GET_CURRENT_TOKEN(ctx).literal;
+      if(MATCH_TOKEN(ctx, TOKEN_RIGHT_PAREN)) {
+        ctx->index += 1;
+        expr = allocNewCall(expr, args);
+      } else {
+        APPEND_ASTERROR(ctx, ASTERR_UNCLOSED_PAREN);
+        freeArgAST(args);
+      }
+    } else if(MATCH_TOKEN(ctx, TOKEN_DOT) || MATCH_TOKEN(ctx, TOKEN_ARROW)) {
+      bool isPointer = MATCH_TOKEN(ctx, TOKEN_ARROW);
       ctx->index += 1;
-      return allocNewGet(isPointer, identifier, primary);
-    }
+
+      if(MATCH_TOKEN(ctx, TOKEN_IDENTIFIER_LITERAL)) {
+        const char* identifier = GET_CURRENT_TOKEN(ctx).literal;
+        ctx->index += 1;
+        expr = allocNewGet(isPointer, identifier, expr);
+      }
+    } else break;
   }
-  return primary;
+  return expr;
 }
 
 static struct ExprAST* genUnaryNode(struct ASTContext* ctx) {
