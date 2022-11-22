@@ -84,7 +84,7 @@ static struct StmtAST* genConditionalNode(struct ASTContext* ctx) {
     *body = newStmtList();
 
     enum ConditionalElseTypes type = CONDELSE_NONE;
-    union ConditionalElse elseBranch;
+    union ConditionalElse elseBranch = { NULL };
 
     while(ctx->index < ctx->tokens->length) {
       if(MATCH_TOKEN(ctx, TOKEN_END)) {

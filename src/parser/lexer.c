@@ -220,8 +220,8 @@ static void lexKeyword(struct LexerContext* td) {
 
   for(enum TokenType tt = TOKEN_TRUE; tt < TOKEN_PRINT + 1; tt++) { // cursed
     const char* c = getTokenName(tt);
-    char* cmpToken = calloc(strlen(c), 1);
-    strncpy(cmpToken, c, strlen(c));
+    char* cmpToken = calloc(sizeof(char), strlen(c));
+    strcpy(cmpToken, c);
 
     if(streq(keyword, strlower(cmpToken))) {
       newNonLiteral(td, tt);
