@@ -230,7 +230,8 @@ static void lexKeyword(struct LexerContext* td) {
     } else free(cmpToken);
   }
 
-  newLiteralToken(td, TOKEN_IDENTIFIER_LITERAL, keyword);
+  if(!streq(keyword, "please"))
+    newLiteralToken(td, TOKEN_IDENTIFIER_LITERAL, keyword);
 }
 
 // I could have definitely written the tokeniser more efficiently;

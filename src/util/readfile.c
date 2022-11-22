@@ -8,7 +8,7 @@ size_t getFileSize(FILE* file) {
   fseek(file, 0, SEEK_END);
   size_t filesize = ftell(file);
   fseek(file, 0, SEEK_SET);
-  return filesize;
+  return filesize + 1;
 }
 
 char* readFile(const char* filename) {

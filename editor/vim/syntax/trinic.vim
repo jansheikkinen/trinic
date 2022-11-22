@@ -32,6 +32,7 @@ syn keyword trinicStatement if else while loop for do end let where in match
   \ struct enum union sum trait function return impl continue break
 
 syn keyword trinicTodo contained TODO FIXME NOTE
+syn keyword trinicComment please
 syn match   trinicComment "//.*$" contains=trinicTodo
 syn region  trinicComment start="/\*" end="\*/"
 

@@ -29,11 +29,11 @@ end
 impl trait ToString for struct Vector2(T)
   function tostring(self: *Self) -> struct String for T: trait ToString do
     // makeString() will probably be a macro in implementation
-    return makeString("({}, {})", self->x, self->y)
+    return makeString("({}, {})", please self->x, self->y)
   end
 end
 
 function main(argc: usize, argv: ..struct String) -> usize do
-  let x, y: struct Vector2(float32) = { 3.5, 3.4 }, { 3.4, 3.5 }
+  please let x, y: struct Vector2(float32) = { 3.5, 3.4 }, { 3.4, 3.5 }
   println("{} + {} = {}", x, y, add(x, y));
 end
