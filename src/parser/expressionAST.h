@@ -16,7 +16,8 @@ enum ExprASTType {
   EXPR_GROUPING,
   EXPR_CALL,
   EXPR_GET,
-  EXPR_ARRAY,
+  EXPR_ARRAY_INDEX,
+  EXPR_ARRAY_INIT,
 };
 
 enum LiteralType {
@@ -75,9 +76,13 @@ struct GroupingExpression {
   struct ExprAST* expression;
 };
 
-struct ArrayExpression {
+struct ArrayIndexExpression {
   struct ExprAST* index;
   struct ExprAST* identifier;
+};
+
+struct ArrayInitExpression {
+  struct ArgAST* args;
 };
 
 struct ExprAST {
@@ -90,7 +95,8 @@ struct ExprAST {
     struct CallExpression call;
     struct GetExpression get;
     struct GroupingExpression grouping;
-    struct ArrayExpression array;
+    struct ArrayIndexExpression arrindex;
+    struct ArrayInitExpression arrinit;
   } as;
 };
 
@@ -101,7 +107,8 @@ struct ExprAST* allocNewVariable(const char* identifier);
 struct ExprAST* allocNewCall(struct ExprAST*, struct ArgAST*);
 struct ExprAST* allocNewGet(bool, const char*, struct ExprAST*);
 struct ExprAST* allocNewGrouping(struct ExprAST*);
-struct ExprAST* allocNewArray(struct ExprAST*, struct ExprAST*);
+struct ExprAST* allocNewArrayIndex(struct ExprAST*, struct ExprAST*);
+struct ExprAST* allocNewArrayInit(struct ArgAST*);
 struct ExprAST* allocNewUndefined(void);
 
 #define ALLOC_NEW_LITERAL(type, vtype, value) \

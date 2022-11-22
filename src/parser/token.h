@@ -11,6 +11,8 @@ enum TokenType {
   TOKEN_RIGHT_PAREN,   // )
   TOKEN_LEFT_BRACKET,  // [
   TOKEN_RIGHT_BRACKET, // ]
+  TOKEN_LEFT_CURLY,    // {
+  TOKEN_RIGHT_CURLY,   // }
   TOKEN_COMMA,    // ,
   TOKEN_QUESTION, // ?
   TOKEN_AT,       // @

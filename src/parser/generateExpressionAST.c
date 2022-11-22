@@ -56,9 +56,15 @@ static struct ExprAST* genPrimaryNode(struct ASTContext* ctx) {
       ctx->index += 1;
       struct ExprAST* identifier = generateExpression(ctx);
       ctx->index -= 1;
-      expr = allocNewArray(index, identifier);
+      expr = allocNewArrayIndex(index, identifier);
     }
+  } else if(MATCH_TOKEN(ctx, TOKEN_LEFT_CURLY)) {
+    ctx->index += 1;
 
+    struct ArgAST* args = generateExpressionArguments(ctx);
+
+    if(MATCH_TOKEN(ctx, TOKEN_RIGHT_CURLY))
+      expr = allocNewArrayInit(args);
   } else if(MATCH_TOKEN(ctx, TOKEN_LEFT_PAREN)) {
     ctx->index += 1;
     struct ExprAST* exprast = generateExpression(ctx);

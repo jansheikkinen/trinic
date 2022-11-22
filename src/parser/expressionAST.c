@@ -84,6 +84,18 @@ static struct ExprAST newGrouping(struct ExprAST* expression) {
   return expr;
 }
 
+static struct ExprAST newArrayInit(struct ArgAST* args) {
+  struct ExprAST expr;
+
+  struct ArrayInitExpression arr;
+  arr.args = args;
+
+  expr.type = EXPR_ARRAY_INIT;
+  expr.as.arrinit = arr;
+
+  return expr;
+}
+
 static struct ExprAST newUndefined(void) {
   struct ExprAST expr;
 
@@ -149,6 +161,13 @@ struct ExprAST* allocNewGrouping(struct ExprAST* expr) {
   return ptr;
 }
 
+struct ExprAST* allocNewArrayInit(struct ArgAST* args) {
+  struct ExprAST* ptr = malloc(sizeof(*ptr));
+  if(ptr) *ptr = newArrayInit(args);
+
+  return ptr;
+}
+
 struct ExprAST* allocNewUndefined(void) {
   struct ExprAST* ptr = malloc(sizeof(*ptr));
   if(ptr) *ptr = newUndefined();
@@ -156,13 +175,13 @@ struct ExprAST* allocNewUndefined(void) {
   return ptr;
 }
 
-struct ExprAST* allocNewArray(struct ExprAST* index,
+struct ExprAST* allocNewArrayIndex(struct ExprAST* index,
     struct ExprAST* identifier) {
   struct ExprAST* ptr = malloc(sizeof(*ptr));
 
-  ptr->type = EXPR_ARRAY;
-  ptr->as.array.index = index;;
-  ptr->as.array.identifier = identifier;
+  ptr->type = EXPR_ARRAY_INDEX;
+  ptr->as.arrindex.index = index;;
+  ptr->as.arrindex.identifier = identifier;
 
   return ptr;
 }
@@ -206,11 +225,15 @@ void printExprAST(const struct ExprAST* ast) {
       printExprAST(ast->as.get.expression);
       if(ast->as.get.isPointer) printf("->"); else printf(".");
       printf("%s", ast->as.get.name); break;
-    case EXPR_ARRAY:
+    case EXPR_ARRAY_INDEX:
       printf("[");
-      printExprAST(ast->as.array.index);
+      printExprAST(ast->as.arrindex.index);
       printf("]");
-      printExprAST(ast->as.array.identifier); break;
+      printExprAST(ast->as.arrindex.identifier); break;
+    case EXPR_ARRAY_INIT:
+      printf("{");
+      printArgAST(ast->as.arrinit.args);
+      printf("}"); break;
   }
 }
 
@@ -240,9 +263,11 @@ void freeExprNode(struct ExprAST* expr) {
       freeArgAST(expr->as.call.args); break;
     case EXPR_GET:
       freeExprNode(expr->as.get.expression); break;
-    case EXPR_ARRAY:
-      freeExprNode(expr->as.array.index);
-      freeExprNode(expr->as.array.identifier); break;
+    case EXPR_ARRAY_INDEX:
+      freeExprNode(expr->as.arrindex.index);
+      freeExprNode(expr->as.arrindex.identifier); break;
+    case EXPR_ARRAY_INIT:
+      freeArgAST(expr->as.arrinit.args);
   }
 
   free(expr);

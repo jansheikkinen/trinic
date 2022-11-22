@@ -5,30 +5,35 @@
 // been putting copies of this file into tests/, but for now they're just
 // available in the commit history lol
 
-/* Match statements */
+// `impl` blocks
 
-let x, y: int8 = 1, undefined
+// This is an example of an actual program
+// It just prints the sum of two 2d vectors
 
-trait TestTrait
-  function testFunction(x: T, y: V, z: Q) -> V
-    where y != 0, return > 5
-    for T + V: trait Div + trait Display, Q: trait Display
+struct Vector2(T) x, y: T end
+
+trait Add
+  function add(left, right: *Self) -> Self
 end
 
-struct TestStruct(T, V) tfield: T, vfield: V end
-union TestUnion(T, V) tfield: T, vfield: V end
-sum TestSum(T, V) tfield(T), vfield(V) end
-
-function voidfn(void) -> void do end
-
-function main(argc: usize, argv: ..struct String) -> usize do
-  match argc do
-    1, 2 => return(34),
-    3, 4 => return(35),
-    5    => return(69),
-    _    => do
-      print(argc)
-      return(argc)
-    end
+trait ToString
+  function tostring(self: *Self) -> struct String
+end
+/*
+impl Add for struct Vector2(T)
+  function add(left, right: *Self) -> Self where T: Add do
+    return { x = left->x + right->x, y = left->y + right->y }
   end
+end
+
+impl ToString for struct Vector2(T)
+  function tostring(self: *Self) -> struct String where T: ToString do
+    // makeString() will probably be a macro in implementation
+    return makeString("({}, {})", self->x, self->y)
+  end
+end
+*/
+function main(argc: usize, argv: ..struct String) -> usize do
+  let x, y: struct Vector2(float32) = { 3.5, 3.4 }, { 3.4, 3.5 }
+  println("{} + {} = {}", x, y, add(x, y));
 end

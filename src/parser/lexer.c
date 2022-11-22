@@ -31,6 +31,8 @@ static void lexUnambiguousOperator(struct LexerContext* td) {
     case ')': newNonLiteral(td, TOKEN_RIGHT_PAREN);   break;
     case '[': newNonLiteral(td, TOKEN_LEFT_BRACKET);  break;
     case ']': newNonLiteral(td, TOKEN_RIGHT_BRACKET); break;
+    case '{': newNonLiteral(td, TOKEN_LEFT_CURLY);    break;
+    case '}': newNonLiteral(td, TOKEN_RIGHT_CURLY);   break;
     case ',': newNonLiteral(td, TOKEN_COMMA);         break;
     case '?': newNonLiteral(td, TOKEN_QUESTION);      break;
     case '@': newNonLiteral(td, TOKEN_AT);            break;

@@ -4,12 +4,12 @@
 program = declaration* EOF ;
 
 declaration = structdecl | uniondecl | enumdecl | sumdecl
-            | traitdecl | funcdecl  | vardecl  ;
+            | traitdecl  | funcdecl  | vardecl  ;
 structdecl  = structtype genericlist? idargs      "end" ;
 uniondecl   = uniontype  genericlist? idargs      "end" ;
 enumdecl    = enumtype                assignargs  "end" ;
 sumdecl     = sumtype    genericlist? sumargs     "end" ;
-traitdecl  = traittype genericlist? function*   "end" ;
+traitdecl   = traittype  genericlist? function*   "end" ;
 funcdecl    = "function" function "do" statement* "end" ;
 function    = IDENTIFIER "(" (idargs | "void") ")" "->" ( type | IDENTIFIER )
               ("where" exprargs)? ("for" genericdefs)? ;
@@ -55,7 +55,8 @@ factor     = unary    ( ("*" | "/")                     unary    )*  ;
 unary      =      ("~" | "!" | "not" | "-" | "*" | "&") unary | call ;
 call       = primary ("(" arguments? ")" | ("." | "->") IDENTIFIER)*  ;
 primary    = "(" expression ")" | NUMBER | STRING | IDENTIFIER
-            | "true" | "false" | "[" expression "]" expression;
+            | "true" | "false" | "[" expression "]" expression
+            | "{" exprargs "}" ;
 
 matcharms = matcharm ( "," matcharm )* ;
 matcharm  = exprargs "=>" (statement | "do" statement* "end") ;
