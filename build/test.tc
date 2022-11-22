@@ -5,35 +5,12 @@
 // been putting copies of this file into tests/, but for now they're just
 // available in the commit history lol
 
-// `impl` blocks
-
-// This is an example of an actual program
-// It just prints the sum of two 2d vectors
-
-struct Vector2(T) x, y: T end
-
-trait Add
-  function add(left, right: *Self) -> Self
-end
-
-trait ToString
-  function tostring(self: *Self) -> struct String
-end
-
-impl trait Add for struct Vector2(T)
-  function add(left, right: *Self) -> Self for T: trait Add do
-    return { left->x + right->x, left->y + right->y }
-  end
-end
-
-impl trait ToString for struct Vector2(T)
-  function tostring(self: *Self) -> struct String for T: trait ToString do
-    // makeString() will probably be a macro in implementation
-    return makeString("({}, {})", please self->x, self->y)
-  end
-end
+// Functions as first-class citizens
 
 function main(argc: usize, argv: ..struct String) -> usize do
-  please let x, y: struct Vector2(float32) = { 3.5, 3.4 }, { 3.4, 3.5 }
-  println("{} + {} = {}", x, y, add(x, y));
+  let add: (int32, int32) -> int32 = function(x, y: int32) -> int32 do
+    return(x + y)
+  end
+
+  print(add(34, 35))
 end

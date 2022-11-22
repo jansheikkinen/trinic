@@ -153,7 +153,9 @@ void printDeclarationAST(const struct DeclarationAST* ast) {
         printf("\n  ");
       } printf("\b\bend\n\n"); break;
     case DECLARATION_FUNCTION:
-      printf("function %s(", ast->name);
+      printf("function ");
+      if(ast->name) printf("%s", ast->name);
+      printf("(");
 
       if(ast->as.function.args) printArgAST(ast->as.function.args);
       else printf("VOID");

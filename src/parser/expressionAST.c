@@ -5,6 +5,7 @@
 #include <stdio.h>
 
 #include "argumentAST.h"
+#include "declarationAST.h"
 #include "expressionAST.h"
 
 
@@ -180,8 +181,17 @@ struct ExprAST* allocNewArrayIndex(struct ExprAST* index,
   struct ExprAST* ptr = malloc(sizeof(*ptr));
 
   ptr->type = EXPR_ARRAY_INDEX;
-  ptr->as.arrindex.index = index;;
+  ptr->as.arrindex.index = index;
   ptr->as.arrindex.identifier = identifier;
+
+  return ptr;
+}
+
+struct ExprAST* allocNewFunctionExpr(struct DeclarationAST* function) {
+  struct ExprAST* ptr = malloc(sizeof(*ptr));
+
+  ptr->type = EXPR_FUNCTION;
+  ptr->as.function.function = function;
 
   return ptr;
 }
@@ -234,6 +244,8 @@ void printExprAST(const struct ExprAST* ast) {
       printf("{");
       printArgAST(ast->as.arrinit.args);
       printf("}"); break;
+    case EXPR_FUNCTION:
+      printDeclarationAST(ast->as.function.function); break;
   }
 }
 
@@ -267,7 +279,9 @@ void freeExprNode(struct ExprAST* expr) {
       freeExprNode(expr->as.arrindex.index);
       freeExprNode(expr->as.arrindex.identifier); break;
     case EXPR_ARRAY_INIT:
-      freeArgAST(expr->as.arrinit.args);
+      freeArgAST(expr->as.arrinit.args); break;
+    case EXPR_FUNCTION:
+      freeDeclarationAST(expr->as.function.function); break;
   }
 
   free(expr);

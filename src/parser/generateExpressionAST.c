@@ -4,6 +4,7 @@
 
 #include "../error/error.h"
 #include "argumentAST.h"
+#include "generateDeclarationAST.h"
 #include "generateExpressionAST.h"
 #include "generateArgumentAST.h"
 #include "token.h"
@@ -56,6 +57,8 @@ static struct ExprAST* genPrimaryNode(struct ASTContext* ctx) {
 
     if(MATCH_TOKEN(ctx, TOKEN_RIGHT_CURLY))
       expr = allocNewArrayInit(args);
+  } else if(MATCH_TOKEN(ctx, TOKEN_FUNCTION)) {
+    expr = allocNewFunctionExpr(generateDeclaration(ctx));
   } else if(MATCH_TOKEN(ctx, TOKEN_LEFT_PAREN)) {
     ctx->index += 1;
     struct ExprAST* exprast = generateExpression(ctx);

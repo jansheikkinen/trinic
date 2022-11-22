@@ -79,6 +79,30 @@ static struct TypeAST* generateArrayType(struct ASTContext* ctx,
   return NULL;
 }
 
+static struct TypeAST* generateFunctionType(struct ASTContext* ctx,
+    bool ismutable) {
+  ctx->index += 1;
+
+  struct ArgAST* params = NULL;
+  struct TypeAST* returns = NULL;
+  if(!(MATCH_TOKEN(ctx, TOKEN_VOID))) {
+    params = genSumTypes(ctx);
+  } else ctx->index += 1;
+
+  if(MATCH_TOKEN(ctx, TOKEN_RIGHT_PAREN)) {
+    ctx->index += 1;
+    if(MATCH_TOKEN(ctx, TOKEN_ARROW)) {
+      ctx->index += 1;
+
+      if(!(MATCH_TOKEN(ctx, TOKEN_VOID))) {
+        returns = generateType(ctx);
+        return allocNewFunctionType(params, returns, ismutable);
+      } else ctx->index += 1;
+    }
+  }
+  return NULL;
+}
+
 struct TypeAST* generateType(struct ASTContext* ctx) {
   bool ismutable = false;
   if(MATCH_TOKEN(ctx, TOKEN_MUT)) {
@@ -102,5 +126,7 @@ struct TypeAST* generateType(struct ASTContext* ctx) {
     return generatePointerType(ctx, ismutable);
   else if(MATCH_TOKEN(ctx, TOKEN_LEFT_BRACKET))
     return generateArrayType(ctx, ismutable);
+  else if(MATCH_TOKEN(ctx, TOKEN_LEFT_PAREN))
+    return generateFunctionType(ctx, ismutable);
   else return generateBaseType(ctx, ismutable);
 }

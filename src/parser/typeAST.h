@@ -6,7 +6,6 @@
 
 struct TypeAST;
 
-// used for "int8" or "int8*", depends on its label in the TypeAST
 enum BaseTypes {
   BASETYPE_UNDEFINED,
   BASETYPE_INT8,
@@ -76,13 +75,19 @@ struct StructType {
   struct ArgAST* generics;
 };
 
+struct FunctionType {
+  struct ArgAST* params;
+  struct TypeAST* returns;
+};
+
 enum TypeASTTypes {
   TYPE_UNDEFINED,
   TYPE_BASE,
   TYPE_VARIADIC,
   TYPE_ARRAY,
   TYPE_PTR,
-  TYPE_STRUCT
+  TYPE_STRUCT,
+  TYPE_FUNCTION,
 };
 
 struct TypeAST {
@@ -94,6 +99,7 @@ struct TypeAST {
     struct PtrType pointer;
     struct ArrayType array;
     struct StructType structure;
+    struct FunctionType function;
   } as;
 };
 
@@ -104,6 +110,7 @@ struct TypeAST* allocNewPointerType(struct TypeAST*, bool);
 struct TypeAST* allocNewArrayType(struct TypeAST*, struct ExprAST*, bool);
 struct TypeAST* allocNewStructType(const char*, enum StructTypes,
     struct ArgAST*, bool);
+struct TypeAST* allocNewFunctionType(struct ArgAST*, struct TypeAST*, bool);
 
 void freeTypeAST(struct TypeAST*);
 

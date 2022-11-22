@@ -74,6 +74,18 @@ struct TypeAST* allocNewStructType(const char* name, enum StructTypes type,
   return ast;
 }
 
+struct TypeAST* allocNewFunctionType(struct ArgAST* params,
+    struct TypeAST* returns, bool mutable) {
+  struct TypeAST* ast = malloc(sizeof(*ast));
+
+  ast->type = TYPE_FUNCTION;
+  ast->ismutable = mutable;
+  ast->as.function.params = params;
+  ast->as.function.returns = returns;
+
+  return ast;
+}
+
 void freeTypeAST(struct TypeAST* ast) {
   switch(ast->type) {
     case TYPE_UNDEFINED:
@@ -88,6 +100,9 @@ void freeTypeAST(struct TypeAST* ast) {
       freeTypeAST(ast->as.array.type);
       if(ast->as.array.size) freeExprNode(ast->as.array.size);
       break;
+    case TYPE_FUNCTION:
+      if(ast->as.function.params) freeArgAST(ast->as.function.params);
+      if(ast->as.function.returns) freeTypeAST(ast->as.function.returns);
   }
 
   free(ast);
@@ -157,5 +172,11 @@ void printTypeAST(const struct TypeAST* ast) {
           printf("trait %s", ast->as.structure.name); break;
       }
       break;
+    case TYPE_FUNCTION:
+      printf("(");
+      if(ast->as.function.params) printArgAST(ast->as.function.params);
+      else printf("void");
+      printf(") -> ");
+      if(ast->as.function.returns) printTypeAST(ast->as.function.returns);
   }
 }

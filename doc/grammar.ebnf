@@ -12,23 +12,24 @@ sumdecl     = sumtype    genericlist? sumargs     "end" ;
 traitdecl   = traittype  genericlist? function*   "end" ;
 impldecl    = "impl" traittype "for" type function* "end" ;
 funcdecl    = "function" function "do" statement* "end" ;
-function    = IDENTIFIER "(" (idargs | "void") ")" "->" ( type | IDENTIFIER )
+function    = IDENTIFIER? "(" (idargs | "void") ")" "->" ( type | IDENTIFIER)
               ("where" exprargs)? ("for" genericdefs)? ;
 
-basetype    = "int8"   | "int16"   | "int32"   | "int64"   | "isize"
-            | "uint8"  | "uint16"  | "uint32"  | "uint64"  | "usize"
-            | "float8" | "float16" | "float32" | "float64" | "fsize"
-            | "byte"   | "char"    | "void"    | "bool" | IDENTIFIER ;
-arraytype   = "[" expression? "]" type ;
-pointertype = "*" type ;
-variadtype  = ".." type ;
-structtype  = "struct"    IDENTIFIER ;
-uniontype   = "union"     IDENTIFIER ;
-enumtype    = "enum"      IDENTIFIER ;
-sumtype     = "sum"       IDENTIFIER ;
-traittype   = "trait"     IDENTIFIER ;
-type        = "mut"? (basetype | variadtype| arraytype | pointertype
-            | enumtype | ((structtype | uniontype | sumtype | traittype)
+basetype     = "int8"   | "int16"   | "int32"   | "int64"   | "isize"
+             | "uint8"  | "uint16"  | "uint32"  | "uint64"  | "usize"
+             | "float8" | "float16" | "float32" | "float64" | "fsize"
+             | "byte"   | "char"    | "void"    | "bool" | IDENTIFIER ;
+arraytype    = "[" expression? "]" type ;
+pointertype  = "*" type ;
+variadtype   = ".." type ;
+structtype   = "struct"    IDENTIFIER ;
+uniontype    = "union"     IDENTIFIER ;
+enumtype     = "enum"      IDENTIFIER ;
+sumtype      = "sum"       IDENTIFIER ;
+traittype    = "trait"     IDENTIFIER ;
+functiontype = "(" (sumlist | "void") ")" "->" ( type | IDENTIFIER ) ;
+type         = "mut"? (basetype | variadtype | arraytype | pointertype
+             | enumtype | ((structtype | uniontype | sumtype | traittype)
                ("(" sumlist ")")?) ;
 
 statement   = (expression | assignment | vardecl | conditional) ";" ;
@@ -57,7 +58,7 @@ unary      =      ("~" | "!" | "not" | "-" | "*" | "&") unary | call ;
 call       = primary  ("(" exprargs? ")"
            | ("." | "->") IDENTIFIER | "[" expression "]")*  ;
 primary    = "(" expression ")" | NUMBER | STRING | IDENTIFIER
-           | "true" | "false" | "{" exprargs "}" ;
+           | "true" | "false" | "{" exprargs "}" | functiondecl ;
 
 matcharms = matcharm ( "," matcharm )* ;
 matcharm  = exprargs "=>" (statement | "do" statement* "end") ;
