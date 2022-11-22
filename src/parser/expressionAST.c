@@ -226,10 +226,10 @@ void printExprAST(const struct ExprAST* ast) {
       if(ast->as.get.isPointer) printf("->"); else printf(".");
       printf("%s", ast->as.get.name); break;
     case EXPR_ARRAY_INDEX:
+      printExprAST(ast->as.arrindex.identifier);
       printf("[");
       printExprAST(ast->as.arrindex.index);
-      printf("]");
-      printExprAST(ast->as.arrindex.identifier); break;
+      printf("]"); break;
     case EXPR_ARRAY_INIT:
       printf("{");
       printArgAST(ast->as.arrinit.args);

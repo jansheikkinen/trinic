@@ -53,10 +53,10 @@ bitwise    = term     ( ("&" | "|" | "^" | "<<" | ">>") term     )*  ;
 term       = factor   ( ("+" | "-")                     factor   )*  ;
 factor     = unary    ( ("*" | "/")                     unary    )*  ;
 unary      =      ("~" | "!" | "not" | "-" | "*" | "&") unary | call ;
-call       = primary ("(" arguments? ")" | ("." | "->") IDENTIFIER)*  ;
+call       = primary  ("(" exprargs? ")"
+           | ("." | "->") IDENTIFIER | "[" expression "]")*  ;
 primary    = "(" expression ")" | NUMBER | STRING | IDENTIFIER
-            | "true" | "false" | "[" expression "]" expression
-            | "{" exprargs "}" ;
+           | "true" | "false" | "{" exprargs "}" ;
 
 matcharms = matcharm ( "," matcharm )* ;
 matcharm  = exprargs "=>" (statement | "do" statement* "end") ;

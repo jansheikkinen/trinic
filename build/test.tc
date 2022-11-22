@@ -36,4 +36,5 @@ end
 function main(argc: usize, argv: ..struct String) -> usize do
   let x, y: struct Vector2(float32) = { 3.5, 3.4 }, { 3.4, 3.5 }
   println("{} + {} = {}", x, y, add(x, y));
+  let z: [3]int = x[1], y.y[1], x[1].y[1]
 end

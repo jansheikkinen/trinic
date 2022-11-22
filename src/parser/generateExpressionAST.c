@@ -49,15 +49,6 @@ static struct ExprAST* genPrimaryNode(struct ASTContext* ctx) {
     expr = allocNewVariable(GET_CURRENT_TOKEN(ctx).literal);
   } else if(MATCH_TOKEN(ctx, TOKEN_RETURN)) {
     expr = allocNewVariable("return");
-  } else if(MATCH_TOKEN(ctx, TOKEN_LEFT_BRACKET)) {
-    ctx->index += 1;
-    struct ExprAST* index = generateExpression(ctx);
-    if(MATCH_TOKEN(ctx, TOKEN_RIGHT_BRACKET)) {
-      ctx->index += 1;
-      struct ExprAST* identifier = generateExpression(ctx);
-      ctx->index -= 1;
-      expr = allocNewArrayIndex(index, identifier);
-    }
   } else if(MATCH_TOKEN(ctx, TOKEN_LEFT_CURLY)) {
     ctx->index += 1;
 
@@ -103,6 +94,14 @@ static struct ExprAST* genCallNode(struct ASTContext* ctx) {
         const char* identifier = GET_CURRENT_TOKEN(ctx).literal;
         ctx->index += 1;
         expr = allocNewGet(isPointer, identifier, expr);
+      }
+    } else if(MATCH_TOKEN(ctx, TOKEN_LEFT_BRACKET)) {
+      ctx->index += 1;
+      struct ExprAST* index = generateExpression(ctx);
+
+      if(MATCH_TOKEN(ctx, TOKEN_RIGHT_BRACKET)) {
+        ctx->index += 1;
+        expr = allocNewArrayIndex(index, expr);
       }
     } else break;
   }
