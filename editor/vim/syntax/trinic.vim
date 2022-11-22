@@ -27,6 +27,7 @@ syn keyword trinicType int8   int16   int32   int64   isize
                      \ uint8  uint16  uint32  uint64  usize
                      \ float8 float16 float32 float64 fsize
                      \ byte   bool    char    void    mut
+                     \ any
 
 syn keyword trinicStatement if else while loop for do end let where in match
   \ struct enum union sum trait function return impl continue break

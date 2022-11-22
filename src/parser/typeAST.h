@@ -27,6 +27,7 @@ enum BaseTypes {
   BASETYPE_CHAR,
   BASETYPE_VOID,
   BASETYPE_BOOL,
+  BASETYPE_ANY,
 };
 
 enum BaseTypeTypes {

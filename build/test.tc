@@ -5,12 +5,9 @@
 // been putting copies of this file into tests/, but for now they're just
 // available in the commit history lol
 
-// Functions as first-class citizens
+// The any type, which is mainly only useful afaik for when you have a variadic
+// that needs to take more than one type at a time and doesn't care which
 
-function main(argc: usize, argv: ..struct String) -> usize do
-  let add: (int32, int32) -> int32 = function(x, y: int32) -> int32 do
-    return(x + y)
-  end
-
-  print(add(34, 35))
+function println(fmt: struct String, args: ..any) -> void do
+  // Pretend there's a cool implementation here :)
 end

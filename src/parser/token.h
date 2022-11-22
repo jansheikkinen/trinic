@@ -100,6 +100,7 @@ enum TokenType {
   TOKEN_CHAR,
   TOKEN_VOID,
   TOKEN_BOOL,
+  TOKEN_ANY,
 
   TOKEN_ENUM,
   TOKEN_STRUCT,

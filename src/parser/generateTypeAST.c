@@ -33,7 +33,7 @@ static struct TypeAST* generateStructType(struct ASTContext* ctx,
 
 static struct TypeAST* generateBaseType(struct ASTContext* ctx,
     bool ismutable) {
-  for(enum TokenType type = TOKEN_INT8; type <= TOKEN_BOOL; type++) {
+  for(enum TokenType type = TOKEN_INT8; type <= TOKEN_ANY; type++) {
     if(MATCH_TOKEN(ctx, type)) {
       ctx->index += 1;
       return allocNewBaseType(type - TOKEN_FALSE, ismutable);

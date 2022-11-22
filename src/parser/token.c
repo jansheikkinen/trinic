@@ -76,6 +76,7 @@ char* tokenTypeStrings[] = {
   "CHAR",
   "VOID",
   "BOOL",
+  "ANY",
   "ENUM",
   "STRUCT",
   "UNION",
