@@ -16,7 +16,8 @@ enum ArgASTType {
   ARG_GENERIC,
   ARG_GENERIC_DEFL,
   ARG_GENERIC_DEFR,
-  ARG_GENERIC_DEFS
+  ARG_GENERIC_DEFS,
+  ARG_MATCH_ARMS,
 };
 
 struct IdentifierArg {
@@ -57,6 +58,11 @@ struct GenericDef {
   struct ArgAST* rvalue;
 };
 
+struct MatchArm {
+  struct ArgAST* exprs;
+  struct StmtList* body;
+};
+
 // x, y: int8, z: isize
 DEFINE_ARRAYLIST(IdentifierArgList, struct IdentifierArg*);
 // TEST = 3 + 4, TEST2 = 3 + 5, TEST3
@@ -74,6 +80,9 @@ DEFINE_ARRAYLIST(GenericDefRight, struct TypeAST*);
 // T + V: interface Divide + interface Display
 // T + V: interface Divide + interface Display, Q: interface Add
 DEFINE_ARRAYLIST(GenericDefs, struct GenericDef*);
+// 1, 2 => return bruh
+// 1, 2 => print(bruh); return bruh
+DEFINE_ARRAYLIST(MatchArms, struct MatchArm*);
 
 struct ArgAST {
   enum ArgASTType type;
@@ -87,6 +96,7 @@ struct ArgAST {
     struct GenericDefLeft genleft;
     struct GenericDefRight genright;
     struct GenericDefs gendefs;
+    struct MatchArms matcharms;
   } as;
 };
 
@@ -96,6 +106,7 @@ struct SumArg* allocNewSumArg(const char*, struct ArgAST*);
 struct SumArgType* allocNewSumArgTypeType(struct TypeAST*);
 struct SumArgType* allocNewSumArgTypeStr(const char*);
 struct GenericDef* allocNewGenericDef(struct ArgAST*, struct ArgAST*);
+struct MatchArm* allocNewMatchArm(struct ArgAST*, struct StmtList*);
 
 struct ArgAST* allocNewExprArgList(struct ExprList* args);
 struct ArgAST* allocNewIdentifierArgList(void);
@@ -106,6 +117,7 @@ struct ArgAST* allocNewSumArgTypeList(void);
 struct ArgAST* allocNewGenericDefLeft(void);
 struct ArgAST* allocNewGenericDefRight(void);
 struct ArgAST* allocNewGenericDefs(void);
+struct ArgAST* allocNewMatchArms(void);
 
 void freeArgAST(struct ArgAST*);
 void printArgAST(const struct ArgAST*);

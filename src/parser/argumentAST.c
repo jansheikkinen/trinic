@@ -7,8 +7,9 @@
 #include <stdio.h>
 
 #include "argumentAST.h"
-#include "declarationAST.h"
 #include "expressionAST.h"
+#include "statementAST.h"
+#include "stmtlist.h"
 
 struct ArgAST* allocNewExprArgList(struct ExprList* args) {
   struct ArgAST* argast = malloc(sizeof(*argast));
@@ -71,6 +72,15 @@ struct GenericDef* allocNewGenericDef(struct ArgAST* lv, struct ArgAST* rv) {
 
   arg->lvalue = lv;
   arg->rvalue = rv;
+
+  return arg;
+}
+
+struct MatchArm* allocNewMatchArm(struct ArgAST* expr, struct StmtList* body) {
+  struct MatchArm* arg = malloc(sizeof(*arg));
+
+  arg->exprs = expr;
+  arg->body = body;
 
   return arg;
 }
@@ -147,6 +157,15 @@ struct ArgAST* allocNewGenericDefs(void) {
   return argast;
 }
 
+struct ArgAST* allocNewMatchArms(void) {
+  struct ArgAST* argast = malloc(sizeof(*argast));
+
+  argast->type = ARG_MATCH_ARMS;
+  NEW_ARRAYLIST(&argast->as.matcharms);
+
+  return argast;
+}
+
 static void freeIdentifierArg(struct IdentifierArg* arg) {
   if(arg->type) freeTypeAST(arg->type);
   free(arg);
@@ -176,6 +195,11 @@ static void freeGenDef(struct GenericDef* arg) {
   if(arg->lvalue) freeArgAST(arg->lvalue);
   if(arg->rvalue) freeArgAST(arg->rvalue);
   free(arg);
+}
+
+static void freeMatchArm(struct MatchArm* arg) {
+  freeArgAST(arg->exprs);
+  freeStmtList(arg->body);
 }
 
 static void printIdentifierArg(const struct IdentifierArg* arg) {
@@ -215,6 +239,16 @@ static void printGenDef(const struct GenericDef* arg) {
   if(arg->rvalue) printArgAST(arg->rvalue);
 }
 
+static void printMatchArm(const struct MatchArm* arg) {
+  printArgAST(arg->exprs);
+  printf(" => ");
+  if(arg->body->size >= 2) {
+    printf("do\n"); printStmtList(arg->body); printf(" end");
+  } else for(size_t i = 0; i < arg->body->size; i++) {
+    printStmtAST(arg->body->stmts[i]); printf(",\n  ");
+  }
+}
+
 void freeArgAST(struct ArgAST* args) {
   switch(args->type) {
     case ARG_UNDEFINED:
@@ -234,6 +268,8 @@ void freeArgAST(struct ArgAST* args) {
       FREE_MEMBERS(&args->as.genright, freeTypeAST); break;
     case ARG_GENERIC_DEFS:
       FREE_MEMBERS(&args->as.gendefs, freeGenDef); break;
+    case ARG_MATCH_ARMS:
+      FREE_MEMBERS(&args->as.matcharms, freeMatchArm); break;
   }
   free(args);
 }
@@ -282,6 +318,11 @@ void printArgAST(const struct ArgAST* args) {
     case ARG_GENERIC_DEFS:
       for(size_t i = 0; i < args->as.gendefs.size; i++) {
         printGenDef(args->as.gendefs.members[i]);
+        printf(", ");
+      } printf("\b\b  \b\b"); break;
+    case ARG_MATCH_ARMS:
+      for(size_t i = 0; i < args->as.matcharms.size; i++) {
+        printMatchArm(args->as.matcharms.members[i]);
         printf(", ");
       } printf("\b\b  \b\b"); break;
   }

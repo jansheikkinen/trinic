@@ -106,6 +106,19 @@ static struct StmtAST newWhile(struct ExprAST* condition,
   return stmt;
 }
 
+static struct StmtAST newMatch(struct ExprAST* expr, struct ArgAST* body) {
+  struct StmtAST stmt;
+
+  struct MatchStmt match;
+  match.expr = expr;
+  match.body = body;
+
+  stmt.type = STMT_MATCH;
+  stmt.as.match = match;
+
+  return stmt;
+}
+
 // I initially wanted to put the entire function declaration in the macro,
 // but that requires two separate VA_ARGS :(
 #define ALLOC_NODE(func, ...) \
@@ -143,6 +156,10 @@ struct StmtAST* allocNewLoop(struct StmtList* body) {
 struct StmtAST* allocNewWhile(struct ExprAST* condition,
     struct StmtList* body) {
   ALLOC_NODE(newWhile, condition, body);
+}
+
+struct StmtAST* allocNewMatch(struct ExprAST* expr, struct ArgAST* body) {
+  ALLOC_NODE(newMatch, expr, body);
 }
 
 void printStmtAST(const struct StmtAST* stmt) {
@@ -195,6 +212,12 @@ void printStmtAST(const struct StmtAST* stmt) {
       printf(" do ");
       printStmtList(stmt->as.whileloop.body);
       printf("end"); break;
+    case STMT_MATCH:
+      printf("match ");
+      printExprAST(stmt->as.match.expr);
+      printf(" do\n  ");
+      printArgAST(stmt->as.match.body);
+      printf("end"); break;
   }
 }
 
@@ -230,6 +253,9 @@ void freeStmtNode(struct StmtAST* stmt) {
     case STMT_WHILE:
       freeExprNode(stmt->as.whileloop.condition);
       freeStmtList(stmt->as.whileloop.body); break;
+    case STMT_MATCH:
+      freeExprNode(stmt->as.match.expr);
+      freeArgAST(stmt->as.match.body); break;
   }
 
   free(stmt);

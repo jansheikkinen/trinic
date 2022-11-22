@@ -5,7 +5,7 @@
 // been putting copies of this file into tests/, but for now they're just
 // available in the commit history lol
 
-/* Return contracts */
+/* Match statements */
 
 let x, y: int8 = 1, undefined
 
@@ -22,8 +22,13 @@ sum TestSum(T, V) tfield(T), vfield(V) end
 function voidfn(void) -> void do end
 
 function main(argc: usize, argv: ..struct String) -> usize do
-  let x, y: int32 = 34, 35;
-  1 + 2 * 3;
-  print; return; continue; break;
-  print("bals"); return(3); continue(1); break(0);
+  match argc do
+    1, 2 => return(34),
+    3, 4 => return(35),
+    5    => return(69),
+    _    => do
+      print(argc)
+      return(argc)
+    end
+  end
 end

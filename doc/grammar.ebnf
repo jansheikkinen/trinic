@@ -41,6 +41,7 @@ conditional = "if" expression "do" statement*
 loop        = "loop" statement* "end" ;
 while       = "while" expression "do" statement* "end" ;
 forin       = "for" expression "in" expression "do" statement* "end" ;
+match       = "match" expression "do" matcharms "end"
 
 # Note that "undefined", though allowed anywhere an expression is in the syntax,
 # should produce an error when not used in variable declarations
@@ -54,8 +55,10 @@ factor     = unary    ( ("*" | "/")                     unary    )*  ;
 unary      =      ("~" | "!" | "not" | "-" | "*" | "&") unary | call ;
 call       = primary ("(" arguments? ")" | ("." | "->") IDENTIFIER)*  ;
 primary    = "(" expression ")" | NUMBER | STRING | IDENTIFIER
-            | "true" | "false" | "[" expression "]" expression
-            | "return" ; # only in function contracts, though
+            | "true" | "false" | "[" expression "]" expression;
+
+matcharms = matcharm ( "," matcharm )* ;
+matcharm  = exprargs "=>" (statement | "do" statement* "end") ;
 
 genericdefs = genericdef  ( "," genericdef  )* ;
 genericdef  = genericdefl ( ":" genericdefr )  ;

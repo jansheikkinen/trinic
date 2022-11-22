@@ -178,12 +178,32 @@ static struct StmtAST* genWhileNode(struct ASTContext* ctx) {
   return stmt;
 }
 
+static struct StmtAST* genMatchNode(struct ASTContext* ctx) {
+  struct StmtAST* stmt = NULL;
+  ctx->index += 1;
+
+  struct ExprAST* expr = generateExpression(ctx);
+
+  if(MATCH_TOKEN(ctx, TOKEN_DO)) {
+    ctx->index += 1;
+
+    struct ArgAST* arms = generateMatchArms(ctx);
+    if(MATCH_TOKEN(ctx, TOKEN_END)) {
+      ctx->index += 1;
+      return allocNewMatch(expr, arms);
+    }
+  }
+
+  return stmt;
+}
+
 static struct StmtAST* genStmtNode(struct ASTContext* ctx) {
   struct StmtAST* stmt = NULL;
 
   if(MATCH_TOKEN(ctx, TOKEN_IF)) stmt = genConditionalNode(ctx);
   else if(MATCH_TOKEN(ctx, TOKEN_LOOP)) stmt = genLoopNode(ctx);
   else if(MATCH_TOKEN(ctx, TOKEN_WHILE)) stmt = genWhileNode(ctx);
+  else if(MATCH_TOKEN(ctx, TOKEN_MATCH)) stmt = genMatchNode(ctx);
   else {
     // These ones use . or ; as explicit terminator(not sure which yet)
     if(MATCH_TOKEN(ctx, TOKEN_PRINT))

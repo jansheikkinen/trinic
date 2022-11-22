@@ -75,6 +75,11 @@ struct WhileStmt {
   struct StmtList* body;
 };
 
+struct MatchStmt {
+  struct ExprAST* expr;
+  struct ArgAST* body;
+};
+
 enum StmtASTType {
   STMT_UNDEFINED,
   STMT_EXPRESSION,
@@ -84,6 +89,7 @@ enum StmtASTType {
   STMT_CONDITIONAL,
   STMT_LOOP,
   STMT_WHILE,
+  STMT_MATCH,
 };
 
 struct StmtAST {
@@ -96,6 +102,7 @@ struct StmtAST {
     struct ConditionalStmt conditional;
     struct LoopStmt loop;
     struct WhileStmt whileloop;
+    struct MatchStmt match;
   } as;
 };
 
@@ -107,6 +114,7 @@ struct StmtAST* allocNewConditional(struct ExprAST*, struct StmtList*,
     enum ConditionalElseTypes, union ConditionalElse);
 struct StmtAST* allocNewLoop(struct StmtList*);
 struct StmtAST* allocNewWhile(struct ExprAST*, struct StmtList*);
+struct StmtAST* allocNewMatch(struct ExprAST*, struct ArgAST*);
 
 void printStmtAST(const struct StmtAST*);
 

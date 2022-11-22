@@ -13,5 +13,6 @@ struct ArgAST* generateGenericArguments(struct ASTContext*);
 struct ArgAST* generateSumArguments(struct ASTContext*);
 struct ArgAST* genSumTypes(struct ASTContext*);
 struct ArgAST* generateGenericDefs(struct ASTContext*);
+struct ArgAST* generateMatchArms(struct ASTContext*);
 
 #endif

@@ -29,7 +29,7 @@ syn keyword trinicType int8   int16   int32   int64   isize
                      \ byte   bool    char    void    mut
 
 syn keyword trinicStatement if else while loop for do end let where in match
-  \ struct enum union sum trait function return impl
+  \ struct enum union sum trait function return impl continue break
 
 syn keyword trinicTodo contained TODO FIXME NOTE
 syn match   trinicComment "//.*$" contains=trinicTodo

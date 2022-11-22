@@ -3,8 +3,10 @@
 #include "../error/error.h"
 #include "../util/arraylist.h"
 #include "argumentAST.h"
+#include "generateStatementAST.h"
 #include "generateTypeAST.h"
 #include "generateExpressionAST.h"
+#include "stmtlist.h"
 
 // Differentiating these two in a single function as I have in expression or
 // statement generation is actually a bit more involved to implement than I
@@ -292,6 +294,50 @@ struct ArgAST* generateGenericDefs(struct ASTContext* ctx) {
         APPEND_ARRAYLIST(&ast->as.gendefs,
             allocNewGenericDef(gendefl, gendefr));
       }
+    } else return ast;
+  }
+
+  return NULL;
+}
+
+static struct MatchArm* generateMatchArm(struct ASTContext* ctx) {
+  struct ArgAST* exprargs = generateExpressionArguments(ctx);
+
+  if(MATCH_TOKEN(ctx, TOKEN_MATCH_ARROW)) {
+    ctx->index += 1;
+
+    struct StmtList* body = malloc(sizeof(*body));
+    *body = newStmtList();
+
+    if(MATCH_TOKEN(ctx, TOKEN_DO)) {
+      ctx->index += 1;
+
+      while(ctx->index < ctx->tokens->length) {
+        if(MATCH_TOKEN(ctx, TOKEN_END)) {
+          ctx->index += 1;
+          return allocNewMatchArm(exprargs, body);
+        } else appendToStmtList(body, generateStatement(ctx));
+      }
+    } else {
+      appendToStmtList(body, generateStatement(ctx));
+      return allocNewMatchArm(exprargs, body);
+    }
+  }
+
+  return NULL;
+}
+
+struct ArgAST* generateMatchArms(struct ASTContext* ctx) {
+  struct ArgAST* ast = allocNewMatchArms();
+
+  struct MatchArm* arm = generateMatchArm(ctx);
+  APPEND_ARRAYLIST(&ast->as.matcharms, arm);
+
+  while(ctx->index < ctx->tokens->length) {
+    if(MATCH_TOKEN(ctx, TOKEN_COMMA)) {
+      ctx->index += 1;
+      arm = generateMatchArm(ctx);
+      APPEND_ARRAYLIST(&ast->as.matcharms, arm);
     } else return ast;
   }
 
