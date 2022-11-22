@@ -19,22 +19,21 @@ end
 trait ToString
   function tostring(self: *Self) -> struct String
 end
-/*
-impl Add for struct Vector2(T)
-  function add(left, right: *Self) -> Self where T: Add do
-    return { x = left->x + right->x, y = left->y + right->y }
+
+impl trait Add for struct Vector2(T)
+  function add(left, right: *Self) -> Self for T: trait Add do
+    return { left->x + right->x, left->y + right->y }
   end
 end
 
-impl ToString for struct Vector2(T)
-  function tostring(self: *Self) -> struct String where T: ToString do
+impl trait ToString for struct Vector2(T)
+  function tostring(self: *Self) -> struct String for T: trait ToString do
     // makeString() will probably be a macro in implementation
     return makeString("({}, {})", self->x, self->y)
   end
 end
-*/
+
 function main(argc: usize, argv: ..struct String) -> usize do
   let x, y: struct Vector2(float32) = { 3.5, 3.4 }, { 3.4, 3.5 }
   println("{} + {} = {}", x, y, add(x, y));
-  let z: [3]int = x[1], y.y[1], x[1].y[1]
 end

@@ -12,6 +12,7 @@ enum DeclarationTypes {
   DECLARATION_ENUM,
   DECLARATION_SUM,
   DECLARATION_INTERFACE,
+  DECLARATION_IMPL,
   DECLARATION_FUNCTION,
   DECLARATION_VARIABLE,
 };
@@ -32,12 +33,19 @@ struct FunctionAST {
 
 DEFINE_ARRAYLIST(DeclarationList, struct DeclarationAST*);
 
+struct ImplAST {
+  struct TypeAST* trait;
+  struct TypeAST* type;
+  struct DeclarationList* body;
+};
+
 struct DeclarationAST {
   enum DeclarationTypes type;
   const char* name;
   union {
     struct StructureAST structure;
     struct DeclarationList* interface;
+    struct ImplAST impl;
     struct FunctionAST function;
     struct StmtAST* vardecl;
   } as;
@@ -53,8 +61,9 @@ struct DeclarationAST* allocNewEnum(const char*, struct ArgAST*,
 struct DeclarationAST* allocNewSum(const char*, struct ArgAST*,
     struct ArgAST*);
 struct DeclarationAST* allocNewInterface(const char*, struct DeclarationList*);
+struct DeclarationAST* allocNewImpl(struct TypeAST*, struct TypeAST*,
+    struct DeclarationList*);
 struct DeclarationAST* allocNewVarDeclDecl(struct StmtAST*);
-
 struct DeclarationAST* allocNewFunction(const char*, struct ArgAST*,
     struct TypeAST*, struct ArgAST*, struct ArgAST*, struct StmtList*);
 

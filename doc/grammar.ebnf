@@ -4,12 +4,13 @@
 program = declaration* EOF ;
 
 declaration = structdecl | uniondecl | enumdecl | sumdecl
-            | traitdecl  | funcdecl  | vardecl  ;
+            | traitdecl  | funcdecl  | vardecl  | impldecl ;
 structdecl  = structtype genericlist? idargs      "end" ;
 uniondecl   = uniontype  genericlist? idargs      "end" ;
 enumdecl    = enumtype                assignargs  "end" ;
 sumdecl     = sumtype    genericlist? sumargs     "end" ;
 traitdecl   = traittype  genericlist? function*   "end" ;
+impldecl    = "impl" traittype "for" type function* "end" ;
 funcdecl    = "function" function "do" statement* "end" ;
 function    = IDENTIFIER "(" (idargs | "void") ")" "->" ( type | IDENTIFIER )
               ("where" exprargs)? ("for" genericdefs)? ;

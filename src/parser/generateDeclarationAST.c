@@ -146,12 +146,40 @@ static struct DeclarationAST* genFunction(struct ASTContext* ctx) {
   return ast;
 }
 
+static struct DeclarationAST* genImpl(struct ASTContext* ctx) {
+  ctx->index += 1;
+
+  struct TypeAST* trait = generateType(ctx);
+
+  if(MATCH_TOKEN(ctx, TOKEN_FOR)) {
+    ctx->index += 1;
+    struct TypeAST* type = generateType(ctx);
+
+    struct DeclarationList* functions = malloc(sizeof(*functions));
+    NEW_ARRAYLIST(functions);
+
+    while(ctx->index < ctx->tokens->length) {
+      if(MATCH_TOKEN(ctx, TOKEN_FUNCTION)) {
+        struct DeclarationAST* function = genFunction(ctx);
+        APPEND_ARRAYLIST(functions, function);
+      } else {
+        if(MATCH_TOKEN(ctx, TOKEN_END)) {
+          ctx->index += 1;
+          return allocNewImpl(trait, type, functions);
+        }
+      }
+    }
+  }
+  return NULL;
+}
+
 struct DeclarationAST* generateDeclaration(struct ASTContext* ctx) {
   if(MATCH_TOKEN(ctx, TOKEN_STRUCT)) return genStruct(ctx);
   else if(MATCH_TOKEN(ctx, TOKEN_UNION)) return genUnion(ctx);
   else if(MATCH_TOKEN(ctx, TOKEN_ENUM)) return genEnum(ctx);
   else if(MATCH_TOKEN(ctx, TOKEN_SUM)) return genSum(ctx);
   else if(MATCH_TOKEN(ctx, TOKEN_INTERFACE)) return genInterface(ctx);
+  else if(MATCH_TOKEN(ctx, TOKEN_IMPL)) return genImpl(ctx);
   else if(MATCH_TOKEN(ctx, TOKEN_FUNCTION)) return genFunction(ctx);
   else if(MATCH_TOKEN(ctx, TOKEN_LET))
     return allocNewVarDeclDecl(generateStatement(ctx));

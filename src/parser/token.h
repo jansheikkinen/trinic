@@ -107,6 +107,7 @@ enum TokenType {
 
   TOKEN_SUM,
   TOKEN_INTERFACE,
+  TOKEN_IMPL,
 
   TOKEN_LET,
 

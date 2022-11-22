@@ -57,6 +57,18 @@ struct DeclarationAST* allocNewVarDeclDecl(struct StmtAST* stmt) {
   return ast;
 }
 
+struct DeclarationAST* allocNewImpl(struct TypeAST* trait, struct TypeAST* type,
+    struct DeclarationList* body) {
+  struct DeclarationAST* ast = malloc(sizeof(*ast));
+
+  ast->type = DECLARATION_IMPL;
+  ast->as.impl.trait = trait;
+  ast->as.impl.type = type;
+  ast->as.impl.body = body;
+
+  return ast;
+}
+
 void freeDeclarationAST(struct DeclarationAST* ast) {
   switch(ast->type) {
     case DECLARATION_UNDEFINED: break;
@@ -69,6 +81,10 @@ void freeDeclarationAST(struct DeclarationAST* ast) {
       break;
     case DECLARATION_INTERFACE:
       FREE_SELF_AND_MEMBERS(ast->as.interface, freeDeclarationAST); break;
+    case DECLARATION_IMPL:
+      freeTypeAST(ast->as.impl.trait);
+      freeTypeAST(ast->as.impl.type);
+      FREE_SELF_AND_MEMBERS(ast->as.impl.body, freeDeclarationAST); break;
     case DECLARATION_FUNCTION:
       if(ast->as.function.args)
         freeArgAST(ast->as.function.args);
@@ -129,6 +145,13 @@ void printDeclarationAST(const struct DeclarationAST* ast) {
         printf("\n  ");
       }
       printf("\b\bend\n\n"); break;
+    case DECLARATION_IMPL:
+      printf("impl "); printTypeAST(ast->as.impl.trait); printf(" for ");
+      printTypeAST(ast->as.impl.type); printf("\n");
+      for(size_t i = 0; i < ast->as.impl.body->size; i++) {
+        printDeclarationAST(ast->as.impl.body->members[i]);
+        printf("\n  ");
+      } printf("\b\bend\n\n"); break;
     case DECLARATION_FUNCTION:
       printf("function %s(", ast->name);
 

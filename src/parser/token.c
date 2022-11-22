@@ -81,6 +81,7 @@ char* tokenTypeStrings[] = {
   "UNION",
   "SUM",
   "TRAIT",
+  "IMPL",
   "LET",
   "FUNCTION",
   "INLINE",
