@@ -1,5 +1,5 @@
 // Struct
 
 function main(void) -> void do
-  let a: struct TestStruct, b: struct TesStructB(int8, int16) = undefined
+  let a: struct TestStruct, b: struct TesStructB(int8, int16) = undefined;
 end

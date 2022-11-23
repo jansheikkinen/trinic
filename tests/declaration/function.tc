@@ -8,7 +8,7 @@ function testD(x: int8) -> int8 where x != 69, return == 420 do 5; end
 function testE(x: T) -> T for T: trait Add do 6; end
 function testF(x: T, y: V) -> T for T + V: trait Add + trait Display do 7; end
 function testG(x: T, y: V) -> T
-  where x != 1,
+  where x != 1
   for T: trait Add, V: trait Display
 do 8; end
 function testH(void) -> void do 9; 10; end

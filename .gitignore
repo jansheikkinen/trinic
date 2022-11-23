@@ -1,5 +1,6 @@
 build/tc
 compile_commands.json
+*.out
 *.o
 .cache
 .mypy*
