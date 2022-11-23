@@ -24,6 +24,9 @@ const char* ASTErrorMessages[] = {
 
   "Expected parentheses",
   "Expected brackets",
+  "Expected arrow in function header",
+  "Expected arrow in match statement",
+  "Expected colon",
   "Expected end of statement",
   "Expected block",
   "Expected end of block",
@@ -31,6 +34,7 @@ const char* ASTErrorMessages[] = {
   "Expected type",
   "Expected identifier",
   "Expected assignment",
+  "Expected 'for' in impl",
 };
 
 const char* LexerErrorMessages[] = {

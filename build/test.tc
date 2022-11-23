@@ -7,11 +7,9 @@
 
 // Testing everything
 
-struct TestStructA end
 struct TestStructB x: int8, y: int16 end
 struct TestStructC(T, V) x: T, y: V end
 
-sum TestSumA end
 sum TestSumB Some(int8), None end
 sum TestSumC(T) Some(T), None end
 
@@ -36,8 +34,8 @@ let a, b: int8, c: []int8, d: [3]int8, e: *int8, f: [3]*int8, g: ..int8,
     h: struct TestStructA, i: ..[]*struct TestStructB(int8), j: union TestUnion,
     k: enum TestEnum, l: sum TestSumC(int8), m: trait TestTraitA,
     n: (int8, int8) -> int8, /* o: (T, T) -> T for T: trait Add,*/
-    p: (void) -> void, q: mut int8, q: mut *int8, r: *mut int8,
-    s: mut *mut int8,
+    p: (void) -> void, q: mut int8, r: mut *int8, s: *mut int8,
+    t: mut *mut int8,
     z: int8 = undefined;
 
 function TestFunction(void) -> void do

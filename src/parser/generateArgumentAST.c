@@ -31,6 +31,11 @@ struct ArgAST* generateExpressionArgumentsWithFirst(struct ASTContext* ctx,
     } else return allocNewExprArgList(args);
   }
 
+  if(ctx->index >= ctx->tokens->length) {
+    FREE_SELF_AND_MEMBERS(args, freeExprNode);
+    APPEND_ASTERROR(ctx, ASTERR_UNEXPECTED_EOF);
+  }
+
   return ast;
 }
 
@@ -69,9 +74,7 @@ static struct IdentifierArg* generateIdentifierArg(struct ASTContext* ctx) {
       struct TypeAST* type = generateType(ctx);
       return allocNewIdentifierArg(identifier, type);
     } else return allocNewIdentifierArg(identifier, NULL);
-  } else {
-    APPEND_ASTERROR(ctx, ASTERR_EXPECTED_IDENTIFIER);
-  }
+  } else APPEND_ASTERROR(ctx, ASTERR_EXPECTED_IDENTIFIER);
   return NULL;
 }
 
@@ -95,7 +98,7 @@ struct ArgAST* generateIdentifierArguments(struct ASTContext* ctx) {
       APPEND_ASTERROR(ctx, ASTERR_UNTERMINATED_ARGS);
       freeArgAST(ast);
     }
-  }
+  } else APPEND_ASTERROR(ctx, ASTERR_EXPECTED_IDENTIFIER);
 
   return NULL;
 }
@@ -111,7 +114,7 @@ static struct AssignArg* generateAssignArg(struct ASTContext* ctx) {
       struct ExprAST* rval = generateExpression(ctx);
       return allocNewAssignArg(identifier, rval);
     } else return allocNewAssignArg(identifier, NULL);
-  }
+  } else APPEND_ASTERROR(ctx, ASTERR_EXPECTED_IDENTIFIER);
 
   return NULL;
 }
@@ -130,7 +133,13 @@ struct ArgAST* generateAssignmentArguments(struct ASTContext* ctx) {
         APPEND_ARRAYLIST(&ast->as.assignargs, arg);
       } else return ast;
     }
-  }
+
+    if(ctx->index <= ctx->tokens->length) {
+      freeArgAST(ast);
+      APPEND_ASTERROR(ctx, ASTERR_UNEXPECTED_EOF);
+    }
+
+  } else APPEND_ASTERROR(ctx, ASTERR_EXPECTED_IDENTIFIER);
 
   return NULL;
 }
@@ -151,10 +160,15 @@ struct ArgAST* generateGenericArguments(struct ASTContext* ctx) {
           identifier = GET_CURRENT_TOKEN(ctx).literal;
           ctx->index += 1;
           APPEND_ARRAYLIST(&ast->as.generics, identifier);
-        }
+        } else APPEND_ASTERROR(ctx, ASTERR_EXPECTED_IDENTIFIER);
       } else return ast;
     }
-  }
+
+    if(ctx->index <= ctx->tokens->length) {
+      freeArgAST(ast);
+      APPEND_ASTERROR(ctx, ASTERR_UNEXPECTED_EOF);
+    }
+  } APPEND_ASTERROR(ctx, ASTERR_EXPECTED_IDENTIFIER);
 
   return NULL;
 }
@@ -186,6 +200,11 @@ struct ArgAST* genSumTypes(struct ASTContext* ctx) {
         APPEND_ARRAYLIST(&ast->as.sumtypes, allocNewSumArgTypeType(type));
       }
     } else return ast;
+  }
+
+  if(ctx->index >= ctx->tokens->length) {
+    freeArgAST(ast);
+    APPEND_ASTERROR(ctx, ASTERR_UNEXPECTED_EOF);
   }
 
   return NULL;
@@ -221,12 +240,17 @@ struct ArgAST* generateSumArguments(struct ASTContext* ctx) {
             if(MATCH_TOKEN(ctx, TOKEN_RIGHT_PAREN)) {
               ctx->index += 1;
               APPEND_ARRAYLIST(&ast->as.sums, allocNewSumArg(name, fields));
-            }
+            } else APPEND_ASTERROR(ctx, ASTERR_UNCLOSED_PAREN);
           } else APPEND_ARRAYLIST(&ast->as.sums, allocNewSumArg(name, NULL));
-        }
+        } else APPEND_ASTERROR(ctx, ASTERR_EXPECTED_IDENTIFIER);
       } else return ast;
     }
-  }
+
+    if(ctx->index <= ctx->tokens->length) {
+      freeArgAST(ast);
+      APPEND_ASTERROR(ctx, ASTERR_UNEXPECTED_EOF);
+    }
+  } else APPEND_ASTERROR(ctx, ASTERR_EXPECTED_IDENTIFIER);
 
   return NULL;
 }
@@ -238,7 +262,8 @@ static struct ArgAST* generateGenericDefLeft(struct ASTContext* ctx) {
     const char* identifier = GET_CURRENT_TOKEN(ctx).literal;
     ctx->index += 1;
     APPEND_ARRAYLIST(&ast->as.genleft, identifier);
-  }
+  } else APPEND_ASTERROR(ctx, ASTERR_EXPECTED_IDENTIFIER);
+
   while(ctx->index < ctx->tokens->length) {
     if(MATCH_TOKEN(ctx, TOKEN_ADD)) {
       ctx->index += 1;
@@ -247,8 +272,13 @@ static struct ArgAST* generateGenericDefLeft(struct ASTContext* ctx) {
         const char* identifier = GET_CURRENT_TOKEN(ctx).literal;
         ctx->index += 1;
         APPEND_ARRAYLIST(&ast->as.genleft, identifier);
-      }
+      } else APPEND_ASTERROR(ctx, ASTERR_EXPECTED_IDENTIFIER);
     } else return ast;
+  }
+
+  if(ctx->index <= ctx->tokens->length) {
+    freeArgAST(ast);
+    APPEND_ASTERROR(ctx, ASTERR_UNEXPECTED_EOF);
   }
 
   return NULL;
@@ -269,6 +299,11 @@ static struct ArgAST* generateGenericDefRight(struct ASTContext* ctx) {
     } else return ast;
   }
 
+  if(ctx->index <= ctx->tokens->length) {
+    freeArgAST(ast);
+    APPEND_ASTERROR(ctx, ASTERR_UNEXPECTED_EOF);
+  }
+
   return NULL;
 }
 
@@ -281,7 +316,7 @@ struct ArgAST* generateGenericDefs(struct ASTContext* ctx) {
     ctx->index += 1;
     struct ArgAST* gendefr = generateGenericDefRight(ctx);
     APPEND_ARRAYLIST(&ast->as.gendefs, allocNewGenericDef(gendefl, gendefr));
-  }
+  } else APPEND_ASTERROR(ctx, ASTERR_EXPECTED_COLON);
 
   while(ctx->index < ctx->tokens->length) {
     if(MATCH_TOKEN(ctx, TOKEN_COMMA)) {
@@ -293,9 +328,15 @@ struct ArgAST* generateGenericDefs(struct ASTContext* ctx) {
         struct ArgAST* gendefr = generateGenericDefRight(ctx);
         APPEND_ARRAYLIST(&ast->as.gendefs,
             allocNewGenericDef(gendefl, gendefr));
-      }
+      } else APPEND_ASTERROR(ctx, ASTERR_EXPECTED_COLON);
     } else return ast;
   }
+
+  if(ctx->index <= ctx->tokens->length) {
+    freeArgAST(gendefl); freeArgAST(ast);
+    APPEND_ASTERROR(ctx, ASTERR_UNEXPECTED_EOF);
+  }
+
 
   return NULL;
 }
@@ -318,11 +359,17 @@ static struct MatchArm* generateMatchArm(struct ASTContext* ctx) {
           return allocNewMatchArm(exprargs, body);
         } else appendToStmtList(body, generateStatement(ctx));
       }
+
+      if(ctx->index <= ctx->tokens->length) {
+        freeArgAST(exprargs);
+        freeStmtList(body);
+        APPEND_ASTERROR(ctx, ASTERR_UNEXPECTED_EOF);
+      }
     } else {
       appendToStmtList(body, generateStatement(ctx));
       return allocNewMatchArm(exprargs, body);
     }
-  }
+  } else APPEND_ASTERROR(ctx, ASTERR_EXPECTED_ARROW_MATCH);
 
   return NULL;
 }
@@ -339,6 +386,11 @@ struct ArgAST* generateMatchArms(struct ASTContext* ctx) {
       arm = generateMatchArm(ctx);
       APPEND_ARRAYLIST(&ast->as.matcharms, arm);
     } else return ast;
+  }
+
+  if(ctx->index <= ctx->tokens->length) {
+    freeArgAST(ast);
+    APPEND_ASTERROR(ctx, ASTERR_UNEXPECTED_EOF);
   }
 
   return NULL;

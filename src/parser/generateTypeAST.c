@@ -23,11 +23,9 @@ static struct TypeAST* generateStructType(struct ASTContext* ctx,
       if(MATCH_TOKEN(ctx, TOKEN_RIGHT_PAREN)) {
         ctx->index += 1;
         return allocNewStructType(identifier, type, generics, ismutable);
-      }
+      } else APPEND_ASTERROR(ctx, ASTERR_UNCLOSED_PAREN);
     } else return allocNewStructType(identifier, type, NULL, ismutable);
-  } else {
-    APPEND_ASTERROR(ctx, ASTERR_EXPECTED_IDENTIFIER);
-  }
+  } else APPEND_ASTERROR(ctx, ASTERR_EXPECTED_IDENTIFIER);
   return NULL;
 }
 
@@ -68,13 +66,14 @@ static struct TypeAST* generateArrayType(struct ASTContext* ctx,
   ctx->index += 1;
 
   struct ExprAST* size = NULL;
+
   if(!(MATCH_TOKEN(ctx, TOKEN_RIGHT_BRACKET))) size = generateExpression(ctx);
 
   if(MATCH_TOKEN(ctx, TOKEN_RIGHT_BRACKET)) {
     ctx->index += 1;
 
     return allocNewArrayType(generateType(ctx), size, ismutable);
-  }
+  } else APPEND_ASTERROR(ctx, ASTERR_UNCLOSED_BRACKET);
 
   return NULL;
 }
@@ -96,11 +95,10 @@ static struct TypeAST* generateFunctionType(struct ASTContext* ctx,
 
       if(!(MATCH_TOKEN(ctx, TOKEN_VOID))) {
         returns = generateType(ctx);
-        return allocNewFunctionType(params, returns, ismutable);
       } else ctx->index += 1;
-    }
-  }
-  return NULL;
+    } else APPEND_ASTERROR(ctx, ASTERR_EXPECTED_ARROW_FUNCTION);
+  } else APPEND_ASTERROR(ctx, ASTERR_UNCLOSED_PAREN);
+  return allocNewFunctionType(params, returns, ismutable);;
 }
 
 struct TypeAST* generateType(struct ASTContext* ctx) {

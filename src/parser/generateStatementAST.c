@@ -105,14 +105,11 @@ static struct StmtAST* genConditionalNode(struct ASTContext* ctx) {
             if(MATCH_TOKEN(ctx, TOKEN_END)) {
               ctx->index += 1;
               return allocNewConditional(condition, body, type, elseBranch);
-            } else {
+            } else
               appendToStmtList(elseBranch.elseBody, generateStatement(ctx));
-            }
           }
         }
-      } else {
-        appendToStmtList(body, generateStatement(ctx));
-      }
+      } else appendToStmtList(body, generateStatement(ctx));
     }
 
     // Missing end token?
@@ -137,9 +134,7 @@ static struct StmtAST* genLoopNode(struct ASTContext* ctx) {
     if(MATCH_TOKEN(ctx, TOKEN_END)) {
       ctx->index += 1;
       return allocNewLoop(body);
-    } else {
-      appendToStmtList(body, generateStatement(ctx));
-    }
+    } else appendToStmtList(body, generateStatement(ctx));
   }
 
   if(ctx->index >= ctx->tokens->length) {
@@ -223,7 +218,7 @@ static struct StmtAST* genStmtNode(struct ASTContext* ctx) {
     // lost when there was an error
     if(MATCH_TOKEN(ctx, TOKEN_SEMICOLON)) ctx->index += 1;
     // god help me
-    else if(stmt->type == STMT_EXPRESSION
+    else if(stmt->type == STMT_EXPRESSION // do nothing lmao
         && stmt->as.expression.expression->type == EXPR_FUNCTION);
     else APPEND_ASTERROR(ctx, ASTERR_EXPECTED_STMT_END);
   }

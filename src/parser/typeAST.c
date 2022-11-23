@@ -178,5 +178,6 @@ void printTypeAST(const struct TypeAST* ast) {
       else printf("void");
       printf(") -> ");
       if(ast->as.function.returns) printTypeAST(ast->as.function.returns);
+      else printf("void");
   }
 }

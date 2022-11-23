@@ -68,6 +68,7 @@ struct DeclarationAST* generateFunctionHeader(struct ASTContext* ctx) {
     name = GET_CURRENT_TOKEN(ctx).literal;
     ctx->index += 1;
   }
+
   if(MATCH_TOKEN(ctx, TOKEN_LEFT_PAREN)) {
     ctx->index += 1;
 
@@ -98,9 +99,9 @@ struct DeclarationAST* generateFunctionHeader(struct ASTContext* ctx) {
 
         return
           allocNewFunction(name, args, returns, contracts, generics, NULL);
-      }
-    }
-  }
+      } else APPEND_ASTERROR(ctx, ASTERR_EXPECTED_ARROW_FUNCTION);
+    } else APPEND_ASTERROR(ctx, ASTERR_UNCLOSED_PAREN);
+  } else APPEND_ASTERROR(ctx, ASTERR_EXPECTED_PAREN);
   return NULL;
 }
 
@@ -122,10 +123,15 @@ static struct DeclarationAST* genInterface(struct ASTContext* ctx) {
         if(MATCH_TOKEN(ctx, TOKEN_END)) {
           ctx->index += 1;
           return allocNewInterface(name, functions);
-        }
+        } else APPEND_ASTERROR(ctx, ASTERR_EXPECTED_END);
       }
     }
-  }
+
+    if(ctx->index >= ctx->tokens->length) {
+      FREE_SELF_AND_MEMBERS(functions, freeDeclarationAST);
+      APPEND_ASTERROR(ctx, ASTERR_UNEXPECTED_EOF);
+    }
+  } else APPEND_ASTERROR(ctx, ASTERR_EXPECTED_IDENTIFIER);
   return NULL;
 }
 
@@ -143,6 +149,11 @@ static struct DeclarationAST* genFunction(struct ASTContext* ctx) {
         ast->as.function.body = body;
         return ast;
       } else appendToStmtList(body, generateStatement(ctx));
+    }
+
+    if(ctx->index >= ctx->tokens->length) {
+      freeStmtList(body);
+      APPEND_ASTERROR(ctx, ASTERR_UNEXPECTED_EOF);
     }
   }
 
@@ -169,10 +180,15 @@ static struct DeclarationAST* genImpl(struct ASTContext* ctx) {
         if(MATCH_TOKEN(ctx, TOKEN_END)) {
           ctx->index += 1;
           return allocNewImpl(trait, type, functions);
-        }
+        } else APPEND_ASTERROR(ctx, ASTERR_EXPECTED_END);
       }
     }
-  }
+
+    if(ctx->index >= ctx->tokens->length) {
+      FREE_SELF_AND_MEMBERS(functions, freeDeclarationAST);
+      APPEND_ASTERROR(ctx, ASTERR_UNEXPECTED_EOF);
+    }
+  } APPEND_ASTERROR(ctx, ASTERR_EXPECTED_FOR_IMPL);
   return NULL;
 }
 
