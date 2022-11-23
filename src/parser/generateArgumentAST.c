@@ -134,7 +134,7 @@ struct ArgAST* generateAssignmentArguments(struct ASTContext* ctx) {
       } else return ast;
     }
 
-    if(ctx->index <= ctx->tokens->length) {
+    if(ctx->index >= ctx->tokens->length) {
       freeArgAST(ast);
       APPEND_ASTERROR(ctx, ASTERR_UNEXPECTED_EOF);
     }
@@ -164,7 +164,7 @@ struct ArgAST* generateGenericArguments(struct ASTContext* ctx) {
       } else return ast;
     }
 
-    if(ctx->index <= ctx->tokens->length) {
+    if(ctx->index >= ctx->tokens->length) {
       freeArgAST(ast);
       APPEND_ASTERROR(ctx, ASTERR_UNEXPECTED_EOF);
     }
@@ -246,7 +246,7 @@ struct ArgAST* generateSumArguments(struct ASTContext* ctx) {
       } else return ast;
     }
 
-    if(ctx->index <= ctx->tokens->length) {
+    if(ctx->index >= ctx->tokens->length) {
       freeArgAST(ast);
       APPEND_ASTERROR(ctx, ASTERR_UNEXPECTED_EOF);
     }
@@ -276,7 +276,7 @@ static struct ArgAST* generateGenericDefLeft(struct ASTContext* ctx) {
     } else return ast;
   }
 
-  if(ctx->index <= ctx->tokens->length) {
+  if(ctx->index >= ctx->tokens->length) {
     freeArgAST(ast);
     APPEND_ASTERROR(ctx, ASTERR_UNEXPECTED_EOF);
   }
@@ -299,7 +299,7 @@ static struct ArgAST* generateGenericDefRight(struct ASTContext* ctx) {
     } else return ast;
   }
 
-  if(ctx->index <= ctx->tokens->length) {
+  if(ctx->index >= ctx->tokens->length) {
     freeArgAST(ast);
     APPEND_ASTERROR(ctx, ASTERR_UNEXPECTED_EOF);
   }
@@ -332,7 +332,7 @@ struct ArgAST* generateGenericDefs(struct ASTContext* ctx) {
     } else return ast;
   }
 
-  if(ctx->index <= ctx->tokens->length) {
+  if(ctx->index >= ctx->tokens->length) {
     freeArgAST(gendefl); freeArgAST(ast);
     APPEND_ASTERROR(ctx, ASTERR_UNEXPECTED_EOF);
   }
@@ -360,7 +360,7 @@ static struct MatchArm* generateMatchArm(struct ASTContext* ctx) {
         } else appendToStmtList(body, generateStatement(ctx));
       }
 
-      if(ctx->index <= ctx->tokens->length) {
+      if(ctx->index >= ctx->tokens->length) {
         freeArgAST(exprargs);
         freeStmtList(body);
         APPEND_ASTERROR(ctx, ASTERR_UNEXPECTED_EOF);
@@ -388,7 +388,7 @@ struct ArgAST* generateMatchArms(struct ASTContext* ctx) {
     } else return ast;
   }
 
-  if(ctx->index <= ctx->tokens->length) {
+  if(ctx->index >= ctx->tokens->length) {
     freeArgAST(ast);
     APPEND_ASTERROR(ctx, ASTERR_UNEXPECTED_EOF);
   }
