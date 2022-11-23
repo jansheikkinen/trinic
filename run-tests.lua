@@ -1,3 +1,4 @@
+#!/bin/lua
 -- Run Tests
 
 -- ### GLOBALS ### --
@@ -34,6 +35,48 @@ local function scandir(dir, ptrn)
 
   pfile:close()
   return t
+end
+
+
+-- ### COLOR UTILITIES ### --
+
+local COLATTR_RESET = 0
+local COLATTR_BRIGHT = 1
+local COLATTR_DIM = 2
+local COLATTR_ITALIC = 3
+local COLATTR_UNDERLINE = 4
+local COLATTR_BLINK = 5
+local COLATTR_REVERSE = 7
+local COLATTR_HIDDEN = 8
+local COLATTR_STRIKE = 9
+local COLATTR_BRIGHT_UNDERLINE = 21
+local COLATTR_OVERLINE = 53
+
+local COL_BLACK = 0
+local COL_RED = 1
+local COL_GREEN = 2
+local COL_ORANGE = 3
+local COL_BLUE = 4
+local COL_MAGENTA = 5
+local COL_CYAN = 6
+local COL_LGREY = 7
+local COL_UNDEFINED = 8
+local COL_DEFAULT = 9
+
+local COLBG_LRED = 0
+local COLBG_LGREEN = 1
+local COLBG_YELLOW = 2
+local COLBG_LBLUE = 3
+local COLBG_LPURPLE = 4
+local COLBG_TEAL = 5
+local COLBG_WHITE = 6
+
+local function setColor(attr, fg, bg)
+  printf("%c[%d;%d;%dm", 0x1B, attr, fg + 30, bg + 40)
+end
+
+local function resetColor()
+  setColor(COLATTR_RESET, COL_DEFAULT, COL_DEFAULT)
 end
 
 
@@ -127,10 +170,18 @@ local function runTests()
     for name, _ in pairs(testOutputs) do
       if testOutputs[name] == expectedOutputs[name .. ".ast.out"] then
         numOk = numOk + 1
-        printf("[ OK ] %s\n", name)
+        printf("[ ")
+        setColor(COLATTR_RESET, COL_GREEN, COL_DEFAULT)
+        printf("OK")
+        resetColor()
+        printf(" ] %s\n", name)
       else
         numFail = numFail + 1
-        printf("[FAIL] %s\n", name)
+        printf("[")
+        setColor(COLATTR_BRIGHT, COL_RED, COL_DEFAULT)
+        printf("FAIL")
+        resetColor()
+        printf("] %s\n", name)
       end
     end
 
