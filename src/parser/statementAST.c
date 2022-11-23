@@ -106,6 +106,21 @@ static struct StmtAST newWhile(struct ExprAST* condition,
   return stmt;
 }
 
+static struct StmtAST newFor(struct ArgAST* itervar, struct ExprAST* iterator,
+    struct StmtList* body) {
+  struct StmtAST stmt;
+
+  struct ForStmt forloop;
+  forloop.itervar = itervar;
+  forloop.iterator = iterator;
+  forloop.body = body;
+
+  stmt.type = STMT_FOR;
+  stmt.as.forloop = forloop;
+
+  return stmt;
+}
+
 static struct StmtAST newMatch(struct ExprAST* expr, struct ArgAST* body) {
   struct StmtAST stmt;
 
@@ -156,6 +171,11 @@ struct StmtAST* allocNewLoop(struct StmtList* body) {
 struct StmtAST* allocNewWhile(struct ExprAST* condition,
     struct StmtList* body) {
   ALLOC_NODE(newWhile, condition, body);
+}
+
+struct StmtAST* allocNewFor(struct ArgAST* itervar, struct ExprAST* iterator,
+    struct StmtList* body) {
+  ALLOC_NODE(newFor, itervar, iterator, body);
 }
 
 struct StmtAST* allocNewMatch(struct ExprAST* expr, struct ArgAST* body) {
@@ -212,6 +232,14 @@ void printStmtAST(const struct StmtAST* stmt) {
       printf(" do ");
       printStmtList(stmt->as.whileloop.body);
       printf("end"); break;
+    case STMT_FOR:
+      printf("for ");
+      printArgAST(stmt->as.forloop.itervar);
+      printf(" in ");
+      printExprAST(stmt->as.forloop.iterator);
+      printf(" do ");
+      printStmtList(stmt->as.forloop.body);
+      printf("end"); break;
     case STMT_MATCH:
       printf("match ");
       printExprAST(stmt->as.match.expr);
@@ -253,6 +281,10 @@ void freeStmtNode(struct StmtAST* stmt) {
     case STMT_WHILE:
       freeExprNode(stmt->as.whileloop.condition);
       freeStmtList(stmt->as.whileloop.body); break;
+    case STMT_FOR:
+      freeArgAST(stmt->as.forloop.itervar);
+      freeExprNode(stmt->as.forloop.iterator);
+      freeStmtList(stmt->as.forloop.body); break;
     case STMT_MATCH:
       freeExprNode(stmt->as.match.expr);
       freeArgAST(stmt->as.match.body); break;

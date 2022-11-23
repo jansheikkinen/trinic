@@ -50,7 +50,7 @@ function TestFunction(void) -> void do
   if a do x; else if b do y; else z; end
   loop x; y; end
   while a do x; y; end
-  // for a in b do x; end
+  for a in b do x; end
   match a do
     1, 2 => y;,
     3    => x;,

@@ -75,6 +75,13 @@ struct WhileStmt {
   struct StmtList* body;
 };
 
+// for x: int8 in { 1, 2, 3 } do z; end
+struct ForStmt {
+  struct ArgAST* itervar;
+  struct ExprAST* iterator;
+  struct StmtList* body;
+};
+
 struct MatchStmt {
   struct ExprAST* expr;
   struct ArgAST* body;
@@ -89,6 +96,7 @@ enum StmtASTType {
   STMT_CONDITIONAL,
   STMT_LOOP,
   STMT_WHILE,
+  STMT_FOR,
   STMT_MATCH,
 };
 
@@ -102,6 +110,7 @@ struct StmtAST {
     struct ConditionalStmt conditional;
     struct LoopStmt loop;
     struct WhileStmt whileloop;
+    struct ForStmt forloop;
     struct MatchStmt match;
   } as;
 };
@@ -114,6 +123,7 @@ struct StmtAST* allocNewConditional(struct ExprAST*, struct StmtList*,
     enum ConditionalElseTypes, union ConditionalElse);
 struct StmtAST* allocNewLoop(struct StmtList*);
 struct StmtAST* allocNewWhile(struct ExprAST*, struct StmtList*);
+struct StmtAST* allocNewFor(struct ArgAST*, struct ExprAST*, struct StmtList*);
 struct StmtAST* allocNewMatch(struct ExprAST*, struct ArgAST*);
 
 void printStmtAST(const struct StmtAST*);

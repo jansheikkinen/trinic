@@ -173,6 +173,40 @@ static struct StmtAST* genWhileNode(struct ASTContext* ctx) {
   return stmt;
 }
 
+static struct StmtAST* genForNode(struct ASTContext* ctx) {
+  ctx->index += 1;
+
+  struct ArgAST* itervar = generateIdentifierArguments(ctx);
+
+  if(MATCH_TOKEN(ctx, TOKEN_IN)) {
+    ctx->index += 1;
+
+    struct ExprAST* iterator = generateExpression(ctx);
+
+    if(MATCH_TOKEN(ctx, TOKEN_DO)) {
+      ctx->index += 1;
+
+      struct StmtList* body = malloc(sizeof(*body));
+      *body = newStmtList();
+
+      while(ctx->index < ctx->tokens->length) {
+        if(MATCH_TOKEN(ctx, TOKEN_END)) {
+          ctx->index += 1;
+          return allocNewFor(itervar, iterator, body);
+        } else appendToStmtList(body, generateStatement(ctx));
+      }
+
+      if(ctx->index >= ctx->tokens->length) {
+        APPEND_ASTERROR(ctx, ASTERR_EXPECTED_END);
+        freeStmtList(body);
+      }
+    } else APPEND_ASTERROR(ctx, ASTERR_EXPECTED_BLOCK);
+
+  } else APPEND_ASTERROR(ctx, ASTERR_EXPECTED_IN_FOR);
+
+  return NULL;
+}
+
 static struct StmtAST* genMatchNode(struct ASTContext* ctx) {
   struct StmtAST* stmt = NULL;
   ctx->index += 1;
@@ -198,6 +232,7 @@ static struct StmtAST* genStmtNode(struct ASTContext* ctx) {
   if(MATCH_TOKEN(ctx, TOKEN_IF)) stmt = genConditionalNode(ctx);
   else if(MATCH_TOKEN(ctx, TOKEN_LOOP)) stmt = genLoopNode(ctx);
   else if(MATCH_TOKEN(ctx, TOKEN_WHILE)) stmt = genWhileNode(ctx);
+  else if(MATCH_TOKEN(ctx, TOKEN_FOR)) stmt = genForNode(ctx);
   else if(MATCH_TOKEN(ctx, TOKEN_MATCH)) stmt = genMatchNode(ctx);
   else {
     // These ones use . or ; as explicit terminator(not sure which yet)

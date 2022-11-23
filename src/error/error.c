@@ -35,6 +35,7 @@ const char* ASTErrorMessages[] = {
   "Expected identifier",
   "Expected assignment",
   "Expected 'for' in impl",
+  "Expected 'in' in for",
 };
 
 const char* LexerErrorMessages[] = {

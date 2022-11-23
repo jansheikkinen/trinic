@@ -44,7 +44,7 @@ conditional = "if" expression "do" statement*
               ( "end" | "else" (statement* "end" | conditional) ) ;
 loop        = "loop" statement* "end" ;
 while       = "while" expression "do" statement* "end" ;
-forin       = "for" expression "in" expression "do" statement* "end" ;
+forin       = "for" idargs "in" expression "do" statement* "end" ;
 match       = "match" expression "do" matcharms "end"
 
 # Note that "undefined", though allowed anywhere an expression is in the syntax,
