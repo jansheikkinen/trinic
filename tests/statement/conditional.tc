@@ -1,0 +1,16 @@
+// Conditional
+
+function main(void) -> void do
+  if 1 do print(1); end
+  if 1 do print(1); else print(2); end
+  if 1 do print(1); else if 2 do print(2); end
+  if 1 do print(1); else if 2 do print(2); else print(3); end
+
+  if 1 do
+    if 2 do
+      print(1 + 2);
+    else
+      print(3 + 4);
+    end
+  end
+end

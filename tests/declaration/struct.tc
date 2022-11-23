@@ -1,0 +1,9 @@
+// Struct
+
+struct TestStruct
+  x: int8
+end
+
+struct TestStructB(T, V)
+  x: T, y: V
+end

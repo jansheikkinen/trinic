@@ -1,0 +1,5 @@
+// Sum
+
+function main(void) -> void do
+  let a: sum TestSum, b: sum TestSumB(int8) = undefined;
+end

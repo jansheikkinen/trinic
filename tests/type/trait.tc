@@ -1,0 +1,5 @@
+// Trait
+
+function main(void) -> void do
+  let a: trait Add = undefined;
+end

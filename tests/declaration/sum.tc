@@ -1,0 +1,12 @@
+// Sum
+
+sum TestSum
+  One(int8),
+  Two
+end
+
+sum TestSum(T, V)
+  One(T, V),
+  Two(T),
+  Three
+end

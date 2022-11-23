@@ -1,0 +1,3 @@
+// Identifier Arguments
+
+function main(x: int8, y, z: int16) -> void do 1; end

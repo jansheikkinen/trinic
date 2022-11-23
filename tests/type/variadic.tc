@@ -1,0 +1,5 @@
+// Variadirc
+
+function main(x: ..int8) -> int8 do
+  return;
+end

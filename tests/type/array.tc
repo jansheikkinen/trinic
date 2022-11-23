@@ -1,0 +1,5 @@
+// Array
+
+function main(void) -> void do
+  let a: []int8, b: [1 + 2]int8 = undefined;
+end

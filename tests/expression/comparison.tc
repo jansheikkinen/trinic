@@ -1,0 +1,5 @@
+// Comparison
+
+function main(void) -> void do
+  1 > 2 >= 3 < 4 <= 5;
+end

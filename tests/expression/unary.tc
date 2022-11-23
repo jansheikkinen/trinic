@@ -1,0 +1,5 @@
+// Unary
+
+function main(void) -> void do
+  ~1; !1; not 1; -1; *1; &1;
+end

@@ -1,0 +1,6 @@
+// Primary
+
+function main(void) -> void do
+  (1 + 2); 1; -1; 1.1; "string"; identifier; true; false; { 1, 2, 3 };
+  function(void) -> void do x; end
+end

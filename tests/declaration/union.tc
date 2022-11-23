@@ -1,0 +1,9 @@
+// Union
+
+union TestUnion
+  x: int8, y: float8
+end
+
+union TestUnionB(T, V)
+  x: T, y: V
+end

@@ -1,0 +1,6 @@
+// Order of Operations
+
+function main(void) -> void do
+  1 and 2 == 3 > 4 & 5 + 6 * -7;
+  -1 * 2 + 3 & 4 > 5 == 6 and 7;
+end

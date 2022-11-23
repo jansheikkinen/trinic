@@ -1,0 +1,5 @@
+// Variable Declaration
+
+function main(void) -> void do
+  let x = undefined;
+end

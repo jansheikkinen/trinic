@@ -1,0 +1,6 @@
+// Expression Arguments
+
+function main(void) -> void do
+  let x, y, z: int8 = undefined;
+  let a, b, c: int8 = 1 + 2, 3, 4;
+end

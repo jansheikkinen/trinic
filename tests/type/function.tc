@@ -1,0 +1,6 @@
+// Function
+
+function main(void) -> void do
+  let a: (void) -> void, b: (int8, int8) -> void, c: (void) -> int8,
+      d: (T, V) -> for T + V: trait Add + trait Display = undefined;
+end

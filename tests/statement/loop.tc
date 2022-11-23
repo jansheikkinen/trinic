@@ -1,0 +1,6 @@
+// Loop
+
+function main(void) -> void do
+  loop print(1); end
+  loop print(1); loop print(2); end end
+end

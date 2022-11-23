@@ -1,0 +1,6 @@
+// Mutable
+
+function main(void) -> void do
+  let a: int8, b: mut int8, c: *int8, d: *mut int8,
+      e: mut *int8, f: mut *mut int8 = undefined;
+end

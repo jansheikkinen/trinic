@@ -1,0 +1,5 @@
+// Union
+
+function main(void) -> void do
+  let a: union TestUnion, b: union TestUnionB(int8, int16) = undefined;
+end

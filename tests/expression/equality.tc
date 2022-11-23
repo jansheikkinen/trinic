@@ -1,0 +1,5 @@
+// Equality
+
+function main(void) -> void do
+  1 == 2 != 3;
+end

@@ -1,0 +1,6 @@
+// Trait
+
+trait TestTrait
+  function testFunction(void) -> void
+  function testFunctionB(void) -> void
+end

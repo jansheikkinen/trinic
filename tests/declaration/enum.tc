@@ -1,0 +1,7 @@
+// Enum
+
+enum TestEnum
+  ENUM_ONE,
+  ENUM_TWO = 2,
+  ENUM_THREE
+end

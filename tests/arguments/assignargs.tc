@@ -1,0 +1,8 @@
+// Assignment Arguments
+
+enum TestEnum
+  ONE = 1,
+  TWO,
+  THREE = 2,
+  FOUR
+end

@@ -1,0 +1,9 @@
+// Base
+
+function main(void) -> void do
+  let a: int8,   b: int16,   c: int32,   d: int64,   e: isize,
+      f: uint8,  g: uint16,  h: uint32,  i: uint64,  j: usize,
+      k: float8, l: float16, m: float32, n: float64, o: fsize,
+      p: byte,   q: char,    r: void,    s: bool,    t: any,
+      u: identifier = undefined;
+end

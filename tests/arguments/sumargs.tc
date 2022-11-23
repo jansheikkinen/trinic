@@ -1,0 +1,8 @@
+// Sum Arguments
+
+sum TestSum
+  A(T),
+  B(T, V),
+  C(int8),
+  Z
+end

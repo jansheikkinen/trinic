@@ -1,0 +1,15 @@
+// Impl
+
+struct TestStruct
+  x, y: int8
+end
+
+trait TestTrait
+  function testFunction(self: *Self) -> Self
+end
+
+impl TestTrait for TestStruct
+  function testFunction(self: *Self) -> Self do
+    return(self);
+  end
+end

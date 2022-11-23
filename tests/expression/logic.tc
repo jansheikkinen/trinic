@@ -1,0 +1,5 @@
+// Logic
+
+function main(void) -> void do
+  1 and 2 or 3;
+end

@@ -1,0 +1,5 @@
+// Pointer
+
+function main(void) -> void do
+  let a: *int8 = undefined;
+end

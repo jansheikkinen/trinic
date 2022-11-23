@@ -1,0 +1,6 @@
+// While
+
+function main(void) -> void do
+  while 1 do print(1); end
+  while 1 do print(1); while 2 do print(2); end end
+end

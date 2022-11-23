@@ -1,0 +1,6 @@
+// Builtin
+
+function main(void) -> void do
+  print; return; continue; break;
+  print(1); return(1); continue(1); break(1);
+end

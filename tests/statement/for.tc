@@ -1,0 +1,6 @@
+// For
+
+function main(void) -> void do
+  for x in y do z; end
+  for x in y do z; for a in b do c; end end
+end

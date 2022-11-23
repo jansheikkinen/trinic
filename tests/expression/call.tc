@@ -1,0 +1,5 @@
+// Call
+
+function main(void) -> void do
+  1; a(1, 2); b.c; d->e; f[g]; a(1, 2).b->c[d].e;
+end

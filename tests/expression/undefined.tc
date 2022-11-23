@@ -1,0 +1,5 @@
+// Undefined
+
+function main(void) -> void do
+  undefined;
+end
