@@ -75,13 +75,14 @@ struct TypeAST* allocNewStructType(const char* name, enum StructTypes type,
 }
 
 struct TypeAST* allocNewFunctionType(struct ArgAST* params,
-    struct TypeAST* returns, bool mutable) {
+    struct TypeAST* returns, struct ArgAST* generics, bool mutable) {
   struct TypeAST* ast = malloc(sizeof(*ast));
 
   ast->type = TYPE_FUNCTION;
   ast->ismutable = mutable;
   ast->as.function.params = params;
   ast->as.function.returns = returns;
+  ast->as.function.generics = generics;
 
   return ast;
 }
@@ -103,6 +104,7 @@ void freeTypeAST(struct TypeAST* ast) {
     case TYPE_FUNCTION:
       if(ast->as.function.params) freeArgAST(ast->as.function.params);
       if(ast->as.function.returns) freeTypeAST(ast->as.function.returns);
+      if(ast->as.function.generics) freeArgAST(ast->as.function.generics);
   }
 
   free(ast);
@@ -179,5 +181,8 @@ void printTypeAST(const struct TypeAST* ast) {
       printf(") -> ");
       if(ast->as.function.returns) printTypeAST(ast->as.function.returns);
       else printf("void");
+      if(ast->as.function.generics) {
+        printf(" for "); printArgAST(ast->as.function.generics);
+      }
   }
 }

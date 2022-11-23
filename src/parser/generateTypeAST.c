@@ -98,7 +98,14 @@ static struct TypeAST* generateFunctionType(struct ASTContext* ctx,
       } else ctx->index += 1;
     } else APPEND_ASTERROR(ctx, ASTERR_EXPECTED_ARROW_FUNCTION);
   } else APPEND_ASTERROR(ctx, ASTERR_UNCLOSED_PAREN);
-  return allocNewFunctionType(params, returns, ismutable);;
+
+  struct ArgAST* generics = NULL;
+  if(MATCH_TOKEN(ctx, TOKEN_FOR)) {
+    ctx->index += 1;
+    generics = generateGenericDefs(ctx);
+  }
+
+  return allocNewFunctionType(params, returns, generics, ismutable);
 }
 
 struct TypeAST* generateType(struct ASTContext* ctx) {

@@ -79,6 +79,7 @@ struct StructType {
 struct FunctionType {
   struct ArgAST* params;
   struct TypeAST* returns;
+  struct ArgAST* generics;
 };
 
 enum TypeASTTypes {
@@ -111,7 +112,8 @@ struct TypeAST* allocNewPointerType(struct TypeAST*, bool);
 struct TypeAST* allocNewArrayType(struct TypeAST*, struct ExprAST*, bool);
 struct TypeAST* allocNewStructType(const char*, enum StructTypes,
     struct ArgAST*, bool);
-struct TypeAST* allocNewFunctionType(struct ArgAST*, struct TypeAST*, bool);
+struct TypeAST* allocNewFunctionType(struct ArgAST*, struct TypeAST*,
+    struct ArgAST*, bool);
 
 void freeTypeAST(struct TypeAST*);
 
