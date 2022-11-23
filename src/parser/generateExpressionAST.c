@@ -22,6 +22,10 @@
       struct ExprAST* right = prevNode(ctx);                \
       left = allocNewBinary(op, left, right);               \
     }                                                       \
+    if(ctx->index >= ctx->tokens->length) {                 \
+      freeExprNode(left);                                   \
+      APPEND_ASTERROR(ctx, ASTERR_UNEXPECTED_EOF);          \
+    }                                                       \
     return left;                                            \
   }
 
@@ -59,6 +63,7 @@ static struct ExprAST* genPrimaryNode(struct ASTContext* ctx) {
       expr = allocNewArrayInit(args);
   } else if(MATCH_TOKEN(ctx, TOKEN_FUNCTION)) {
     expr = allocNewFunctionExpr(generateDeclaration(ctx));
+    ctx->index -= 1; // bruh
   } else if(MATCH_TOKEN(ctx, TOKEN_LEFT_PAREN)) {
     ctx->index += 1;
     struct ExprAST* exprast = generateExpression(ctx);
@@ -97,6 +102,9 @@ static struct ExprAST* genCallNode(struct ASTContext* ctx) {
         const char* identifier = GET_CURRENT_TOKEN(ctx).literal;
         ctx->index += 1;
         expr = allocNewGet(isPointer, identifier, expr);
+      } else {
+        APPEND_ASTERROR(ctx, ASTERR_EXPECTED_IDENTIFIER);
+        freeExprNode(expr);
       }
     } else if(MATCH_TOKEN(ctx, TOKEN_LEFT_BRACKET)) {
       ctx->index += 1;
@@ -105,9 +113,18 @@ static struct ExprAST* genCallNode(struct ASTContext* ctx) {
       if(MATCH_TOKEN(ctx, TOKEN_RIGHT_BRACKET)) {
         ctx->index += 1;
         expr = allocNewArrayIndex(index, expr);
+      } else {
+        APPEND_ASTERROR(ctx, ASTERR_UNCLOSED_BRACKET);
+        freeExprNode(expr);
       }
     } else break;
   }
+
+  if(ctx->index >= ctx->tokens->length) {
+    freeExprNode(expr);
+    APPEND_ASTERROR(ctx, ASTERR_UNEXPECTED_EOF);
+  }
+
   return expr;
 }
 

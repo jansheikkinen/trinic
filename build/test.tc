@@ -5,9 +5,70 @@
 // been putting copies of this file into tests/, but for now they're just
 // available in the commit history lol
 
-// The any type, which is mainly only useful afaik for when you have a variadic
-// that needs to take more than one type at a time and doesn't care which
+// Testing everything
 
-function println(fmt: struct String, args: ..any) -> void do
-  // Pretend there's a cool implementation here :)
+struct TestStructA end
+struct TestStructB x: int8, y: int16 end
+struct TestStructC(T, V) x: T, y: V end
+
+sum TestSumA end
+sum TestSumB Some(int8), None end
+sum TestSumC(T) Some(T), None end
+
+trait TestTraitA
+  function TestFunctionA(void) -> void
+  function TestFunctionB(x: int8) -> int8
+  function TestFunctionC(x: T) -> T for T: trait Add
+  function TestFunctionD(x: T, y: V) -> T for T + V: trait Add + trait Display
+  function TestFunctionE(x: T, y: V) -> T for T: trait Add, V: trait Display
+  function TestFunctionF(x, y: int8) -> int8 where x > 3, return != 0
+end
+
+impl TestTraitA for struct TestStructA
+  function TestFunctionA(void) -> void do return(69); end
+end
+
+impl TestTraitA for struct TestStructC(T)
+  function TestFunctionA(void) -> void do return(69); end
+end
+
+let a, b: int8, c: []int8, d: [3]int8, e: *int8, f: [3]*int8, g: ..int8,
+    h: struct TestStructA, i: ..[]*struct TestStructB(int8), j: union TestUnion,
+    k: enum TestEnum, l: sum TestSumC(int8), m: trait TestTraitA,
+    n: (int8, int8) -> int8, /* o: (T, T) -> T for T: trait Add,*/
+    p: (void) -> void, q: mut int8, q: mut *int8, r: *mut int8,
+    s: mut *mut int8,
+    z: int8 = undefined;
+
+function TestFunction(void) -> void do
+  print; print(3); return; return(3); continue; continue(3); break; break(3);
+
+  let a, b: int8, c: int16 = 1, 2, 3;
+  a, b = 3; a += 4;
+
+  if a do x; y; end
+  if a do x; else y; end
+  if a do x; else if b do y; end
+  if a do x; else if b do y; else z; end
+  loop x; y; end
+  while a do x; y; end
+  // for a in b do x; end
+  match a do
+    1, 2 => y;,
+    3    => x;,
+    5    => do x; y; end
+  end
+
+  1; (1); "string"; identifier; true; false; { 1, 2 };
+  function(void) -> void do return(x); end
+  atest(1, 2); btest.a; ctest->b; dtest[2]; etest(1).b[2]->y;
+  ~a; !b; not c; -d; *e; &f;
+  1 * 2; 1 / 2;
+  1 + 2; 1 - 2;
+  1 & 2; 1 | 2; 1 ^ 2; 1 << 2; 1 >> 2;
+  1 > 2; 1 >= 2; 1 < 2; 1 <= 2;
+  1 == 2; 1 != 2;
+  1 and 2; 1 or 2;
+  1 and 3 == 4 > 4 & 5 + 6 * -7;
+  undefined;
 end

@@ -41,7 +41,7 @@ static struct StmtAST* genVarDeclNode(struct ASTContext* ctx) {
 
     struct ArgAST* rvals = generateExpressionArguments(ctx);
     stmt = allocNewVarDecl(lvals, rvals);
-  }
+  } else APPEND_ASTERROR(ctx, ASTERR_EXPECTED_ASSIGN);
 
   return stmt;
 }
@@ -117,12 +117,12 @@ static struct StmtAST* genConditionalNode(struct ASTContext* ctx) {
 
     // Missing end token?
     if(ctx->index >= ctx->tokens->length) {
-      APPEND_ASTERROR(ctx, ASTERR_UNTERMINATED_IF);
+      APPEND_ASTERROR(ctx, ASTERR_EXPECTED_END);
       freeStmtList(body);
       if(type == CONDELSE_ELSE) freeStmtList(elseBranch.elseBody);
     }
 
-  }
+  } else APPEND_ASTERROR(ctx, ASTERR_EXPECTED_BLOCK);
   return stmt;
 }
 
@@ -143,7 +143,7 @@ static struct StmtAST* genLoopNode(struct ASTContext* ctx) {
   }
 
   if(ctx->index >= ctx->tokens->length) {
-    APPEND_ASTERROR(ctx, ASTERR_UNTERMINATED_LOOP);
+    APPEND_ASTERROR(ctx, ASTERR_EXPECTED_END);
     freeStmtList(body);
   }
 
@@ -170,10 +170,10 @@ static struct StmtAST* genWhileNode(struct ASTContext* ctx) {
     }
 
     if(ctx->index >= ctx->tokens->length) {
-      APPEND_ASTERROR(ctx, ASTERR_UNTERMINATED_WHILE);
+      APPEND_ASTERROR(ctx, ASTERR_EXPECTED_END);
       freeStmtList(body);
     }
-  }
+  } else APPEND_ASTERROR(ctx, ASTERR_EXPECTED_BLOCK);
 
   return stmt;
 }
@@ -191,8 +191,8 @@ static struct StmtAST* genMatchNode(struct ASTContext* ctx) {
     if(MATCH_TOKEN(ctx, TOKEN_END)) {
       ctx->index += 1;
       return allocNewMatch(expr, arms);
-    }
-  }
+    } else APPEND_ASTERROR(ctx, ASTERR_EXPECTED_END);
+  } else APPEND_ASTERROR(ctx, ASTERR_EXPECTED_BLOCK);
 
   return stmt;
 }
@@ -218,9 +218,14 @@ static struct StmtAST* genStmtNode(struct ASTContext* ctx) {
       stmt = genVarDeclNode(ctx);
     else stmt = genAssignmentNode(ctx); // THIS MUST BE LAST
 
+    // TODO: Implicit statement termination
+    // The old method only worked when the input was 100% correct; it would get
+    // lost when there was an error
     if(MATCH_TOKEN(ctx, TOKEN_SEMICOLON)) ctx->index += 1;
-    // TODO: Make sure not appending an error is actually ok
-    //else APPEND_ASTERROR(ctx, ASTERR_STMT_END);
+    // god help me
+    else if(stmt->type == STMT_EXPRESSION
+        && stmt->as.expression.expression->type == EXPR_FUNCTION);
+    else APPEND_ASTERROR(ctx, ASTERR_EXPECTED_STMT_END);
   }
 
   return stmt;

@@ -162,6 +162,7 @@ void printDeclarationAST(const struct DeclarationAST* ast) {
 
       printf(") -> ");
       if(ast->as.function.returns) printTypeAST(ast->as.function.returns);
+      else printf("VOID");
 
       if(ast->as.function.contracts) {
         printf(" where ");

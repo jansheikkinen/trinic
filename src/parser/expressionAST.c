@@ -245,7 +245,9 @@ void printExprAST(const struct ExprAST* ast) {
       printArgAST(ast->as.arrinit.args);
       printf("}"); break;
     case EXPR_FUNCTION:
-      printDeclarationAST(ast->as.function.function); break;
+      if(ast->as.function.function)
+        printDeclarationAST(ast->as.function.function);
+      break;
   }
 }
 
@@ -281,7 +283,9 @@ void freeExprNode(struct ExprAST* expr) {
     case EXPR_ARRAY_INIT:
       freeArgAST(expr->as.arrinit.args); break;
     case EXPR_FUNCTION:
-      freeDeclarationAST(expr->as.function.function); break;
+      if(expr->as.function.function)
+        freeDeclarationAST(expr->as.function.function);
+      break;
   }
 
   free(expr);

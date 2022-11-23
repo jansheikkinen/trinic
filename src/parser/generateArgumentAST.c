@@ -51,7 +51,7 @@ struct ArgAST* generateExpressionArguments(struct ASTContext* ctx) {
   }
 
   if(ctx->index >= ctx->tokens->length) {
-    APPEND_ASTERROR(ctx, ASTERR_UNTERMINATED_EXPR_ARGS);
+    APPEND_ASTERROR(ctx, ASTERR_UNTERMINATED_ARGS);
     FREE_SELF_AND_MEMBERS(args, freeExprNode);
   }
 
@@ -70,7 +70,7 @@ static struct IdentifierArg* generateIdentifierArg(struct ASTContext* ctx) {
       return allocNewIdentifierArg(identifier, type);
     } else return allocNewIdentifierArg(identifier, NULL);
   } else {
-    APPEND_ASTERROR(ctx, ASTERR_MISSING_IDENTIFIER_IDARGS);
+    APPEND_ASTERROR(ctx, ASTERR_EXPECTED_IDENTIFIER);
   }
   return NULL;
 }
@@ -92,7 +92,7 @@ struct ArgAST* generateIdentifierArguments(struct ASTContext* ctx) {
    }
 
     if(ctx->index >= ctx->tokens->length) {
-      APPEND_ASTERROR(ctx, ASTERR_UNTERMINATED_IDENTIFIER_ARGS);
+      APPEND_ASTERROR(ctx, ASTERR_UNTERMINATED_ARGS);
       freeArgAST(ast);
     }
   }

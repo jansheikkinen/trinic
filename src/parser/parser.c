@@ -28,14 +28,12 @@ struct DeclarationList* parseProgram(const char* filename) {
   free(program);
 
 #ifdef VERBOSE_DEBUG
-  for(size_t i = 0; i < tokens->capacity; i++) {
-    if(tokens->tokens[i].type) { // TOKEN_UNDEFINED == 0 == NULL
-      printf("%03ld: %12s, %10s, (%03ld, %03ld)\n", i,
-          getTokenName(tokens->tokens[i].type),
-          tokens->tokens[i].literal,
-          tokens->tokens[i].row,
-          tokens->tokens[i].col);
-    }
+  for(size_t i = 0; i < tokens->length; i++) {
+    printf("%03ld: %12s, %10s, (%03ld, %03ld)\n", i,
+        getTokenName(tokens->tokens[i].type),
+        tokens->tokens[i].literal,
+        tokens->tokens[i].row,
+        tokens->tokens[i].col);
   }
 
   printf("\n### AST GENERATION ###\n");

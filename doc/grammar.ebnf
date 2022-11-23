@@ -9,7 +9,7 @@ structdecl  = structtype genericlist? idargs      "end" ;
 uniondecl   = uniontype  genericlist? idargs      "end" ;
 enumdecl    = enumtype                assignargs  "end" ;
 sumdecl     = sumtype    genericlist? sumargs     "end" ;
-traitdecl   = traittype  genericlist? function*   "end" ;
+traitdecl   = traittype               function*   "end" ;
 impldecl    = "impl" traittype "for" type function* "end" ;
 funcdecl    = "function" function "do" statement* "end" ;
 function    = IDENTIFIER? "(" (idargs | "void") ")" "->" ( type | IDENTIFIER)
@@ -28,7 +28,8 @@ uniontype    = "union"     IDENTIFIER ;
 enumtype     = "enum"      IDENTIFIER ;
 sumtype      = "sum"       IDENTIFIER ;
 traittype    = "trait"     IDENTIFIER ;
-functiontype = "(" (sumlist | "void") ")" "->" ( type | IDENTIFIER ) ;
+functiontype = "(" (sumlist | "void") ")" "->" ( type | IDENTIFIER )
+               ("for" sumlist)? ;
 type         = "mut"? (basetype | variadtype | arraytype | pointertype
              | enumtype | ((structtype | uniontype | sumtype | traittype)
                ("(" sumlist ")")?) ;

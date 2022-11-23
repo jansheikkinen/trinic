@@ -33,7 +33,7 @@ static struct DeclarationAST* fnname(struct ASTContext* ctx) { \
     if(MATCH_TOKEN(ctx, TOKEN_END)) { \
       ctx->index += 1; \
       return allocfnname(name, fields, generics); \
-    } \
+    } else APPEND_ASTERROR(ctx, ASTERR_EXPECTED_END); \
   } else { \
     APPEND_ASTERROR(ctx, ASTERR_EXPECTED_IDENTIFIER); \
   } \
@@ -55,12 +55,12 @@ static struct DeclarationAST* genEnum(struct ASTContext* ctx) {
     if(MATCH_TOKEN(ctx, TOKEN_END)) {
       ctx->index += 1;
       return allocNewEnum(name, fields, NULL);
-    }
+    } else APPEND_ASTERROR(ctx, ASTERR_EXPECTED_END);
   } else APPEND_ASTERROR(ctx, ASTERR_EXPECTED_IDENTIFIER);
   return NULL;
 }
 
-static struct DeclarationAST* genFunctionHeader(struct ASTContext* ctx) {
+struct DeclarationAST* generateFunctionHeader(struct ASTContext* ctx) {
   ctx->index += 1;
 
   const char* name = NULL;
@@ -81,7 +81,10 @@ static struct DeclarationAST* genFunctionHeader(struct ASTContext* ctx) {
       if(MATCH_TOKEN(ctx, TOKEN_ARROW)) {
         ctx->index += 1;
 
-        struct TypeAST* returns = generateType(ctx);
+        struct TypeAST* returns = NULL;
+        if(MATCH_TOKEN(ctx, TOKEN_VOID)) ctx->index += 1;
+        else returns = generateType(ctx);
+
         struct ArgAST* contracts = NULL, *generics = NULL;
 
         if(MATCH_TOKEN(ctx, TOKEN_WHERE)) {
@@ -113,7 +116,7 @@ static struct DeclarationAST* genInterface(struct ASTContext* ctx) {
 
     while(ctx->index < ctx->tokens->length) {
       if(MATCH_TOKEN(ctx, TOKEN_FUNCTION)) {
-        struct DeclarationAST* header = genFunctionHeader(ctx);
+        struct DeclarationAST* header = generateFunctionHeader(ctx);
         APPEND_ARRAYLIST(functions, header);
       } else {
         if(MATCH_TOKEN(ctx, TOKEN_END)) {
@@ -127,7 +130,7 @@ static struct DeclarationAST* genInterface(struct ASTContext* ctx) {
 }
 
 static struct DeclarationAST* genFunction(struct ASTContext* ctx) {
-  struct DeclarationAST* ast = genFunctionHeader(ctx);
+  struct DeclarationAST* ast = generateFunctionHeader(ctx);
 
   if(MATCH_TOKEN(ctx, TOKEN_DO)) {
     ctx->index += 1;
