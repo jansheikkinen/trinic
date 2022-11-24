@@ -1,0 +1,33 @@
+## PARSER ##
+Parsing tests/declaration/struct.tc...
+
+### LEXER ###
+Generating tokens from source...
+Generated 21 tokens
+000:       STRUCT,     (null), (003, 006)
+001:   IDENTIFIER, TestStruct, (003, 017)
+002:   IDENTIFIER,          x, (004, 003)
+003:            :,     (null), (004, 004)
+004:         INT8,     (null), (004, 009)
+005:          END,     (null), (005, 003)
+006:       STRUCT,     (null), (007, 006)
+007:   IDENTIFIER, TestStructB, (007, 018)
+008:            (,     (null), (007, 019)
+009:   IDENTIFIER,          T, (007, 020)
+010:            ,,     (null), (007, 021)
+011:   IDENTIFIER,          V, (007, 023)
+012:            ),     (null), (007, 024)
+013:   IDENTIFIER,          x, (008, 003)
+014:            :,     (null), (008, 004)
+015:   IDENTIFIER,          T, (008, 006)
+016:            ,,     (null), (008, 007)
+017:   IDENTIFIER,          y, (008, 009)
+018:            :,     (null), (008, 010)
+019:   IDENTIFIER,          V, (008, 012)
+020:          END,     (null), (009, 003)
+
+### AST GENERATION ###
+struct TestStruct x: INT8,    end
+
+struct TestStructB (T, V,   ) x: T, y: V,    end
+

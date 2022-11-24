@@ -1,0 +1,27 @@
+## PARSER ##
+Parsing tests/expression/equality.tc...
+
+### LEXER ###
+Generating tokens from source...
+Generated 15 tokens
+000:     FUNCTION,     (null), (003, 008)
+001:   IDENTIFIER,       main, (003, 013)
+002:            (,     (null), (003, 014)
+003:         VOID,     (null), (003, 018)
+004:            ),     (null), (003, 019)
+005:           ->,     (null), (003, 021)
+006:         VOID,     (null), (003, 026)
+007:           DO,     (null), (003, 029)
+008:      INTEGER,          1, (004, 004)
+009:           ==,     (null), (004, 005)
+010:      INTEGER,          2, (004, 008)
+011:           !=,     (null), (004, 009)
+012:      INTEGER,          3, (004, 012)
+013:            ;,     (null), (004, 012)
+014:          END,     (null), (005, 003)
+
+### AST GENERATION ###
+function main(VOID) -> VOID do
+  ((1 == 2) != 3)
+  end
+

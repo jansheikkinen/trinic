@@ -1,0 +1,8 @@
+## PARSER ##
+Parsing tests/attributes/test.tc...
+
+### LEXER ###
+Generating tokens from source...
+Generated 0 tokens
+
+### AST GENERATION ###

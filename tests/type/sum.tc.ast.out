@@ -1,0 +1,37 @@
+## PARSER ##
+Parsing tests/type/sum.tc...
+
+### LEXER ###
+Generating tokens from source...
+Generated 25 tokens
+000:     FUNCTION,     (null), (003, 008)
+001:   IDENTIFIER,       main, (003, 013)
+002:            (,     (null), (003, 014)
+003:         VOID,     (null), (003, 018)
+004:            ),     (null), (003, 019)
+005:           ->,     (null), (003, 021)
+006:         VOID,     (null), (003, 026)
+007:           DO,     (null), (003, 029)
+008:          LET,     (null), (004, 005)
+009:   IDENTIFIER,          a, (004, 007)
+010:            :,     (null), (004, 008)
+011:          SUM,     (null), (004, 012)
+012:   IDENTIFIER,    TestSum, (004, 020)
+013:            ,,     (null), (004, 021)
+014:   IDENTIFIER,          b, (004, 023)
+015:            :,     (null), (004, 024)
+016:          SUM,     (null), (004, 028)
+017:   IDENTIFIER,   TestSumB, (004, 037)
+018:            (,     (null), (004, 038)
+019:         INT8,     (null), (004, 042)
+020:            ),     (null), (004, 043)
+021:            =,     (null), (004, 045)
+022:    UNDEFINED,     (null), (004, 055)
+023:            ;,     (null), (004, 056)
+024:          END,     (null), (005, 003)
+
+### AST GENERATION ###
+function main(VOID) -> VOID do
+  let a: sum TestSum, b: sum TestSumB(INT8,   ),    = UNDEFINED,   
+  end
+

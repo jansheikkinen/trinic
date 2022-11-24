@@ -1,0 +1,63 @@
+## PARSER ##
+Parsing tests/statement/match.tc...
+
+### LEXER ###
+Generating tokens from source...
+Generated 45 tokens
+000:     FUNCTION,     (null), (003, 008)
+001:   IDENTIFIER,       main, (003, 013)
+002:            (,     (null), (003, 014)
+003:         VOID,     (null), (003, 018)
+004:            ),     (null), (003, 019)
+005:           ->,     (null), (003, 021)
+006:         VOID,     (null), (003, 026)
+007:           DO,     (null), (003, 029)
+008:        MATCH,     (null), (004, 007)
+009:   IDENTIFIER,          x, (004, 009)
+010:           DO,     (null), (004, 012)
+011:      INTEGER,          1, (005, 006)
+012:           =>,     (null), (005, 007)
+013:        PRINT,     (null), (005, 013)
+014:            (,     (null), (005, 014)
+015:      INTEGER,          1, (005, 016)
+016:            ),     (null), (005, 016)
+017:            ;,     (null), (005, 017)
+018:            ,,     (null), (005, 018)
+019:      INTEGER,          2, (006, 006)
+020:            ,,     (null), (006, 006)
+021:      INTEGER,          3, (006, 009)
+022:           =>,     (null), (006, 010)
+023:        PRINT,     (null), (006, 016)
+024:            (,     (null), (006, 017)
+025:      INTEGER,          2, (006, 019)
+026:            ),     (null), (006, 019)
+027:            ;,     (null), (006, 020)
+028:            ,,     (null), (006, 021)
+029:      INTEGER,          4, (007, 006)
+030:           =>,     (null), (007, 007)
+031:           DO,     (null), (007, 010)
+032:        PRINT,     (null), (007, 016)
+033:            (,     (null), (007, 017)
+034:      INTEGER,          3, (007, 019)
+035:            ),     (null), (007, 019)
+036:            ;,     (null), (007, 020)
+037:        PRINT,     (null), (007, 026)
+038:            (,     (null), (007, 027)
+039:      INTEGER,          4, (007, 029)
+040:            ),     (null), (007, 029)
+041:            ;,     (null), (007, 030)
+042:          END,     (null), (007, 034)
+043:          END,     (null), (008, 005)
+044:          END,     (null), (009, 003)
+
+### AST GENERATION ###
+function main(VOID) -> VOID do
+  match x do
+  1,    => print(1),
+  , 2, 3,    => print(2),
+  , 4,    => do
+print(3)
+  print(4)
+   end,   end
+  end
+
