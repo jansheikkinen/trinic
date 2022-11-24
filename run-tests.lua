@@ -22,23 +22,15 @@ local function printf(fmt, ...)
   io.write(string.format(fmt, ...))
 end
 
--- Get all files in a directory
-local function scandir(dir, ptrn)
-  local i, t = 0, { }
+-- Check if file exists
+local function fileExists(filename)
+  local file = io.open(filename, "r")
 
-  local pfile = io.popen("find " .. dir .. " -type f -name \"" .. ptrn .. "\"")
-
-  for filename in pfile:lines() do
-    i = i + 1
-    t[i] = filename
-  end
-
-  pfile:close()
-  return t
+  if file ~= nil then
+    file:close()
+    return true
+  else return false end
 end
-
-
--- ### COLOR UTILITIES ### --
 
 local COLATTR_RESET = 0
 local COLATTR_BRIGHT = 1
@@ -77,6 +69,44 @@ end
 
 local function resetColor()
   setColor(COLATTR_RESET, COL_DEFAULT, COL_DEFAULT)
+end
+
+-- Get all files in a directory
+local function scandir(dir, ptrn)
+  local i, t = 0, { }
+
+  local pfile = io.popen("find " .. dir .. " -type f -name \"" .. ptrn .. "\"")
+
+  for filename in pfile:lines() do
+    i = i + 1
+    t[i] = filename
+  end
+
+  pfile:close()
+  return t
+end
+
+-- Check if a file or directory exists in this path
+-- Stolen from Hisham H M on:
+-- https://stackoverflow.com/questions/1340230/check-if-directory-exists-in-lua
+local function exists(file)
+  local ok, err, code = os.rename(file, file)
+  if not ok then
+     if code == 13 then
+        -- Permission denied, but it exists
+        return true
+     end
+  end
+  return ok, err
+end
+
+-- Print message and exit with code
+local function panic(err, msg)
+  setColor(COLATTR_RESET, COL_RED, COL_DEFAULT)
+  printf("Error")
+  resetColor()
+  printf(": %s\n", msg)
+  os.exit(err)
 end
 
 
@@ -126,7 +156,7 @@ local function updateTests()
     local testOutputs = generateASTs()
 
     if not testOutputs then
-      printf("ERROR: No test files\n")
+      panic(1, "No test files")
     end
 
     local numFiles = 0
@@ -157,16 +187,14 @@ local function runTests()
     local expectedOutputs = getExpectedOutput()
 
     if not testOutputs then
-      printf("ERROR: No test files\n")
+      panic(1, "No test files")
     elseif not expectedOutputs then
-      printf("ERROR: No test out files\n")
+      panic(1, "No test output files")
     elseif #testOutputs ~= #expectedOutputs then
-      printf("ERROR: Differing number of test and test out files")
-      -- TODO: Exit
+      panic(1, "Differing number of test and test output files")
     end
 
     local numOk, numFail = 0, 0
-    -- TODO: Make sure this works
     for name, _ in pairs(testOutputs) do
       if testOutputs[name] == expectedOutputs[name .. ".ast.out"] then
         numOk = numOk + 1
@@ -185,7 +213,7 @@ local function runTests()
       end
     end
 
-    printf("%d succeeded, %d failed\n", numOk, numFail)
+    printf("%d succeeded, %d failed, %d total\n", numOk, numFail, numOk + numFail)
   elseif testGen == "bytecode" then
     printf("This hasn't been implemented yet!\n")
   end
@@ -203,14 +231,21 @@ local function printUsage(name)
   printf("\n")
   printf("  ast -- run tests for generated AST\n")
   printf("  bytecode -- run tests for bytecode ouput; this does nothing yet\n")
-  -- Exit with code 1
 end
 
 local function main(argc, argv)
   -- Ensure correct number of arguments
   if argc ~= 2 then
-    printf("ERROR: Incorrect number of arguments\n")
     printUsage(argv[0])
+    panic(1, "Incorrect number of arguments")
+  end
+
+  -- Ensure globals exis
+  local ok, err = exists(binary)
+  local ok_, err_ = exists(testDir)
+  ok, err = ok or ok_, err or err_
+  if not ok or err then
+    panic(1, "Please edit \"binary\" and \"testDir\" variables to point to correct paths")
   end
 
   -- Alias arguments
@@ -234,8 +269,8 @@ local function main(argc, argv)
 
   -- Exit if either of the last checks failed
   if not actionMatch or not genMatch then
-    printf("ERROR: Incorrect arguments\n")
     printUsage(argv[0])
+    panic(1, "Invalid arguments")
   end
 
   testGen = testGenIn
