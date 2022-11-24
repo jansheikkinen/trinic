@@ -33,7 +33,17 @@ Generated 27 tokens
 026:          END,     (null), (005, 003)
 
 ### AST GENERATION ###
-function main(VOID) -> VOID do
-  let a: struct TestStruct, b: struct TesStructB(INT8, INT16,   ),    = UNDEFINED,   
-  end
-
+Declaration FUNCTION  main
+  Stmt VARDECL
+    Arg IDENTIFIER
+      Identifier_Arg a
+        Type STRUCTURE TestStruct
+      Identifier_Arg b
+        Type STRUCTURE TesStructB
+          Arg SUMARGTYPE
+            Sum_Arg_Type 
+              Type TYPE INT8
+            Sum_Arg_Type 
+              Type TYPE INT16
+    Arg EXPR
+      Expr UNDEFINED

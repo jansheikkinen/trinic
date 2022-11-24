@@ -39,12 +39,22 @@ Generated 33 tokens
 032:          END,     (null), (006, 003)
 
 ### AST GENERATION ###
-function main(VOID) -> VOID do
-  for x,    in y do z
-  end
-  for x,    in y do z
-  for a,    in b do c
-  end
-  end
-  end
-
+Declaration FUNCTION  main
+  Stmt FOR
+    Arg IDENTIFIER
+      Identifier_Arg x
+    Expr VARIABLE y
+    Stmt EXPRESSION
+      Expr VARIABLE z
+  Stmt FOR
+    Arg IDENTIFIER
+      Identifier_Arg x
+    Expr VARIABLE y
+    Stmt EXPRESSION
+      Expr VARIABLE z
+    Stmt FOR
+      Arg IDENTIFIER
+        Identifier_Arg a
+      Expr VARIABLE b
+      Stmt EXPRESSION
+        Expr VARIABLE c

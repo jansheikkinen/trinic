@@ -1,5 +1,5 @@
 // Generic Definitions
 
 function testA(x: T) -> T for T: trait Add do 1; end
-function testB(x: T, y: V) -> T for T: trait Add, V: trait Display do 1; end
+function testB(x: T, y: V) -> T for T: trait Add | V: trait Display do 1; end
 function testC(x: T, y: V) -> T for T + V: trait Add + trait Display do 1; end

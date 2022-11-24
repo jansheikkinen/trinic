@@ -23,7 +23,11 @@ Generated 17 tokens
 016:          END,     (null), (005, 003)
 
 ### AST GENERATION ###
-function main(VOID) -> VOID do
-  let a: *INT8,    = UNDEFINED,   
-  end
-
+Declaration FUNCTION  main
+  Stmt VARDECL
+    Arg IDENTIFIER
+      Identifier_Arg a
+        Type POINTER
+          Type TYPE INT8
+    Arg EXPR
+      Expr UNDEFINED

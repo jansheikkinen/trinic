@@ -104,22 +104,67 @@ Generated 98 tokens
 097:          END,     (null), (016, 003)
 
 ### AST GENERATION ###
-function main(VOID) -> VOID do
-  if 1 do print(1)
-  end
-  if 1 do print(1)
-  else print(2)
-  end
-  if 1 do print(1)
-  else if 2 do print(2)
-  end
-  if 1 do print(1)
-  else if 2 do print(2)
-  else print(3)
-  end
-  if 1 do if 2 do print((1 + 2))
-  else print((3 + 4))
-  end
-  end
-  end
-
+Declaration FUNCTION  main
+  Stmt IF
+    Expr LITERAL
+      INT 1
+    Stmt BUILTIN print
+      Expr LITERAL
+        INT 1
+    NONE
+  Stmt IF
+    Expr LITERAL
+      INT 1
+    Stmt BUILTIN print
+      Expr LITERAL
+        INT 1
+    Stmt BUILTIN print
+      Expr LITERAL
+        INT 2
+  Stmt IF
+    Expr LITERAL
+      INT 1
+    Stmt BUILTIN print
+      Expr LITERAL
+        INT 1
+    Stmt IF
+      Expr LITERAL
+        INT 2
+      Stmt BUILTIN print
+        Expr LITERAL
+          INT 2
+      NONE
+  Stmt IF
+    Expr LITERAL
+      INT 1
+    Stmt BUILTIN print
+      Expr LITERAL
+        INT 1
+    Stmt IF
+      Expr LITERAL
+        INT 2
+      Stmt BUILTIN print
+        Expr LITERAL
+          INT 2
+      Stmt BUILTIN print
+        Expr LITERAL
+          INT 3
+  Stmt IF
+    Expr LITERAL
+      INT 1
+    Stmt IF
+      Expr LITERAL
+        INT 2
+      Stmt BUILTIN print
+        Expr BINARY +
+          Expr LITERAL
+            INT 1
+          Expr LITERAL
+            INT 2
+      Stmt BUILTIN print
+        Expr BINARY +
+          Expr LITERAL
+            INT 3
+          Expr LITERAL
+            INT 4
+    NONE

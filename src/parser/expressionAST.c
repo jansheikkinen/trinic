@@ -4,6 +4,7 @@
 
 #include <stdio.h>
 
+#include "../util/printIndent.h"
 #include "argumentAST.h"
 #include "declarationAST.h"
 #include "expressionAST.h"
@@ -196,57 +197,68 @@ struct ExprAST* allocNewFunctionExpr(struct DeclarationAST* function) {
   return ptr;
 }
 
-void printExprAST(const struct ExprAST* ast) {
+void printExprAST(const struct ExprAST* ast, size_t indent) {
+  PRINT_INDENT(indent); printf("Expr ");
+
   switch(ast->type) {
-    case EXPR_UNDEFINED: printf("UNDEFINED"); break;
+    case EXPR_UNDEFINED:
+      printf("UNDEFINED\n"); break;
     case EXPR_LITERAL:
+      printf("LITERAL\n"); PRINT_INDENT(indent + 1);
       switch(ast->as.literal.type) {
-        case LIT_UNDEFINED: printf("LIT_UNDEFINED"); break;
-        case LIT_IDENTIFIER: printf("%s", ast->as.literal.as.identifier); break;
-        case LIT_STRING: printf("\"%s\"", ast->as.literal.as.string);     break;
-        case LIT_CHAR: printf("'%c'",     ast->as.literal.as.character);  break;
-        case LIT_INTEGER: printf("%ld",   ast->as.literal.as.integer);    break;
-        case LIT_UINTEGER: printf("%lu",  ast->as.literal.as.uinteger);   break;
-        case LIT_FLOAT: printf("%lf",     ast->as.literal.as.floating);   break;
+        case LIT_UNDEFINED:
+          printf("UNDEFINED"); break;
+        case LIT_IDENTIFIER:
+          printf("IDENTIFIER %s", ast->as.literal.as.identifier); break;
+        case LIT_STRING:
+          printf("STRING %s", ast->as.literal.as.string); break;
+        case LIT_CHAR:
+          printf("CHAR %c", ast->as.literal.as.character); break;
+        case LIT_INTEGER:
+          printf("INT %ld", ast->as.literal.as.integer); break;
+        case LIT_UINTEGER:
+          printf("UINT %lu", ast->as.literal.as.uinteger); break;
+        case LIT_FLOAT:
+          printf("FLOAT %lf", ast->as.literal.as.floating); break;
         case LIT_BOOL:
-          printf("%s", ast->as.literal.as.boolean ? "true" : "false"); break;
-      } break;
+          printf("BOOL %s", ast->as.literal.as.boolean?"true":"false"); break;
+      } printf("\n"); break;
     case EXPR_UNARY:
-      printf("%s", getTokenName(ast->as.unary.operation));
-      printExprAST(ast->as.unary.operand); break;
+      printf("UNARY %s\n", getTokenName(ast->as.unary.operation));
+      printExprAST(ast->as.unary.operand, indent + 1);
+      break;
     case EXPR_BINARY:
-      printf("(");
-      printExprAST(ast->as.binary.left);
-      printf(" %s ", getTokenName(ast->as.binary.operation));
-      printExprAST(ast->as.binary.right);
-      printf(")"); break;
+      printf("BINARY %s\n", getTokenName(ast->as.binary.operation));
+      printExprAST(ast->as.binary.left, indent + 1);
+      printExprAST(ast->as.binary.right, indent + 1);
+      break;
     case EXPR_VARIABLE:
-      printf("%s", ast->as.variable.identifier); break;
+      printf("VARIABLE %s\n", ast->as.variable.identifier); break;
     case EXPR_GROUPING:
-      printf("(");
-      printExprAST(ast->as.grouping.expression);
-      printf(")"); break;
+      printf("GROUPING\n");
+      printExprAST(ast->as.grouping.expression, indent + 1);
+      break;
     case EXPR_CALL:
-      printExprAST(ast->as.call.callee);
-      printf("(");
-      printArgAST(ast->as.call.args);
-      printf(")"); break;
+      printf("CALL\n");
+      printExprAST(ast->as.call.callee, indent + 1);
+      printArgAST(ast->as.call.args, indent + 1); break;
     case EXPR_GET:
-      printExprAST(ast->as.get.expression);
-      if(ast->as.get.isPointer) printf("->"); else printf(".");
-      printf("%s", ast->as.get.name); break;
+      printf("GET");
+      if(ast->as.get.isPointer) printf(" PTR");
+      printf(" %s\n", ast->as.get.name);
+      printExprAST(ast->as.get.expression, indent + 1); break;
     case EXPR_ARRAY_INDEX:
-      printExprAST(ast->as.arrindex.identifier);
-      printf("[");
-      printExprAST(ast->as.arrindex.index);
-      printf("]"); break;
+      printf("ARRAY INDEX\n");
+      printExprAST(ast->as.arrindex.identifier, indent + 1);
+      printExprAST(ast->as.arrindex.index, indent + 1);
+      break;
     case EXPR_ARRAY_INIT:
-      printf("{");
-      printArgAST(ast->as.arrinit.args);
-      printf("}"); break;
+      printf("ARRAY INIT\n");
+      printArgAST(ast->as.arrinit.args, indent + 1);
+      break;
     case EXPR_FUNCTION:
-      if(ast->as.function.function)
-        printDeclarationAST(ast->as.function.function);
+      printf("FUNCTION\n");
+      printDeclarationAST(ast->as.function.function, indent + 1);
       break;
   }
 }

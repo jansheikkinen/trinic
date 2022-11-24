@@ -16,5 +16,10 @@ Generated 10 tokens
 009:          END,     (null), (007, 003)
 
 ### AST GENERATION ###
-enum TestEnum ENUM_ONE, ENUM_TWO = 2, ENUM_THREE,    end
-
+Declaration ENUM
+  Arg ASSIGN
+    Assign_Arg ENUM_ONE
+    Assign_Arg ENUM_TWO
+      Expr LITERAL
+        INT 2
+    Assign_Arg ENUM_THREE

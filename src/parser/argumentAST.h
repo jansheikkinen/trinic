@@ -120,6 +120,6 @@ struct ArgAST* allocNewGenericDefs(void);
 struct ArgAST* allocNewMatchArms(void);
 
 void freeArgAST(struct ArgAST*);
-void printArgAST(const struct ArgAST*);
+void printArgAST(const struct ArgAST*, size_t);
 
 #endif

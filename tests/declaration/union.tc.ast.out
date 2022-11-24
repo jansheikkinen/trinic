@@ -31,7 +31,18 @@ Generated 25 tokens
 024:          END,     (null), (009, 003)
 
 ### AST GENERATION ###
-union TestUnion x: INT8, y: FLOAT8,    end
-
-union TestUnionB (T, V,   ) x: T, y: V,    end
-
+Declaration UNION
+  Arg IDENTIFIER
+    Identifier_Arg x
+      Type TYPE INT8
+    Identifier_Arg y
+      Type TYPE FLOAT8
+Declaration UNION
+  Arg GENERIC
+    IDENTIFIER T
+    IDENTIFIER V
+  Arg IDENTIFIER
+    Identifier_Arg x
+      Type IDENTIFIER T
+    Identifier_Arg y
+      Type IDENTIFIER V

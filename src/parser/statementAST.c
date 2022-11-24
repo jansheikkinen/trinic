@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 
+#include "../util/printIndent.h"
 #include "../error/panic.h"
 #include "statementAST.h"
 
@@ -182,70 +183,68 @@ struct StmtAST* allocNewMatch(struct ExprAST* expr, struct ArgAST* body) {
   ALLOC_NODE(newMatch, expr, body);
 }
 
-void printStmtAST(const struct StmtAST* stmt) {
+void printStmtAST(const struct StmtAST* stmt, size_t indent) {
+  PRINT_INDENT(indent); printf("Stmt ");
+
   switch(stmt->type) {
     case STMT_UNDEFINED:
-      printf("STMT_UNDEFINED"); break;
+      printf("UNDEFINED\n"); break;
     case STMT_EXPRESSION:
-      printExprAST(stmt->as.expression.expression); break;
+      printf("EXPRESSION\n");
+      printExprAST(stmt->as.expression.expression, indent + 1);
+      break;
     case STMT_BUILTIN:
-      printf("%s", builtinNames[stmt->as.builtin.type]);
-      if(stmt->as.builtin.parameter) {
-        printf("("); printExprAST(stmt->as.builtin.parameter); printf(")");
-      } break;
+      printf("BUILTIN ");
+      printf("%s\n", builtinNames[stmt->as.builtin.type]);
+
+      if(stmt->as.builtin.parameter)
+        printExprAST(stmt->as.builtin.parameter, indent + 1);
+      break;
     case STMT_VARDECL:
-      printf("let ");
-      printArgAST(stmt->as.vardecl.lvalue);
-      printf(" = ");
-      printArgAST(stmt->as.vardecl.rvalue);
+      printf("VARDECL\n");
+      printArgAST(stmt->as.vardecl.lvalue, indent + 1);
+      printArgAST(stmt->as.vardecl.rvalue, indent + 1);
       break;
     case STMT_VARASSIGN:
-      printArgAST(stmt->as.assignment.lvalue);
-      printf(" %s ", getTokenName(stmt->as.assignment.op));
-      printArgAST(stmt->as.assignment.rvalue);
+      printf("VARASSIGN %s\n", getTokenName(stmt->as.assignment.op));
+      printArgAST(stmt->as.assignment.lvalue, indent + 1);
+      printArgAST(stmt->as.assignment.rvalue, indent + 1);
       break;
     case STMT_CONDITIONAL:
-      printf("if ");
-      printExprAST(stmt->as.conditional.condition);
-      printf(" do ");
-      printStmtList(stmt->as.conditional.body);
+      printf("IF\n");
+      printExprAST(stmt->as.conditional.condition, indent + 1);
+      printStmtList(stmt->as.conditional.body, indent + 1);
       switch(stmt->as.conditional.type) {
         case CONDELSE_UNDEFINED:
-          panic(1, "Undefined else branch in conditional node"); break;
+          PRINT_INDENT(indent + 1); printf("UNDEFINED\n"); break;
         case CONDELSE_ELSE:
-          printf("else ");
-          printStmtList(stmt->as.conditional.elseBranch.elseBody);
-          printf("end"); break;
+          printStmtList(stmt->as.conditional.elseBranch.elseBody, indent + 1);
+          break;
         case CONDELSE_ELSEIF:
-          printf("else ");
-          printStmtAST(stmt->as.conditional.elseBranch.elseif); break;
-        case CONDELSE_NONE: printf("end"); break;
-      }
-      break;
+          printStmtAST(stmt->as.conditional.elseBranch.elseif, indent + 1);
+          break;
+        case CONDELSE_NONE: PRINT_INDENT(indent + 1); printf("NONE\n"); break;
+      } break;
     case STMT_LOOP:
-      printf("loop ");
-      printStmtList(stmt->as.loop.body);
-      printf("end"); break;
+      printf("LOOP\n");
+      printStmtList(stmt->as.loop.body, indent + 1);
+      break;
     case STMT_WHILE:
-      printf("while ");
-      printExprAST(stmt->as.whileloop.condition);
-      printf(" do ");
-      printStmtList(stmt->as.whileloop.body);
-      printf("end"); break;
+      printf("WHILE\n");
+      printExprAST(stmt->as.whileloop.condition, indent + 1);
+      printStmtList(stmt->as.whileloop.body, indent + 1);
+      break;
     case STMT_FOR:
-      printf("for ");
-      printArgAST(stmt->as.forloop.itervar);
-      printf(" in ");
-      printExprAST(stmt->as.forloop.iterator);
-      printf(" do ");
-      printStmtList(stmt->as.forloop.body);
-      printf("end"); break;
+      printf("FOR\n");
+      printArgAST(stmt->as.forloop.itervar, indent + 1);
+      printExprAST(stmt->as.forloop.iterator, indent + 1);
+      printStmtList(stmt->as.forloop.body, indent + 1);
+      break;
     case STMT_MATCH:
-      printf("match ");
-      printExprAST(stmt->as.match.expr);
-      printf(" do\n  ");
-      printArgAST(stmt->as.match.body);
-      printf("end"); break;
+      printf("MATCH\n");
+      printExprAST(stmt->as.match.expr, indent + 1);
+      printArgAST(stmt->as.match.body, indent + 1);
+      break;
   }
 }
 

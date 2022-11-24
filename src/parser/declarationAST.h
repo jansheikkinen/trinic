@@ -69,6 +69,6 @@ struct DeclarationAST* allocNewFunction(const char*, struct ArgAST*,
 
 void freeDeclarationAST(struct DeclarationAST*);
 
-void printDeclarationAST(const struct DeclarationAST*);
+void printDeclarationAST(const struct DeclarationAST*, size_t);
 
 #endif

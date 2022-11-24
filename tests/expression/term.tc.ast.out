@@ -21,7 +21,13 @@ Generated 15 tokens
 014:          END,     (null), (005, 003)
 
 ### AST GENERATION ###
-function main(VOID) -> VOID do
-  ((1 + 2) - 3)
-  end
-
+Declaration FUNCTION  main
+  Stmt EXPRESSION
+    Expr BINARY -
+      Expr BINARY +
+        Expr LITERAL
+          INT 1
+        Expr LITERAL
+          INT 2
+      Expr LITERAL
+        INT 3

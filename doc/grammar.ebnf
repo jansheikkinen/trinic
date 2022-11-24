@@ -65,7 +65,7 @@ primary    = "(" expression ")" | NUMBER | STRING | IDENTIFIER
 matcharms = matcharm ( "," matcharm )* ;
 matcharm  = exprargs "=>" (statement | "do" statement* "end") ;
 
-genericdefs = genericdef  ( "," genericdef  )* ;
+genericdefs = genericdef  ( "|" genericdef  )* ;
 genericdef  = genericdefl ( ":" genericdefr )  ;
 genericdefl = IDENTIFIER  ( "+" IDENTIFIER  )* ;
 genericdefr = traittype  ( "+" traittype  )* ;

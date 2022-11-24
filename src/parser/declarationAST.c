@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 
+#include "../util/printIndent.h"
 #include "declarationAST.h"
 
 #define ALLOC_NEW_STRUCTURE(structuren, enum) \
@@ -104,81 +105,72 @@ void freeDeclarationAST(struct DeclarationAST* ast) {
   free(ast);
 }
 
-void printDeclarationAST(const struct DeclarationAST* ast) {
+void printDeclarationAST(const struct DeclarationAST* ast, size_t indent) {
+  PRINT_INDENT(indent); printf("Declaration ");
+
   switch(ast->type) {
-    case DECLARATION_UNDEFINED: printf("DECL_UNDEFINED"); break;
+    case DECLARATION_UNDEFINED: printf("UNDEFINED"); break;
     case DECLARATION_STRUCT:
-      printf("struct %s ", ast->name);
-      if(ast->as.structure.generics) {
-        printf("\b(");
-        printArgAST(ast->as.structure.generics);
-        printf(") ");
-      }
-      if(ast->as.structure.fields) printArgAST(ast->as.structure.fields);
-      printf(" end\n\n"); break;
+      printf("STRUCT\n");
+      if(ast->as.structure.generics)
+        printArgAST(ast->as.structure.generics, indent + 1);
+      if(ast->as.structure.fields)
+        printArgAST(ast->as.structure.fields, indent + 1);
+      break;
     case DECLARATION_UNION:
-      printf("union %s ", ast->name);
-      if(ast->as.structure.generics) {
-        printf("\b(");
-        printArgAST(ast->as.structure.generics);
-        printf(") ");
-      }
-      if(ast->as.structure.fields) printArgAST(ast->as.structure.fields);
-      printf(" end\n\n"); break;
+      printf("UNION\n");
+      if(ast->as.structure.generics)
+        printArgAST(ast->as.structure.generics, indent + 1);
+      if(ast->as.structure.fields)
+        printArgAST(ast->as.structure.fields, indent + 1);
+      break;
     case DECLARATION_ENUM:
-      printf("enum %s ", ast->name);
-      if(ast->as.structure.fields) printArgAST(ast->as.structure.fields);
-      printf(" end\n\n"); break;
+      printf("ENUM\n");
+      if(ast->as.structure.fields)
+        printArgAST(ast->as.structure.fields, indent + 1);
+      break;
     case DECLARATION_SUM:
-      printf("sum %s ", ast->name);
-      if(ast->as.structure.generics) {
-        printf("\b(");
-        printArgAST(ast->as.structure.generics);
-        printf(") ");
-      }
-      if(ast->as.structure.fields) printArgAST(ast->as.structure.fields);
-      printf(" end\n\n"); break;
+      printf("SUM\n");
+      if(ast->as.structure.generics)
+        printArgAST(ast->as.structure.generics, indent + 1);
+      if(ast->as.structure.fields)
+        printArgAST(ast->as.structure.fields, indent + 1);
+      break;
     case DECLARATION_INTERFACE:
-      printf("trait %s\n  ", ast->name);
-      for(size_t i = 0; i < ast->as.interface->size; i++) {
-        printDeclarationAST(ast->as.interface->members[i]);
-        printf("\n  ");
-      }
-      printf("\b\bend\n\n"); break;
+      printf("TRAIT %s\n", ast->name);
+      for(size_t i = 0; i < ast->as.interface->size; i++)
+        printDeclarationAST(ast->as.interface->members[i], indent + 1);
+      break;
     case DECLARATION_IMPL:
-      printf("impl "); printTypeAST(ast->as.impl.trait); printf(" for ");
-      printTypeAST(ast->as.impl.type); printf("\n");
-      for(size_t i = 0; i < ast->as.impl.body->size; i++) {
-        printDeclarationAST(ast->as.impl.body->members[i]);
-        printf("\n  ");
-      } printf("\b\bend\n\n"); break;
+      printf("IMPL\n");
+      printTypeAST(ast->as.impl.trait, indent + 1);
+      printTypeAST(ast->as.impl.type, indent + 1);
+      for(size_t i = 0; i < ast->as.impl.body->size; i++)
+        printDeclarationAST(ast->as.impl.body->members[i], indent + 1);
+      break;
     case DECLARATION_FUNCTION:
-      printf("function ");
-      if(ast->name) printf("%s", ast->name);
-      printf("(");
+      printf("FUNCTION ");
+      if(ast->name) printf(" %s", ast->name);
+      printf("\n");
 
-      if(ast->as.function.args) printArgAST(ast->as.function.args);
-      else printf("VOID");
+      if(ast->as.function.args)
+        printArgAST(ast->as.function.args, indent + 1);
 
-      printf(") -> ");
-      if(ast->as.function.returns) printTypeAST(ast->as.function.returns);
-      else printf("VOID");
+      if(ast->as.function.returns)
+        printTypeAST(ast->as.function.returns, indent + 1);
 
-      if(ast->as.function.contracts) {
-        printf(" where ");
-        printArgAST(ast->as.function.contracts);
-      }
+      if(ast->as.function.contracts)
+        printArgAST(ast->as.function.contracts, indent + 1);
 
-      if(ast->as.function.generics) {
-        printf(" for ");
-        printArgAST(ast->as.function.generics);
-      }
-      if(ast->as.function.body) {
-        printf(" do\n  ");
-        printStmtList(ast->as.function.body);
-        printf("\b\bend\n\n");
-      } break;
+      if(ast->as.function.generics)
+        printArgAST(ast->as.function.generics, indent + 1);
+
+      if(ast->as.function.body)
+        printStmtList(ast->as.function.body, indent + 1);
+      break;
     case DECLARATION_VARIABLE:
-      printStmtAST(ast->as.vardecl); printf("\n\n"); break;
+      printf("\n");
+      printStmtAST(ast->as.vardecl, indent + 1);
+      break;
   }
 }

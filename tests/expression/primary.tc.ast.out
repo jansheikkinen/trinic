@@ -54,20 +54,46 @@ Generated 48 tokens
 047:          END,     (null), (006, 003)
 
 ### AST GENERATION ###
-function main(VOID) -> VOID do
-  ((1 + 2))
-  1
-  -1
-  1.100000
-  "string"
-  identifier
-  true
-  false
-  {1, 2, 3,   }
-  function (VOID) -> VOID do
-  x
-  end
-
-
-  end
-
+Declaration FUNCTION  main
+  Stmt EXPRESSION
+    Expr GROUPING
+      Expr BINARY +
+        Expr LITERAL
+          INT 1
+        Expr LITERAL
+          INT 2
+  Stmt EXPRESSION
+    Expr LITERAL
+      INT 1
+  Stmt EXPRESSION
+    Expr UNARY -
+      Expr LITERAL
+        INT 1
+  Stmt EXPRESSION
+    Expr LITERAL
+      FLOAT 1.100000
+  Stmt EXPRESSION
+    Expr LITERAL
+      STRING string
+  Stmt EXPRESSION
+    Expr VARIABLE identifier
+  Stmt EXPRESSION
+    Expr LITERAL
+      BOOL true
+  Stmt EXPRESSION
+    Expr LITERAL
+      BOOL false
+  Stmt EXPRESSION
+    Expr ARRAY INIT
+      Arg EXPR
+        Expr LITERAL
+          INT 1
+        Expr LITERAL
+          INT 2
+        Expr LITERAL
+          INT 3
+  Stmt EXPRESSION
+    Expr FUNCTION
+      Declaration FUNCTION 
+        Stmt EXPRESSION
+          Expr VARIABLE x

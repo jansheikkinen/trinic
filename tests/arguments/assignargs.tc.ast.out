@@ -20,5 +20,13 @@ Generated 14 tokens
 013:          END,     (null), (008, 003)
 
 ### AST GENERATION ###
-enum TestEnum ONE = 1, TWO, THREE = 2, FOUR,    end
-
+Declaration ENUM
+  Arg ASSIGN
+    Assign_Arg ONE
+      Expr LITERAL
+        INT 1
+    Assign_Arg TWO
+    Assign_Arg THREE
+      Expr LITERAL
+        INT 2
+    Assign_Arg FOUR

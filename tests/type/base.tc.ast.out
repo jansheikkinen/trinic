@@ -114,11 +114,66 @@ Generated 108 tokens
 107:          END,     (null), (009, 003)
 
 ### AST GENERATION ###
-function main(VOID) -> VOID do
-  let a: INT8, b: INT16, c: INT32, d: INT64, e: ISIZE,    = UNDEFINED,   
-  let f: UINT8, g: UINT16, h: UINT32, i: UINT64, j: USIZE,    = UNDEFINED,   
-  let k: FLOAT8, l: FLOAT16, m: FLOAT32, n: FLOAT64, o: FSIZE,    = UNDEFINED,   
-  let p: BYTE, q: CHAR, r: VOID, s: BOOL, t: ANY,    = UNDEFINED,   
-  let u: identifier,    = UNDEFINED,   
-  end
-
+Declaration FUNCTION  main
+  Stmt VARDECL
+    Arg IDENTIFIER
+      Identifier_Arg a
+        Type TYPE INT8
+      Identifier_Arg b
+        Type TYPE INT16
+      Identifier_Arg c
+        Type TYPE INT32
+      Identifier_Arg d
+        Type TYPE INT64
+      Identifier_Arg e
+        Type TYPE ISIZE
+    Arg EXPR
+      Expr UNDEFINED
+  Stmt VARDECL
+    Arg IDENTIFIER
+      Identifier_Arg f
+        Type TYPE UINT8
+      Identifier_Arg g
+        Type TYPE UINT16
+      Identifier_Arg h
+        Type TYPE UINT32
+      Identifier_Arg i
+        Type TYPE UINT64
+      Identifier_Arg j
+        Type TYPE USIZE
+    Arg EXPR
+      Expr UNDEFINED
+  Stmt VARDECL
+    Arg IDENTIFIER
+      Identifier_Arg k
+        Type TYPE FLOAT8
+      Identifier_Arg l
+        Type TYPE FLOAT16
+      Identifier_Arg m
+        Type TYPE FLOAT32
+      Identifier_Arg n
+        Type TYPE FLOAT64
+      Identifier_Arg o
+        Type TYPE FSIZE
+    Arg EXPR
+      Expr UNDEFINED
+  Stmt VARDECL
+    Arg IDENTIFIER
+      Identifier_Arg p
+        Type TYPE BYTE
+      Identifier_Arg q
+        Type TYPE CHAR
+      Identifier_Arg r
+        Type TYPE VOID
+      Identifier_Arg s
+        Type TYPE BOOL
+      Identifier_Arg t
+        Type TYPE ANY
+    Arg EXPR
+      Expr UNDEFINED
+  Stmt VARDECL
+    Arg IDENTIFIER
+      Identifier_Arg u
+        Type IDENTIFIER identifier
+    Arg EXPR
+      Expr UNDEFINED

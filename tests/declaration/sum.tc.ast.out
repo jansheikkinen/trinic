@@ -36,7 +36,23 @@ Generated 30 tokens
 029:          END,     (null), (012, 003)
 
 ### AST GENERATION ###
-sum TestSum One(INT8,   ), Two,    end
-
-sum TestSum (T, V,   ) One(T, V,   ), Two(T,   ), Three,    end
-
+Declaration SUM
+  Arg SUMARG
+    Sum_Arg One
+      Arg SUMARGTYPE
+        Sum_Arg_Type 
+          Type TYPE INT8
+    Sum_Arg Two
+Declaration SUM
+  Arg GENERIC
+    IDENTIFIER T
+    IDENTIFIER V
+  Arg SUMARG
+    Sum_Arg One
+      Arg SUMARGTYPE
+        Sum_Arg_Type T
+        Sum_Arg_Type V
+    Sum_Arg Two
+      Arg SUMARGTYPE
+        Sum_Arg_Type T
+    Sum_Arg Three

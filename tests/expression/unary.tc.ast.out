@@ -33,12 +33,28 @@ Generated 27 tokens
 026:          END,     (null), (005, 003)
 
 ### AST GENERATION ###
-function main(VOID) -> VOID do
-  ~1
-  !1
-  NOT1
-  -1
-  *1
-  &1
-  end
-
+Declaration FUNCTION  main
+  Stmt EXPRESSION
+    Expr UNARY ~
+      Expr LITERAL
+        INT 1
+  Stmt EXPRESSION
+    Expr UNARY !
+      Expr LITERAL
+        INT 1
+  Stmt EXPRESSION
+    Expr UNARY NOT
+      Expr LITERAL
+        INT 1
+  Stmt EXPRESSION
+    Expr UNARY -
+      Expr LITERAL
+        INT 1
+  Stmt EXPRESSION
+    Expr UNARY *
+      Expr LITERAL
+        INT 1
+  Stmt EXPRESSION
+    Expr UNARY &
+      Expr LITERAL
+        INT 1

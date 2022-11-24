@@ -27,7 +27,16 @@ Generated 21 tokens
 020:          END,     (null), (009, 003)
 
 ### AST GENERATION ###
-struct TestStruct x: INT8,    end
-
-struct TestStructB (T, V,   ) x: T, y: V,    end
-
+Declaration STRUCT
+  Arg IDENTIFIER
+    Identifier_Arg x
+      Type TYPE INT8
+Declaration STRUCT
+  Arg GENERIC
+    IDENTIFIER T
+    IDENTIFIER V
+  Arg IDENTIFIER
+    Identifier_Arg x
+      Type IDENTIFIER T
+    Identifier_Arg y
+      Type IDENTIFIER V

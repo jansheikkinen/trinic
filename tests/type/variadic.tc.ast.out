@@ -20,7 +20,10 @@ Generated 14 tokens
 013:          END,     (null), (005, 003)
 
 ### AST GENERATION ###
-function main(x: ..INT8,   ) -> INT8 do
-  return
-  end
-
+Declaration FUNCTION  main
+  Arg IDENTIFIER
+    Identifier_Arg x
+      Type VARIADIC
+        Type TYPE INT8
+  Type TYPE INT8
+  Stmt BUILTIN return

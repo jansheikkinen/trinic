@@ -27,7 +27,22 @@ Generated 21 tokens
 020:          END,     (null), (005, 003)
 
 ### AST GENERATION ###
-function main(VOID) -> VOID do
-  (((((1 & 2) | 3) ^ 4) << 5) >> 6)
-  end
-
+Declaration FUNCTION  main
+  Stmt EXPRESSION
+    Expr BINARY >>
+      Expr BINARY <<
+        Expr BINARY ^
+          Expr BINARY |
+            Expr BINARY &
+              Expr LITERAL
+                INT 1
+              Expr LITERAL
+                INT 2
+            Expr LITERAL
+              INT 3
+          Expr LITERAL
+            INT 4
+        Expr LITERAL
+          INT 5
+      Expr LITERAL
+        INT 6

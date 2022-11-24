@@ -53,12 +53,38 @@ Generated 47 tokens
 046:          END,     (null), (005, 003)
 
 ### AST GENERATION ###
-function main(VOID) -> VOID do
-  1
-  a(1, 2,   )
-  b.c
-  d->e
-  f[g]
-  a(1, 2,   ).b->c[d].e
-  end
-
+Declaration FUNCTION  main
+  Stmt EXPRESSION
+    Expr LITERAL
+      INT 1
+  Stmt EXPRESSION
+    Expr CALL
+      Expr VARIABLE a
+      Arg EXPR
+        Expr LITERAL
+          INT 1
+        Expr LITERAL
+          INT 2
+  Stmt EXPRESSION
+    Expr GET c
+      Expr VARIABLE b
+  Stmt EXPRESSION
+    Expr GET PTR e
+      Expr VARIABLE d
+  Stmt EXPRESSION
+    Expr ARRAY INDEX
+      Expr VARIABLE f
+      Expr VARIABLE g
+  Stmt EXPRESSION
+    Expr GET e
+      Expr ARRAY INDEX
+        Expr GET PTR c
+          Expr GET b
+            Expr CALL
+              Expr VARIABLE a
+              Arg EXPR
+                Expr LITERAL
+                  INT 1
+                Expr LITERAL
+                  INT 2
+        Expr VARIABLE d

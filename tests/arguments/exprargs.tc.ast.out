@@ -43,8 +43,28 @@ Generated 37 tokens
 036:          END,     (null), (006, 003)
 
 ### AST GENERATION ###
-function main(VOID) -> VOID do
-  let x, y, z: INT8,    = UNDEFINED,   
-  let a, b, c: INT8,    = (1 + 2), 3, 4,   
-  end
-
+Declaration FUNCTION  main
+  Stmt VARDECL
+    Arg IDENTIFIER
+      Identifier_Arg x
+      Identifier_Arg y
+      Identifier_Arg z
+        Type TYPE INT8
+    Arg EXPR
+      Expr UNDEFINED
+  Stmt VARDECL
+    Arg IDENTIFIER
+      Identifier_Arg a
+      Identifier_Arg b
+      Identifier_Arg c
+        Type TYPE INT8
+    Arg EXPR
+      Expr BINARY +
+        Expr LITERAL
+          INT 1
+        Expr LITERAL
+          INT 2
+      Expr LITERAL
+        INT 3
+      Expr LITERAL
+        INT 4

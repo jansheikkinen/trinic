@@ -43,7 +43,7 @@ struct DeclarationList* parseProgram(const char* filename) {
 
 #ifdef VERBOSE_DEBUG
   for(size_t i = 0; i < decls->size; i++) {
-    printDeclarationAST(decls->members[i]);
+    printDeclarationAST(decls->members[i], 0);
   }
 #endif
 

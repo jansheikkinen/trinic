@@ -59,17 +59,70 @@ Generated 53 tokens
 052:          END,     (null), (015, 003)
 
 ### AST GENERATION ###
-function main(VOID) -> VOID do
-  a,    = 1,   
-  b,    += 2,   
-  c,    -= 3,   
-  d,    *= 4,   
-  e,    /= 5,   
-  f,    %= 6,   
-  g,    &= 7,   
-  h,    |= 8,   
-  i,    ^= 9,   
-  j,    <<= 10,   
-  k,    >>= 11,   
-  end
-
+Declaration FUNCTION  main
+  Stmt VARASSIGN =
+    Arg EXPR
+      Expr VARIABLE a
+    Arg EXPR
+      Expr LITERAL
+        INT 1
+  Stmt VARASSIGN +=
+    Arg EXPR
+      Expr VARIABLE b
+    Arg EXPR
+      Expr LITERAL
+        INT 2
+  Stmt VARASSIGN -=
+    Arg EXPR
+      Expr VARIABLE c
+    Arg EXPR
+      Expr LITERAL
+        INT 3
+  Stmt VARASSIGN *=
+    Arg EXPR
+      Expr VARIABLE d
+    Arg EXPR
+      Expr LITERAL
+        INT 4
+  Stmt VARASSIGN /=
+    Arg EXPR
+      Expr VARIABLE e
+    Arg EXPR
+      Expr LITERAL
+        INT 5
+  Stmt VARASSIGN %=
+    Arg EXPR
+      Expr VARIABLE f
+    Arg EXPR
+      Expr LITERAL
+        INT 6
+  Stmt VARASSIGN &=
+    Arg EXPR
+      Expr VARIABLE g
+    Arg EXPR
+      Expr LITERAL
+        INT 7
+  Stmt VARASSIGN |=
+    Arg EXPR
+      Expr VARIABLE h
+    Arg EXPR
+      Expr LITERAL
+        INT 8
+  Stmt VARASSIGN ^=
+    Arg EXPR
+      Expr VARIABLE i
+    Arg EXPR
+      Expr LITERAL
+        INT 9
+  Stmt VARASSIGN <<=
+    Arg EXPR
+      Expr VARIABLE j
+    Arg EXPR
+      Expr LITERAL
+        INT 10
+  Stmt VARASSIGN >>=
+    Arg EXPR
+      Expr VARIABLE k
+    Arg EXPR
+      Expr LITERAL
+        INT 11

@@ -319,7 +319,7 @@ struct ArgAST* generateGenericDefs(struct ASTContext* ctx) {
   } else APPEND_ASTERROR(ctx, ASTERR_EXPECTED_COLON);
 
   while(ctx->index < ctx->tokens->length) {
-    if(MATCH_TOKEN(ctx, TOKEN_COMMA)) {
+    if(MATCH_TOKEN(ctx, TOKEN_BIT_OR)) {
       ctx->index += 1;
       gendefl = generateGenericDefLeft(ctx);
 

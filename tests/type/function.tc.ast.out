@@ -64,7 +64,34 @@ Generated 58 tokens
 057:          END,     (null), (006, 003)
 
 ### AST GENERATION ###
-function main(VOID) -> VOID do
-  let a: (void) -> void, b: (INT8, INT8,   ) -> void, c: (void) -> INT8, d: (T, V,   ) -> T for T + V +    : trait Add + trait Display +    ,   ,    = UNDEFINED,   
-  end
-
+Declaration FUNCTION  main
+  Stmt VARDECL
+    Arg IDENTIFIER
+      Identifier_Arg a
+        Type FUNCTION
+      Identifier_Arg b
+        Type FUNCTION
+          Arg SUMARGTYPE
+            Sum_Arg_Type 
+              Type TYPE INT8
+            Sum_Arg_Type 
+              Type TYPE INT8
+      Identifier_Arg c
+        Type FUNCTION
+          Type TYPE INT8
+      Identifier_Arg d
+        Type FUNCTION
+          Arg SUMARGTYPE
+            Sum_Arg_Type T
+            Sum_Arg_Type V
+          Type IDENTIFIER T
+          Arg GENERIC_DEFS
+            Generic_Def
+              Arg GENERIC_DEFL
+                IDENTIFIER T
+                IDENTIFIER V
+              Arg GENERIC_DEFR
+                Type TRAIT Add
+                Type TRAIT Display
+    Arg EXPR
+      Expr UNDEFINED

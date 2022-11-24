@@ -31,9 +31,8 @@ void freeStmtList(struct StmtList* list) {
   free(list);
 }
 
-void printStmtList(const struct StmtList* stmts) {
+void printStmtList(const struct StmtList* stmts, size_t indent) {
   for(size_t i = 0; i < stmts->size; i++) {
-    printStmtAST(stmts->stmts[i]);
-    printf("\n  ");
+    printStmtAST(stmts->stmts[i], indent);
   }
 }

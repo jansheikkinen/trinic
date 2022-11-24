@@ -42,12 +42,22 @@ Generated 36 tokens
 035:          END,     (null), (006, 003)
 
 ### AST GENERATION ###
-function main(VOID) -> VOID do
-  while 1 do print(1)
-  end
-  while 1 do print(1)
-  while 2 do print(2)
-  end
-  end
-  end
-
+Declaration FUNCTION  main
+  Stmt WHILE
+    Expr LITERAL
+      INT 1
+    Stmt BUILTIN print
+      Expr LITERAL
+        INT 1
+  Stmt WHILE
+    Expr LITERAL
+      INT 1
+    Stmt BUILTIN print
+      Expr LITERAL
+        INT 1
+    Stmt WHILE
+      Expr LITERAL
+        INT 2
+      Stmt BUILTIN print
+        Expr LITERAL
+          INT 2

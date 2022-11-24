@@ -23,8 +23,6 @@ Generated 17 tokens
 016:          END,     (null), (006, 003)
 
 ### AST GENERATION ###
-trait TestTrait
-  function testFunction(VOID) -> VOID
-  function testFunctionB(VOID) -> VOID
-  end
-
+Declaration TRAIT TestTrait
+  Declaration FUNCTION  testFunction
+  Declaration FUNCTION  testFunctionB

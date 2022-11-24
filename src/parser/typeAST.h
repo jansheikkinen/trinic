@@ -117,6 +117,6 @@ struct TypeAST* allocNewFunctionType(struct ArgAST*, struct TypeAST*,
 
 void freeTypeAST(struct TypeAST*);
 
-void printTypeAST(const struct TypeAST*);
+void printTypeAST(const struct TypeAST*, size_t);
 
 #endif

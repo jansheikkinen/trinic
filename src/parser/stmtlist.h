@@ -12,6 +12,6 @@ struct StmtList {
 struct StmtList newStmtList(void);
 void appendToStmtList(struct StmtList*, struct StmtAST*);
 void freeStmtList(struct StmtList*);
-void printStmtList(const struct StmtList*);
+void printStmtList(const struct StmtList*, size_t);
 
 #endif

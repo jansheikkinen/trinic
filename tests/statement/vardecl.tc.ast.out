@@ -3,7 +3,7 @@ Parsing tests/statement/vardecl.tc...
 
 ### LEXER ###
 Generating tokens from source...
-Generated 14 tokens
+Generated 16 tokens
 000:     FUNCTION,     (null), (003, 008)
 001:   IDENTIFIER,       main, (003, 013)
 002:            (,     (null), (003, 014)
@@ -14,13 +14,18 @@ Generated 14 tokens
 007:           DO,     (null), (003, 029)
 008:          LET,     (null), (004, 005)
 009:   IDENTIFIER,          x, (004, 007)
-010:            =,     (null), (004, 009)
-011:    UNDEFINED,     (null), (004, 019)
-012:            ;,     (null), (004, 020)
-013:          END,     (null), (005, 003)
+010:            :,     (null), (004, 008)
+011:         INT8,     (null), (004, 013)
+012:            =,     (null), (004, 015)
+013:    UNDEFINED,     (null), (004, 025)
+014:            ;,     (null), (004, 026)
+015:          END,     (null), (005, 003)
 
 ### AST GENERATION ###
-function main(VOID) -> VOID do
-  let x,    = UNDEFINED,   
-  end
-
+Declaration FUNCTION  main
+  Stmt VARDECL
+    Arg IDENTIFIER
+      Identifier_Arg x
+        Type TYPE INT8
+    Arg EXPR
+      Expr UNDEFINED

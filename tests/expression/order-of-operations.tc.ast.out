@@ -45,8 +45,48 @@ Generated 39 tokens
 038:          END,     (null), (006, 003)
 
 ### AST GENERATION ###
-function main(VOID) -> VOID do
-  (1 AND (2 == (3 > (4 & (5 + (6 * -7))))))
-  ((((((-1 * 2) + 3) & 4) > 5) == 6) AND 7)
-  end
-
+Declaration FUNCTION  main
+  Stmt EXPRESSION
+    Expr BINARY AND
+      Expr LITERAL
+        INT 1
+      Expr BINARY ==
+        Expr LITERAL
+          INT 2
+        Expr BINARY >
+          Expr LITERAL
+            INT 3
+          Expr BINARY &
+            Expr LITERAL
+              INT 4
+            Expr BINARY +
+              Expr LITERAL
+                INT 5
+              Expr BINARY *
+                Expr LITERAL
+                  INT 6
+                Expr UNARY -
+                  Expr LITERAL
+                    INT 7
+  Stmt EXPRESSION
+    Expr BINARY AND
+      Expr BINARY ==
+        Expr BINARY >
+          Expr BINARY &
+            Expr BINARY +
+              Expr BINARY *
+                Expr UNARY -
+                  Expr LITERAL
+                    INT 1
+                Expr LITERAL
+                  INT 2
+              Expr LITERAL
+                INT 3
+            Expr LITERAL
+              INT 4
+          Expr LITERAL
+            INT 5
+        Expr LITERAL
+          INT 6
+      Expr LITERAL
+        INT 7

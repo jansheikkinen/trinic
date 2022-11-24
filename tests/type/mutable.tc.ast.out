@@ -51,7 +51,29 @@ Generated 45 tokens
 044:          END,     (null), (006, 003)
 
 ### AST GENERATION ###
-function main(VOID) -> VOID do
-  let a: INT8, b: mut INT8, c: *INT8, d: *mut INT8, e: mut *INT8, f: mut *mut INT8,    = UNDEFINED,   
-  end
-
+Declaration FUNCTION  main
+  Stmt VARDECL
+    Arg IDENTIFIER
+      Identifier_Arg a
+        Type TYPE INT8
+      Identifier_Arg b
+        Type TYPE INT8
+          MUTABLE
+      Identifier_Arg c
+        Type POINTER
+          Type TYPE INT8
+      Identifier_Arg d
+        Type POINTER
+          Type TYPE INT8
+            MUTABLE
+      Identifier_Arg e
+        Type POINTER
+          Type TYPE INT8
+          MUTABLE
+      Identifier_Arg f
+        Type POINTER
+          Type TYPE INT8
+            MUTABLE
+          MUTABLE
+    Arg EXPR
+      Expr UNDEFINED

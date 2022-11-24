@@ -36,12 +36,16 @@ Generated 30 tokens
 029:          END,     (null), (006, 003)
 
 ### AST GENERATION ###
-function main(VOID) -> VOID do
-  loop print(1)
-  end
-  loop print(1)
-  loop print(2)
-  end
-  end
-  end
-
+Declaration FUNCTION  main
+  Stmt LOOP
+    Stmt BUILTIN print
+      Expr LITERAL
+        INT 1
+  Stmt LOOP
+    Stmt BUILTIN print
+      Expr LITERAL
+        INT 1
+    Stmt LOOP
+      Stmt BUILTIN print
+        Expr LITERAL
+          INT 2

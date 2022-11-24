@@ -1,5 +1,5 @@
 // Variable Declaration
 
 function main(void) -> void do
-  let x = undefined;
+  let x: int8 = undefined;
 end

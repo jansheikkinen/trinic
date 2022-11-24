@@ -30,10 +30,23 @@ Generated 24 tokens
 023:          END,     (null), (008, 003)
 
 ### AST GENERATION ###
-function main(VOID) -> VOID do
-  match a do
-  1,    => 2,
-  , 3, 4,    => 5,
-  ,   end
-  end
-
+Declaration FUNCTION  main
+  Stmt MATCH
+    Expr VARIABLE a
+    Arg MATCH_ARM
+      Match_Arm
+        Arg EXPR
+          Expr LITERAL
+            INT 1
+        Stmt EXPRESSION
+          Expr LITERAL
+            INT 2
+      Match_Arm
+        Arg EXPR
+          Expr LITERAL
+            INT 3
+          Expr LITERAL
+            INT 4
+        Stmt EXPRESSION
+          Expr LITERAL
+            INT 5

@@ -43,14 +43,20 @@ Generated 37 tokens
 036:          END,     (null), (006, 003)
 
 ### AST GENERATION ###
-function main(VOID) -> VOID do
-  print
-  return
-  break
-  continue
-  print(1)
-  return(1)
-  break(1)
-  continue(1)
-  end
-
+Declaration FUNCTION  main
+  Stmt BUILTIN print
+  Stmt BUILTIN return
+  Stmt BUILTIN break
+  Stmt BUILTIN continue
+  Stmt BUILTIN print
+    Expr LITERAL
+      INT 1
+  Stmt BUILTIN return
+    Expr LITERAL
+      INT 1
+  Stmt BUILTIN break
+    Expr LITERAL
+      INT 1
+  Stmt BUILTIN continue
+    Expr LITERAL
+      INT 1

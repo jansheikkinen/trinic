@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 
+#include "../util/printIndent.h"
 #include "argumentAST.h"
 #include "token.h"
 #include "typeAST.h"
@@ -110,79 +111,66 @@ void freeTypeAST(struct TypeAST* ast) {
   free(ast);
 }
 
-void printTypeAST(const struct TypeAST* ast) {
-  if(ast->ismutable) printf("mut ");
+void printTypeAST(const struct TypeAST* ast, size_t indent) {
+  PRINT_INDENT(indent); printf("Type ");
+
   switch(ast->type) {
-    case TYPE_UNDEFINED:
-      printf("(UNDEFINED TYPE)"); break;
-    case TYPE_BASE:
-      switch(ast->as.base.type) {
-        case BTT_UNDEFINED:
-          printf("UNDEFINED BASE TYPE"); break;
-        case BTT_IDENTIFIER:
-          printf("%s", ast->as.base.as.identifier); break;
-        case BTT_TYPE:
-          printf("%s", getTokenName(TOKEN_FALSE + ast->as.base.as.type)); break;
-      } break;
-    case TYPE_VARIADIC:
-      printf(".."); printTypeAST(ast->as.variadic.type); break;
-    case TYPE_PTR:
-      printf("*");
-      printTypeAST(ast->as.pointer.type);
-      break;
-    case TYPE_ARRAY:
-      printf("[");
-      if(ast->as.array.size) printExprAST(ast->as.array.size);
-      printf("]");
-      printTypeAST(ast->as.array.type); break;
-    case TYPE_STRUCT:
-      switch(ast->as.structure.type) {
-        case STRUCT_UNDEFINED: printf("UNDEFINED STRUCT"); break;
-        case STRUCT_STRUCT:
-          printf("struct %s", ast->as.structure.name);
-          if(ast->as.structure.generics) {
-            printf("(");
-            printArgAST(ast->as.structure.generics);
-            printf(")");
-          }
-          break;
-        case STRUCT_UNION:
-          printf("union %s", ast->as.structure.name);
-          if(ast->as.structure.generics) {
-            printf("(");
-            printArgAST(ast->as.structure.generics);
-            printf(")");
-          }
-          break;
-        case STRUCT_ENUM:
-          printf("enum %s", ast->as.structure.name);
-          if(ast->as.structure.generics) {
-            printf("(");
-            printArgAST(ast->as.structure.generics);
-            printf(")");
-          }
-          break;
-        case STRUCT_SUM:
-          printf("sum %s", ast->as.structure.name);
-          if(ast->as.structure.generics) {
-            printf("(");
-            printArgAST(ast->as.structure.generics);
-            printf(")");
-          }
-          break;
-        case STRUCT_INTERFACE:
-          printf("trait %s", ast->as.structure.name); break;
-      }
-      break;
-    case TYPE_FUNCTION:
-      printf("(");
-      if(ast->as.function.params) printArgAST(ast->as.function.params);
-      else printf("void");
-      printf(") -> ");
-      if(ast->as.function.returns) printTypeAST(ast->as.function.returns);
-      else printf("void");
-      if(ast->as.function.generics) {
-        printf(" for "); printArgAST(ast->as.function.generics);
-      }
+  case TYPE_UNDEFINED:
+    printf("UNDEFINED\n"); break;
+  case TYPE_BASE:
+    switch(ast->as.base.type) {
+      case BTT_UNDEFINED:
+        printf("UNDEFINED BASE"); break;
+      case BTT_IDENTIFIER:
+        printf("IDENTIFIER %s", ast->as.base.as.identifier); break;
+      case BTT_TYPE:
+        printf("TYPE %s", getTokenName(TOKEN_FALSE +ast->as.base.as.type));
+        break;
+    } printf("\n"); break;
+  case TYPE_VARIADIC:
+    printf("VARIADIC\n");
+    printTypeAST(ast->as.variadic.type, indent + 1); break;
+  case TYPE_PTR:
+    printf("POINTER\n");
+    printTypeAST(ast->as.pointer.type, indent + 1); break;
+  case TYPE_ARRAY:
+    printf("ARRAY\n");
+    printTypeAST(ast->as.array.type, indent + 1);
+    if(ast->as.array.size) printExprAST(ast->as.array.size, indent + 1);
+    break;
+  case TYPE_STRUCT:
+    switch(ast->as.structure.type) {
+      case STRUCT_UNDEFINED:
+        printf("UNDEFINED STRUCT"); break;
+      case STRUCT_STRUCT:
+        printf("STRUCTURE %s", ast->as.structure.name); break;
+      case STRUCT_UNION:
+        printf("UNION %s", ast->as.structure.name); break;
+      case STRUCT_ENUM:
+        printf("ENUM %s", ast->as.structure.name); break;
+      case STRUCT_SUM:
+        printf("SUM %s", ast->as.structure.name); break;
+      case STRUCT_INTERFACE:
+        printf("TRAIT %s", ast->as.structure.name); break;
+    } printf("\n");
+    if(ast->as.structure.generics)
+      printArgAST(ast->as.structure.generics, indent + 1);
+    break;
+  case TYPE_FUNCTION:
+    printf("FUNCTION\n");
+    if(ast->as.function.params)
+      printArgAST(ast->as.function.params, indent + 1);
+
+    if(ast->as.function.returns)
+      printTypeAST(ast->as.function.returns, indent + 1);
+
+    if(ast->as.function.generics)
+      printArgAST(ast->as.function.generics, indent + 1);
+    break;
+  }
+
+  if(ast->ismutable) {
+    PRINT_INDENT(indent + 1);
+    printf("MUTABLE\n");
   }
 }

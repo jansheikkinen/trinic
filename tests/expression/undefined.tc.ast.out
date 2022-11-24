@@ -17,7 +17,6 @@ Generated 11 tokens
 010:          END,     (null), (005, 003)
 
 ### AST GENERATION ###
-function main(VOID) -> VOID do
-  UNDEFINED
-  end
-
+Declaration FUNCTION  main
+  Stmt EXPRESSION
+    Expr UNDEFINED

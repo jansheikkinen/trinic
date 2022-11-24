@@ -6,6 +6,7 @@
 
 #include <stdio.h>
 
+#include "../util/printIndent.h"
 #include "argumentAST.h"
 #include "expressionAST.h"
 #include "statementAST.h"
@@ -202,51 +203,44 @@ static void freeMatchArm(struct MatchArm* arg) {
   freeStmtList(arg->body);
 }
 
-static void printIdentifierArg(const struct IdentifierArg* arg) {
-  if(arg->type) {
-    printf("%s: ", arg->identifier);
-    printTypeAST(arg->type);
-  } else {
-    printf("%s", arg->identifier);
+static void printIdentifierArg(const struct IdentifierArg* arg, size_t indent) {
+  PRINT_INDENT(indent); printf("Identifier_Arg %s\n", arg->identifier);
+  if(arg->type)
+    printTypeAST(arg->type, indent + 1);
+}
+
+static void printAssignArg(const struct AssignArg* arg, size_t indent) {
+  PRINT_INDENT(indent); printf("Assign_Arg %s\n", arg->identifier);
+  if(arg->rval) printExprAST(arg->rval, indent + 1);
+}
+
+static void printSumArgType(const struct SumArgType* arg, size_t indent) {
+  PRINT_INDENT(indent); printf("Sum_Arg_Type ");
+  if(arg->type == SUMARG_IDENTIFIER)
+    printf("%s\n", arg->as.identifier);
+  else if(arg->type == SUMARG_TYPE) {
+    printf("\n");
+    printTypeAST(arg->as.type, indent + 1);
   }
 }
 
-static void printAssignArg(const struct AssignArg* arg) {
-  printf("%s", arg->identifier);
-  if(arg->rval) {
-    printf(" = ");
-    printExprAST(arg->rval);
-  }
+static void printSumArg(const struct SumArg* arg, size_t indent) {
+  PRINT_INDENT(indent); printf("Sum_Arg ");
+  printf("%s\n", arg->name);
+  if(arg->fields)
+    printArgAST(arg->fields, indent + 1);
 }
 
-static void printSumArgType(const struct SumArgType* arg) {
-  if(arg->type == SUMARG_IDENTIFIER) printf("%s", arg->as.identifier);
-  else if(arg->type == SUMARG_TYPE) printTypeAST(arg->as.type);
+static void printGenDef(const struct GenericDef* arg, size_t indent) {
+  PRINT_INDENT(indent); printf("Generic_Def\n");
+  if(arg->lvalue) printArgAST(arg->lvalue, indent + 1);
+  if(arg->rvalue) printArgAST(arg->rvalue, indent + 1);
 }
 
-static void printSumArg(const struct SumArg* arg) {
-  printf("%s", arg->name);
-  if(arg->fields) {
-    printf("(");
-    printArgAST(arg->fields);
-    printf(")");
-  }
-}
-
-static void printGenDef(const struct GenericDef* arg) {
-  if(arg->lvalue) printArgAST(arg->lvalue);
-  printf(": ");
-  if(arg->rvalue) printArgAST(arg->rvalue);
-}
-
-static void printMatchArm(const struct MatchArm* arg) {
-  printArgAST(arg->exprs);
-  printf(" => ");
-  if(arg->body->size >= 2) {
-    printf("do\n"); printStmtList(arg->body); printf(" end");
-  } else for(size_t i = 0; i < arg->body->size; i++) {
-    printStmtAST(arg->body->stmts[i]); printf(",\n  ");
-  }
+static void printMatchArm(const struct MatchArm* arg, size_t indent) {
+  PRINT_INDENT(indent); printf("Match_Arm\n");
+  printArgAST(arg->exprs, indent + 1);
+  printStmtList(arg->body, indent + 1);
 }
 
 void freeArgAST(struct ArgAST* args) {
@@ -274,56 +268,64 @@ void freeArgAST(struct ArgAST* args) {
   free(args);
 }
 
-void printArgAST(const struct ArgAST* args) {
+void printArgAST(const struct ArgAST* args, size_t indent) {
+  PRINT_INDENT(indent); printf("Arg ");
+
   switch(args->type) {
-    case ARG_UNDEFINED: printf("ARG_UNDEFINED"); break;
+    case ARG_UNDEFINED: printf("UNDEFINED\n"); break;
     case ARG_EXPR:
-      for(size_t i = 0; i < args->as.exprargs.args->size; i++) {
-        printExprAST(args->as.exprargs.args->members[i]);
-        printf(", ");
-      } printf("\b\b  \b\b"); break;
+      printf("EXPR\n");
+      for(size_t i = 0; i < args->as.exprargs.args->size; i++)
+        printExprAST(args->as.exprargs.args->members[i], indent + 1);
+      break;
     case ARG_IDENTIFIER:
-      for(size_t i = 0; i < args->as.idargs.size; i++) {
-        printIdentifierArg(args->as.idargs.members[i]);
-        printf(", ");
-      } printf("\b\b  \b\b"); break;
+      printf("IDENTIFIER\n");
+      for(size_t i = 0; i < args->as.idargs.size; i++)
+        printIdentifierArg(args->as.idargs.members[i], indent + 1);
+      break;
     case ARG_ASSIGN:
-      for(size_t i = 0; i < args->as.assignargs.size; i++) {
-        printAssignArg(args->as.assignargs.members[i]);
-        printf(", ");
-      } printf("\b\b  \b\b"); break;
+      printf("ASSIGN\n");
+      for(size_t i = 0; i < args->as.assignargs.size; i++)
+        printAssignArg(args->as.assignargs.members[i], indent + 1);
+      break;
     case ARG_SUMARG:
-      for(size_t i = 0; i < args->as.sums.size; i++) {
-        printSumArg(args->as.sums.members[i]);
-        printf(", ");
-      } printf("\b\b  \b\b"); break;
+      printf("SUMARG\n");
+      for(size_t i = 0; i < args->as.sums.size; i++)
+        printSumArg(args->as.sums.members[i], indent + 1);
+      break;
     case ARG_SUMARGTYPE:
-      for(size_t i = 0; i < args->as.sumtypes.size; i++) {
-        printSumArgType(args->as.sumtypes.members[i]);
-        printf(", ");
-      } printf("\b\b  \b\b"); break;
+      printf("SUMARGTYPE\n");
+      for(size_t i = 0; i < args->as.sumtypes.size; i++)
+        printSumArgType(args->as.sumtypes.members[i], indent + 1);
+      break;
     case ARG_GENERIC:
+      printf("GENERIC\n");
       for(size_t i = 0; i < args->as.generics.size; i++) {
-        printf("%s, ", args->as.generics.members[i]);
-      } printf("\b\b  \b\b"); break;
+        PRINT_INDENT(indent + 1);
+        printf("IDENTIFIER %s\n", args->as.generics.members[i]);
+      }
+      break;
     case ARG_GENERIC_DEFL:
+      printf("GENERIC_DEFL\n");
       for(size_t i = 0; i < args->as.genleft.size; i++) {
-        printf("%s + ", args->as.genleft.members[i]);
-      } printf("\b\b\b   \b\b\b"); break;
+        PRINT_INDENT(indent + 1);
+        printf("IDENTIFIER %s\n", args->as.genleft.members[i]);
+      }
+      break;
     case ARG_GENERIC_DEFR:
-      for(size_t i = 0; i < args->as.genright.size; i++) {
-        printTypeAST(args->as.genright.members[i]);
-        printf(" + ");
-      } printf("\b\b\b   \b\b\b"); break;
+      printf("GENERIC_DEFR\n");
+      for(size_t i = 0; i < args->as.genright.size; i++)
+        printTypeAST(args->as.genright.members[i], indent + 1);
+      break;
     case ARG_GENERIC_DEFS:
-      for(size_t i = 0; i < args->as.gendefs.size; i++) {
-        printGenDef(args->as.gendefs.members[i]);
-        printf(", ");
-      } printf("\b\b  \b\b"); break;
+      printf("GENERIC_DEFS\n");
+      for(size_t i = 0; i < args->as.gendefs.size; i++)
+        printGenDef(args->as.gendefs.members[i], indent + 1);
+      break;
     case ARG_MATCH_ARMS:
-      for(size_t i = 0; i < args->as.matcharms.size; i++) {
-        printMatchArm(args->as.matcharms.members[i]);
-        printf(", ");
-      } printf("\b\b  \b\b"); break;
+      printf("MATCH_ARM\n");
+      for(size_t i = 0; i < args->as.matcharms.size; i++)
+        printMatchArm(args->as.matcharms.members[i], indent + 1);
+      break;
   }
 }

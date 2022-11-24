@@ -126,7 +126,7 @@ struct StmtAST* allocNewWhile(struct ExprAST*, struct StmtList*);
 struct StmtAST* allocNewFor(struct ArgAST*, struct ExprAST*, struct StmtList*);
 struct StmtAST* allocNewMatch(struct ExprAST*, struct ArgAST*);
 
-void printStmtAST(const struct StmtAST*);
+void printStmtAST(const struct StmtAST*, size_t);
 
 void freeStmtNode(struct StmtAST* stmt);
 

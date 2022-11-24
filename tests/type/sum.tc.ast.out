@@ -31,7 +31,15 @@ Generated 25 tokens
 024:          END,     (null), (005, 003)
 
 ### AST GENERATION ###
-function main(VOID) -> VOID do
-  let a: sum TestSum, b: sum TestSumB(INT8,   ),    = UNDEFINED,   
-  end
-
+Declaration FUNCTION  main
+  Stmt VARDECL
+    Arg IDENTIFIER
+      Identifier_Arg a
+        Type SUM TestSum
+      Identifier_Arg b
+        Type SUM TestSumB
+          Arg SUMARGTYPE
+            Sum_Arg_Type 
+              Type TYPE INT8
+    Arg EXPR
+      Expr UNDEFINED

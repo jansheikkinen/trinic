@@ -25,7 +25,13 @@ Generated 19 tokens
 018:          END,     (null), (003, 052)
 
 ### AST GENERATION ###
-function main(x: INT8, y, z: INT16,   ) -> VOID do
-  1
-  end
-
+Declaration FUNCTION  main
+  Arg IDENTIFIER
+    Identifier_Arg x
+      Type TYPE INT8
+    Identifier_Arg y
+    Identifier_Arg z
+      Type TYPE INT16
+  Stmt EXPRESSION
+    Expr LITERAL
+      INT 1

@@ -23,7 +23,10 @@ Generated 17 tokens
 016:          END,     (null), (005, 003)
 
 ### AST GENERATION ###
-function main(VOID) -> VOID do
-  let a: trait Add,    = UNDEFINED,   
-  end
-
+Declaration FUNCTION  main
+  Stmt VARDECL
+    Arg IDENTIFIER
+      Identifier_Arg a
+        Type TRAIT Add
+    Arg EXPR
+      Expr UNDEFINED

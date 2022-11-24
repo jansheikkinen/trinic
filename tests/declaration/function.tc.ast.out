@@ -137,11 +137,11 @@ Generated 155 tokens
 130:            :,     (null), (012, 008)
 131:        TRAIT,     (null), (012, 014)
 132:   IDENTIFIER,        Add, (012, 018)
-133:            ,,     (null), (012, 019)
-134:   IDENTIFIER,          V, (012, 021)
-135:            :,     (null), (012, 022)
-136:        TRAIT,     (null), (012, 028)
-137:   IDENTIFIER,    Display, (012, 036)
+133:            |,     (null), (012, 020)
+134:   IDENTIFIER,          V, (012, 022)
+135:            :,     (null), (012, 023)
+136:        TRAIT,     (null), (012, 029)
+137:   IDENTIFIER,    Display, (012, 037)
 138:           DO,     (null), (013, 002)
 139:      INTEGER,          8, (013, 005)
 140:            ;,     (null), (013, 005)
@@ -161,40 +161,105 @@ Generated 155 tokens
 154:          END,     (null), (014, 041)
 
 ### AST GENERATION ###
-function (VOID) -> VOID do
-  1
-  end
-
-function testA(VOID) -> VOID do
-  2
-  end
-
-function testB(x: INT8,   ) -> VOID do
-  3
-  end
-
-function testC(VOID) -> INT8 do
-  4
-  end
-
-function testD(x: INT8,   ) -> INT8 where (x != 69), (return == 420),    do
-  5
-  end
-
-function testE(x: T,   ) -> T for T +    : trait Add +    ,    do
-  6
-  end
-
-function testF(x: T, y: V,   ) -> T for T + V +    : trait Add + trait Display +    ,    do
-  7
-  end
-
-function testG(x: T, y: V,   ) -> T where (x != 1),    for T +    : trait Add +    , V +    : trait Display +    ,    do
-  8
-  end
-
-function testH(VOID) -> VOID do
-  9
-  10
-  end
-
+Declaration FUNCTION 
+  Stmt EXPRESSION
+    Expr LITERAL
+      INT 1
+Declaration FUNCTION  testA
+  Stmt EXPRESSION
+    Expr LITERAL
+      INT 2
+Declaration FUNCTION  testB
+  Arg IDENTIFIER
+    Identifier_Arg x
+      Type TYPE INT8
+  Stmt EXPRESSION
+    Expr LITERAL
+      INT 3
+Declaration FUNCTION  testC
+  Type TYPE INT8
+  Stmt EXPRESSION
+    Expr LITERAL
+      INT 4
+Declaration FUNCTION  testD
+  Arg IDENTIFIER
+    Identifier_Arg x
+      Type TYPE INT8
+  Type TYPE INT8
+  Arg EXPR
+    Expr BINARY !=
+      Expr VARIABLE x
+      Expr LITERAL
+        INT 69
+    Expr BINARY ==
+      Expr VARIABLE return
+      Expr LITERAL
+        INT 420
+  Stmt EXPRESSION
+    Expr LITERAL
+      INT 5
+Declaration FUNCTION  testE
+  Arg IDENTIFIER
+    Identifier_Arg x
+      Type IDENTIFIER T
+  Type IDENTIFIER T
+  Arg GENERIC_DEFS
+    Generic_Def
+      Arg GENERIC_DEFL
+        IDENTIFIER T
+      Arg GENERIC_DEFR
+        Type TRAIT Add
+  Stmt EXPRESSION
+    Expr LITERAL
+      INT 6
+Declaration FUNCTION  testF
+  Arg IDENTIFIER
+    Identifier_Arg x
+      Type IDENTIFIER T
+    Identifier_Arg y
+      Type IDENTIFIER V
+  Type IDENTIFIER T
+  Arg GENERIC_DEFS
+    Generic_Def
+      Arg GENERIC_DEFL
+        IDENTIFIER T
+        IDENTIFIER V
+      Arg GENERIC_DEFR
+        Type TRAIT Add
+        Type TRAIT Display
+  Stmt EXPRESSION
+    Expr LITERAL
+      INT 7
+Declaration FUNCTION  testG
+  Arg IDENTIFIER
+    Identifier_Arg x
+      Type IDENTIFIER T
+    Identifier_Arg y
+      Type IDENTIFIER V
+  Type IDENTIFIER T
+  Arg EXPR
+    Expr BINARY !=
+      Expr VARIABLE x
+      Expr LITERAL
+        INT 1
+  Arg GENERIC_DEFS
+    Generic_Def
+      Arg GENERIC_DEFL
+        IDENTIFIER T
+      Arg GENERIC_DEFR
+        Type TRAIT Add
+    Generic_Def
+      Arg GENERIC_DEFL
+        IDENTIFIER V
+      Arg GENERIC_DEFR
+        Type TRAIT Display
+  Stmt EXPRESSION
+    Expr LITERAL
+      INT 8
+Declaration FUNCTION  testH
+  Stmt EXPRESSION
+    Expr LITERAL
+      INT 9
+  Stmt EXPRESSION
+    Expr LITERAL
+      INT 10

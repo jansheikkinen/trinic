@@ -40,15 +40,15 @@ Generated 72 tokens
 033:            :,     (null), (004, 037)
 034:        TRAIT,     (null), (004, 043)
 035:   IDENTIFIER,        Add, (004, 047)
-036:            ,,     (null), (004, 048)
-037:   IDENTIFIER,          V, (004, 050)
-038:            :,     (null), (004, 051)
-039:        TRAIT,     (null), (004, 057)
-040:   IDENTIFIER,    Display, (004, 065)
-041:           DO,     (null), (004, 068)
-042:      INTEGER,          1, (004, 071)
-043:            ;,     (null), (004, 071)
-044:          END,     (null), (004, 075)
+036:            |,     (null), (004, 049)
+037:   IDENTIFIER,          V, (004, 051)
+038:            :,     (null), (004, 052)
+039:        TRAIT,     (null), (004, 058)
+040:   IDENTIFIER,    Display, (004, 066)
+041:           DO,     (null), (004, 069)
+042:      INTEGER,          1, (004, 072)
+043:            ;,     (null), (004, 072)
+044:          END,     (null), (004, 076)
 045:     FUNCTION,     (null), (005, 008)
 046:   IDENTIFIER,      testC, (005, 014)
 047:            (,     (null), (005, 015)
@@ -78,15 +78,56 @@ Generated 72 tokens
 071:          END,     (null), (005, 077)
 
 ### AST GENERATION ###
-function testA(x: T,   ) -> T for T +    : trait Add +    ,    do
-  1
-  end
-
-function testB(x: T, y: V,   ) -> T for T +    : trait Add +    , V +    : trait Display +    ,    do
-  1
-  end
-
-function testC(x: T, y: V,   ) -> T for T + V +    : trait Add + trait Display +    ,    do
-  1
-  end
-
+Declaration FUNCTION  testA
+  Arg IDENTIFIER
+    Identifier_Arg x
+      Type IDENTIFIER T
+  Type IDENTIFIER T
+  Arg GENERIC_DEFS
+    Generic_Def
+      Arg GENERIC_DEFL
+        IDENTIFIER T
+      Arg GENERIC_DEFR
+        Type TRAIT Add
+  Stmt EXPRESSION
+    Expr LITERAL
+      INT 1
+Declaration FUNCTION  testB
+  Arg IDENTIFIER
+    Identifier_Arg x
+      Type IDENTIFIER T
+    Identifier_Arg y
+      Type IDENTIFIER V
+  Type IDENTIFIER T
+  Arg GENERIC_DEFS
+    Generic_Def
+      Arg GENERIC_DEFL
+        IDENTIFIER T
+      Arg GENERIC_DEFR
+        Type TRAIT Add
+    Generic_Def
+      Arg GENERIC_DEFL
+        IDENTIFIER V
+      Arg GENERIC_DEFR
+        Type TRAIT Display
+  Stmt EXPRESSION
+    Expr LITERAL
+      INT 1
+Declaration FUNCTION  testC
+  Arg IDENTIFIER
+    Identifier_Arg x
+      Type IDENTIFIER T
+    Identifier_Arg y
+      Type IDENTIFIER V
+  Type IDENTIFIER T
+  Arg GENERIC_DEFS
+    Generic_Def
+      Arg GENERIC_DEFL
+        IDENTIFIER T
+        IDENTIFIER V
+      Arg GENERIC_DEFR
+        Type TRAIT Add
+        Type TRAIT Display
+  Stmt EXPRESSION
+    Expr LITERAL
+      INT 1

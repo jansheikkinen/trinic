@@ -18,7 +18,7 @@ trait TestTraitA
   function TestFunctionB(x: int8) -> int8
   function TestFunctionC(x: T) -> T for T: trait Add
   function TestFunctionD(x: T, y: V) -> T for T + V: trait Add + trait Display
-  function TestFunctionE(x: T, y: V) -> T for T: trait Add, V: trait Display
+  function TestFunctionE(x: T, y: V) -> T for T: trait Add | V: trait Display
   function TestFunctionF(x, y: int8) -> int8 where x > 3, return != 0
 end
 
@@ -33,7 +33,7 @@ end
 let a, b: int8, c: []int8, d: [3]int8, e: *int8, f: [3]*int8, g: ..int8,
     h: struct TestStructA, i: ..[]*struct TestStructB(int8), j: union TestUnion,
     k: enum TestEnum, l: sum TestSumC(int8), m: trait TestTraitA,
-    n: (int8, int8) -> int8, o: (T, T) -> T for T: trait Add,
+    n: (int8, int8) -> int8, o: (T, T) -> T for T: trait Add | V: trait Display,
     p: (void) -> void, q: mut int8, r: mut *int8, s: *mut int8,
     t: mut *mut int8,
     z: int8 = undefined;

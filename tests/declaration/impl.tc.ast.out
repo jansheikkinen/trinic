@@ -49,17 +49,26 @@ Generated 43 tokens
 042:          END,     (null), (015, 003)
 
 ### AST GENERATION ###
-struct TestStruct x, y: INT8,    end
-
-trait TestTrait
-  function testFunction(self: *Self,   ) -> Self
-  end
-
-impl TestTrait for TestStruct
-function testFunction(self: *Self,   ) -> Self do
-  return(self)
-  end
-
-
-  end
-
+Declaration STRUCT
+  Arg IDENTIFIER
+    Identifier_Arg x
+    Identifier_Arg y
+      Type TYPE INT8
+Declaration TRAIT TestTrait
+  Declaration FUNCTION  testFunction
+    Arg IDENTIFIER
+      Identifier_Arg self
+        Type POINTER
+          Type IDENTIFIER Self
+    Type IDENTIFIER Self
+Declaration IMPL
+  Type IDENTIFIER TestTrait
+  Type IDENTIFIER TestStruct
+  Declaration FUNCTION  testFunction
+    Arg IDENTIFIER
+      Identifier_Arg self
+        Type POINTER
+          Type IDENTIFIER Self
+    Type IDENTIFIER Self
+    Stmt BUILTIN return
+      Expr VARIABLE self

@@ -121,7 +121,7 @@ struct ExprAST* allocNewUndefined(void);
 #define ALLOC_NEW_LITERAL(type, vtype, value) \
   allocNewLiteral(type, (union LiteralValue){ .vtype = value })
 
-void printExprAST(const struct ExprAST*);
+void printExprAST(const struct ExprAST*, size_t);
 
 void freeExprNode(struct ExprAST* expr);
 
