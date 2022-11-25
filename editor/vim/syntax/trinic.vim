@@ -14,6 +14,9 @@ endif
 
 syn case match
 
+syn match trinicConstant "[A-Z_][A-Z0-9_]*"
+syn match trinicIdentifier "[a-zA-Z_][a-zA-Z0-9_]*"
+
 syn region trinicString start="\"" end="\""
 syn region trinicChar   start="\'" end="\'"
 
@@ -30,29 +33,26 @@ syn keyword trinicType int8   int16   int32   int64   isize
                      \ byte   bool    char    void    mut
                      \ any
 
+syn keyword trinicStructure struct enum union sum trait
 syn keyword trinicStatement if else while loop for do end let where in match
-  \ struct enum union sum trait function return impl continue break
+  \ function impl include continue return break extern as
 
 syn keyword trinicTodo contained TODO FIXME NOTE
 syn keyword trinicComment please
 syn match   trinicComment "//.*$" contains=trinicTodo
 syn region  trinicComment start="/\*" end="\*/"
 
-" Statement Repeat String Number Operator Constant Conditional
-" Function Comment Todo Structure Error SpecialChar Identifier
-" Label
-
-hi def link trinicStatement  Statement
-hi def link trinicStructure  Structure
-hi def link trinicType       Type
-hi def link trinicTodo       Todo
-hi def link trinicComment    Comment
+hi def link trinicConstant   Constant
+hi def link trinicIdentifier Identifier
 hi def link trinicString     String
 hi def link trinicChar       String
+hi def link trinicNumber     Number
 hi def link trinicOperator   Operator
 hi def link trinicConstant   Constant
-hi def link trinicNumber     Number
-hi def link trinicIdentifier Identifier
-hi def link trinicError      Error
+hi def link trinicType       Type
+hi def link trinicStructure  Structure
+hi def link trinicStatement  Statement
+hi def link trinicTodo       Todo
+hi def link trinicComment    Comment
 
 let b:current_syntax = "trinic"
