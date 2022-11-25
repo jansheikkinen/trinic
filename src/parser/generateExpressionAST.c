@@ -7,6 +7,7 @@
 #include "generateDeclarationAST.h"
 #include "generateExpressionAST.h"
 #include "generateArgumentAST.h"
+#include "generateTypeAST.h"
 #include "token.h"
 
 #define GET_CURRENT_TOKEN(ctx) ctx->tokens->tokens[ctx->index]
@@ -168,8 +169,26 @@ generateBinaryNode(genLogicNode, genEqualityNode,
 
 #undef generateBinaryNode
 
-struct ExprAST* generateExpression(struct ASTContext* ctx) {
+static struct ExprAST* genCastNode(struct ASTContext* ctx) {
   struct ExprAST* ast = genLogicNode(ctx);
+
+  while(MATCH_TOKEN(ctx, TOKEN_AS)) {
+    ctx->index += 1;
+    struct TypeAST* type = generateType(ctx);
+    ast = allocNewCastExpr(ast, type);
+  }
+
+  if(ctx->index >= ctx->tokens->length) {
+    freeExprNode(ast);
+    APPEND_ASTERROR(ctx, ASTERR_UNEXPECTED_EOF);
+    return NULL;
+  }
+
+  return ast;
+}
+
+struct ExprAST* generateExpression(struct ASTContext* ctx) {
+  struct ExprAST* ast = genCastNode(ctx);
 
   return ast;
 }

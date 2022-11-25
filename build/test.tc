@@ -1,12 +1,13 @@
 /* test.tc */
 
-// I've mainly been using this file to write test cases directly related to
-// whatever I'm currently implementing. If I'm being honest, I *should* have
-// been putting copies of this file into tests/, but for now they're just
-// available in the commit history lol
+// This file's basically just used to test as many rules as possible at once
 
-// Testing everything
+// include "std";
 
+// extern struct TestStructA x: int8 end
+
+
+/*
 struct TestStructB x: int8, y: int16 end
 struct TestStructC(T, V) x: T, y: V end
 
@@ -37,7 +38,7 @@ let a, b: int8, c: []int8, d: [3]int8, e: *int8, f: [3]*int8, g: ..int8,
     p: (void) -> void, q: mut int8, r: mut *int8, s: *mut int8,
     t: mut *mut int8,
     z: int8 = undefined;
-
+*/
 function TestFunction(void) -> void do
   print; print(3); return; return(3); continue; continue(3); break; break(3);
 
@@ -67,6 +68,7 @@ function TestFunction(void) -> void do
   1 > 2; 1 >= 2; 1 < 2; 1 <= 2;
   1 == 2; 1 != 2;
   1 and 2; 1 or 2;
+  x as float32; y as struct TestStruct; z as *[][]struct TestStructB(int8);
   1 and 2 == 3 > 4 & 5 + 6 * -7;
   -1 * 2 + 3 & 4 > 4 == 6 and 7;
   undefined;

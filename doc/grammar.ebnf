@@ -3,8 +3,9 @@
 
 program = declaration* EOF ;
 
-declaration = structdecl | uniondecl | enumdecl | sumdecl
-            | traitdecl  | funcdecl  | vardecl  | impldecl ;
+declaration = include | ("extern"? (structdecl | uniondecl | enumdecl | sumdecl
+            | traitdecl  | funcdecl  | vardecl  | impldecl)) ;
+include     = "include" STRING ";" ;
 structdecl  = structtype genericlist? idargs      "end" ;
 uniondecl   = uniontype  genericlist? idargs      "end" ;
 enumdecl    = enumtype                assignargs  "end" ;
@@ -49,7 +50,8 @@ match       = "match" expression "do" matcharms "end"
 
 # Note that "undefined", though allowed anywhere an expression is in the syntax,
 # should produce an error when not used in variable declarations
-expression = logic | "undefined" ;
+expression = cast | "undefined" ;
+cast       = cast "as" type | logic ;
 logic      = equality ( ("and" | "or")                  equality )*  ;
 equality   = compare  ( ("==" | "!=")                   compare  )*  ;
 compare    = bitwise  ( (">" | ">=" | "<" | "<=")       bitwise  )*  ;

@@ -13,7 +13,7 @@
 #define MATCH_TOKEN(ctx, token) (GET_CURRENT_TOKEN(ctx).type == token)
 
 #define DEFINE_GEN(fnname, argfnname, allocfnname) \
-static struct DeclarationAST* fnname(struct ASTContext* ctx) { \
+static struct DeclarationAST* fnname(struct ASTContext* ctx, bool external) { \
   ctx->index += 1; \
   if(MATCH_TOKEN(ctx, TOKEN_IDENTIFIER_LITERAL)) { \
     const char* name = GET_CURRENT_TOKEN(ctx).literal; \
@@ -32,7 +32,7 @@ static struct DeclarationAST* fnname(struct ASTContext* ctx) { \
     struct ArgAST* fields = argfnname(ctx); \
     if(MATCH_TOKEN(ctx, TOKEN_END)) { \
       ctx->index += 1; \
-      return allocfnname(name, fields, generics); \
+      return allocfnname(name, fields, generics, external); \
     } else APPEND_ASTERROR(ctx, ASTERR_EXPECTED_END); \
   } else { \
     APPEND_ASTERROR(ctx, ASTERR_EXPECTED_IDENTIFIER); \
@@ -44,7 +44,7 @@ DEFINE_GEN(genStruct, generateIdentifierArguments, allocNewStruct)
 DEFINE_GEN(genUnion,  generateIdentifierArguments, allocNewUnion)
 DEFINE_GEN(genSum,    generateSumArguments, allocNewSum)
 
-static struct DeclarationAST* genEnum(struct ASTContext* ctx) {
+static struct DeclarationAST* genEnum(struct ASTContext* ctx, bool external) {
   ctx->index += 1;
 
   if(MATCH_TOKEN(ctx, TOKEN_IDENTIFIER_LITERAL)) {
@@ -54,13 +54,14 @@ static struct DeclarationAST* genEnum(struct ASTContext* ctx) {
     struct ArgAST* fields = generateAssignmentArguments(ctx);
     if(MATCH_TOKEN(ctx, TOKEN_END)) {
       ctx->index += 1;
-      return allocNewEnum(name, fields, NULL);
+      return allocNewEnum(name, fields, NULL, external);
     } else APPEND_ASTERROR(ctx, ASTERR_EXPECTED_END);
   } else APPEND_ASTERROR(ctx, ASTERR_EXPECTED_IDENTIFIER);
   return NULL;
 }
 
-struct DeclarationAST* generateFunctionHeader(struct ASTContext* ctx) {
+struct DeclarationAST* generateFunctionHeader(struct ASTContext* ctx,
+    bool external) {
   ctx->index += 1;
 
   const char* name = NULL;
@@ -98,14 +99,16 @@ struct DeclarationAST* generateFunctionHeader(struct ASTContext* ctx) {
         }
 
         return
-          allocNewFunction(name, args, returns, contracts, generics, NULL);
+          allocNewFunction(name, args, returns, contracts,
+              generics, NULL, external);
       } else APPEND_ASTERROR(ctx, ASTERR_EXPECTED_ARROW_FUNCTION);
     } else APPEND_ASTERROR(ctx, ASTERR_UNCLOSED_PAREN);
   } else APPEND_ASTERROR(ctx, ASTERR_EXPECTED_PAREN);
   return NULL;
 }
 
-static struct DeclarationAST* genInterface(struct ASTContext* ctx) {
+static struct DeclarationAST* genInterface(struct ASTContext* ctx,
+    bool external) {
   ctx->index += 1;
 
   if(MATCH_TOKEN(ctx, TOKEN_IDENTIFIER_LITERAL)) {
@@ -117,12 +120,12 @@ static struct DeclarationAST* genInterface(struct ASTContext* ctx) {
 
     while(ctx->index < ctx->tokens->length) {
       if(MATCH_TOKEN(ctx, TOKEN_FUNCTION)) {
-        struct DeclarationAST* header = generateFunctionHeader(ctx);
+        struct DeclarationAST* header = generateFunctionHeader(ctx, external);
         APPEND_ARRAYLIST(functions, header);
       } else {
         if(MATCH_TOKEN(ctx, TOKEN_END)) {
           ctx->index += 1;
-          return allocNewInterface(name, functions);
+          return allocNewInterface(name, functions, external);
         } else APPEND_ASTERROR(ctx, ASTERR_EXPECTED_END);
       }
     }
@@ -135,8 +138,9 @@ static struct DeclarationAST* genInterface(struct ASTContext* ctx) {
   return NULL;
 }
 
-static struct DeclarationAST* genFunction(struct ASTContext* ctx) {
-  struct DeclarationAST* ast = generateFunctionHeader(ctx);
+static struct DeclarationAST* genFunction(struct ASTContext* ctx,
+    bool external) {
+  struct DeclarationAST* ast = generateFunctionHeader(ctx, external);
 
   if(MATCH_TOKEN(ctx, TOKEN_DO)) {
     ctx->index += 1;
@@ -160,7 +164,7 @@ static struct DeclarationAST* genFunction(struct ASTContext* ctx) {
   return ast;
 }
 
-static struct DeclarationAST* genImpl(struct ASTContext* ctx) {
+static struct DeclarationAST* genImpl(struct ASTContext* ctx, bool external) {
   ctx->index += 1;
 
   struct TypeAST* trait = generateType(ctx);
@@ -174,12 +178,12 @@ static struct DeclarationAST* genImpl(struct ASTContext* ctx) {
 
     while(ctx->index < ctx->tokens->length) {
       if(MATCH_TOKEN(ctx, TOKEN_FUNCTION)) {
-        struct DeclarationAST* function = genFunction(ctx);
+        struct DeclarationAST* function = genFunction(ctx, external);
         APPEND_ARRAYLIST(functions, function);
       } else {
         if(MATCH_TOKEN(ctx, TOKEN_END)) {
           ctx->index += 1;
-          return allocNewImpl(trait, type, functions);
+          return allocNewImpl(trait, type, functions, external);
         } else APPEND_ASTERROR(ctx, ASTERR_EXPECTED_END);
       }
     }
@@ -192,15 +196,39 @@ static struct DeclarationAST* genImpl(struct ASTContext* ctx) {
   return NULL;
 }
 
+static struct DeclarationAST* genInclude(struct ASTContext* ctx) {
+  ctx->index += 1;
+
+  if(MATCH_TOKEN(ctx, TOKEN_STRING_LITERAL)) {
+    const char* str = GET_CURRENT_TOKEN(ctx).literal;
+    ctx->index += 1;
+
+    if(MATCH_TOKEN(ctx, TOKEN_SEMICOLON)) {
+      ctx->index += 1;
+      return allocNewInclude(str);
+    } else APPEND_ASTERROR(ctx, ASTERR_EXPECTED_STMT_END);
+  } else APPEND_ASTERROR(ctx, ASTERR_EXPECTED_STRING);
+
+  return NULL;
+}
+
 struct DeclarationAST* generateDeclaration(struct ASTContext* ctx) {
-  if(MATCH_TOKEN(ctx, TOKEN_STRUCT)) return genStruct(ctx);
-  else if(MATCH_TOKEN(ctx, TOKEN_UNION)) return genUnion(ctx);
-  else if(MATCH_TOKEN(ctx, TOKEN_ENUM)) return genEnum(ctx);
-  else if(MATCH_TOKEN(ctx, TOKEN_SUM)) return genSum(ctx);
-  else if(MATCH_TOKEN(ctx, TOKEN_INTERFACE)) return genInterface(ctx);
-  else if(MATCH_TOKEN(ctx, TOKEN_IMPL)) return genImpl(ctx);
-  else if(MATCH_TOKEN(ctx, TOKEN_FUNCTION)) return genFunction(ctx);
+
+  bool external = false;
+  if(MATCH_TOKEN(ctx, TOKEN_EXTERN)) {
+    ctx->index += 1;
+    external = !external;
+  }
+
+  if(MATCH_TOKEN(ctx, TOKEN_STRUCT)) return genStruct(ctx, external);
+  else if(MATCH_TOKEN(ctx, TOKEN_UNION)) return genUnion(ctx, external);
+  else if(MATCH_TOKEN(ctx, TOKEN_ENUM)) return genEnum(ctx, external);
+  else if(MATCH_TOKEN(ctx, TOKEN_SUM)) return genSum(ctx, external);
+  else if(MATCH_TOKEN(ctx, TOKEN_INTERFACE)) return genInterface(ctx, external);
+  else if(MATCH_TOKEN(ctx, TOKEN_IMPL)) return genImpl(ctx, external);
+  else if(MATCH_TOKEN(ctx, TOKEN_FUNCTION)) return genFunction(ctx, external);
+  else if(MATCH_TOKEN(ctx, TOKEN_INCLUDE)) return genInclude(ctx);
   else if(MATCH_TOKEN(ctx, TOKEN_LET))
-    return allocNewVarDeclDecl(generateStatement(ctx));
+    return allocNewVarDeclDecl(generateStatement(ctx), external);
   else return NULL;
 }

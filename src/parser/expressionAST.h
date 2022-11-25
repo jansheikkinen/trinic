@@ -19,6 +19,7 @@ enum ExprASTType {
   EXPR_ARRAY_INDEX,
   EXPR_ARRAY_INIT,
   EXPR_FUNCTION,
+  EXPR_CAST,
 };
 
 enum LiteralType {
@@ -90,6 +91,11 @@ struct FunctionExpression {
   struct DeclarationAST* function;
 };
 
+struct CastExpression {
+  struct ExprAST* expr;
+  struct TypeAST* type;
+};
+
 struct ExprAST {
   enum ExprASTType type;
   union {
@@ -103,6 +109,7 @@ struct ExprAST {
     struct ArrayIndexExpression arrindex;
     struct ArrayInitExpression arrinit;
     struct FunctionExpression function;
+    struct CastExpression cast;
   } as;
 };
 
@@ -116,6 +123,7 @@ struct ExprAST* allocNewGrouping(struct ExprAST*);
 struct ExprAST* allocNewArrayIndex(struct ExprAST*, struct ExprAST*);
 struct ExprAST* allocNewArrayInit(struct ArgAST*);
 struct ExprAST* allocNewFunctionExpr(struct DeclarationAST*);
+struct ExprAST* allocNewCastExpr(struct ExprAST*, struct TypeAST*);
 struct ExprAST* allocNewUndefined(void);
 
 #define ALLOC_NEW_LITERAL(type, vtype, value) \

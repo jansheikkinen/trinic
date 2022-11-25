@@ -117,7 +117,6 @@ local function generateASTs()
 
   local testOutputs = { }
   for _, filename in pairs(filenames) do
-    printf("Generating AST for %s...\n", filename)
     local pfile = io.popen(binary .. " " .. filename)
 
     testOutputs[filename] = pfile:read("*a")
@@ -154,23 +153,29 @@ local function updateTests()
     printf("Updating AST tests...\n")
 
     local testOutputs = generateASTs()
+    local expectedOutputs = getExpectedOutput()
 
     if not testOutputs then
       panic(1, "No test files")
+    elseif not expectedOutputs then
+      panic(1, "No output files")
     end
 
-    local numFiles = 0
-    for name, output in pairs(testOutputs) do
-      printf("Updating %s.out\n", name)
-      local file = io.open(name .. ".ast.out", "w")
+    local numUpdated, numFiles = 0, 0
+    for name, _ in pairs(testOutputs) do
+      if testOutputs[name] ~= expectedOutputs[name .. ".ast.out"] then
+        printf("Updating %s.ast.out\n", name)
+        local file = io.open(name .. ".ast.out", "w")
 
-      file:write(output)
+        file:write(testOutputs[name])
 
-      file:close()
+        file:close()
+        numUpdated = numUpdated + 1
+      end
       numFiles = numFiles + 1
     end
 
-    printf("Updated %d test files\n", numFiles)
+    printf("Updated %d of %d test files\n", numUpdated, numFiles)
   elseif testGen == "bytecode" then
     printf("This hasn't been implemented yet!\n")
   end

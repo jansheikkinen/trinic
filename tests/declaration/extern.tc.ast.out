@@ -1,0 +1,23 @@
+## PARSER ##
+Parsing tests/declaration/extern.tc...
+
+### LEXER ###
+Generating tokens from source...
+Generated 9 tokens
+000:       EXTERN,     (null), (003, 006)
+001:       STRUCT,     (null), (003, 013)
+002:   IDENTIFIER, TestStruct, (003, 024)
+003:   IDENTIFIER,          x, (003, 026)
+004:            ,,     (null), (003, 027)
+005:   IDENTIFIER,          y, (003, 029)
+006:            :,     (null), (003, 030)
+007:        ISIZE,     (null), (003, 036)
+008:          END,     (null), (003, 040)
+
+### AST GENERATION ###
+Declaration STRUCT
+  Arg IDENTIFIER
+    Identifier_Arg x
+    Identifier_Arg y
+      Type TYPE ISIZE
+  EXTERNAL

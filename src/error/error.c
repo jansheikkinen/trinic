@@ -33,6 +33,7 @@ const char* ASTErrorMessages[] = {
   "Expected expression",
   "Expected type",
   "Expected identifier",
+  "Expected string",
   "Expected assignment",
   "Expected 'for' in impl",
   "Expected 'in' in for",

@@ -1,0 +1,5 @@
+// Cast
+
+function main(void) -> void do
+  x as float32; y as struct TestStruct; z as *[][]struct TestStructB(int8);
+end

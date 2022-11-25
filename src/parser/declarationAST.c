@@ -7,9 +7,10 @@
 
 #define ALLOC_NEW_STRUCTURE(structuren, enum) \
   struct DeclarationAST* structuren(const char* name, \
-      struct ArgAST* fields, struct ArgAST* generics) { \
+      struct ArgAST* fields, struct ArgAST* generics, bool isexternal) { \
     struct DeclarationAST* ast = malloc(sizeof(*ast)); \
     ast->type = enum; \
+    ast->isexternal = isexternal; \
     ast->name = name; \
     ast->as.structure.fields = fields; \
     ast->as.structure.generics = generics; \
@@ -22,11 +23,12 @@ ALLOC_NEW_STRUCTURE(allocNewEnum, DECLARATION_ENUM) // too lazy to fix but enum
 ALLOC_NEW_STRUCTURE(allocNewSum, DECLARATION_SUM) // should never have generics
 
 struct DeclarationAST* allocNewInterface(const char* name,
-    struct DeclarationList* functions) {
+    struct DeclarationList* functions, bool isexternal) {
   struct DeclarationAST* ast = malloc(sizeof(*ast));
 
   ast->type = DECLARATION_INTERFACE;
   ast->name = name;
+  ast->isexternal = isexternal;
   ast->as.interface = functions;
 
   return ast;
@@ -34,11 +36,12 @@ struct DeclarationAST* allocNewInterface(const char* name,
 
 struct DeclarationAST* allocNewFunction(const char* name, struct ArgAST* args,
     struct TypeAST* returns, struct ArgAST* contracts,
-    struct ArgAST* generics, struct StmtList* body) {
+    struct ArgAST* generics, struct StmtList* body, bool isexternal) {
   struct DeclarationAST* ast = malloc(sizeof(*ast));
 
   ast->type = DECLARATION_FUNCTION;
   ast->name = name;
+  ast->isexternal = isexternal;
 
   ast->as.function.args = args;
   ast->as.function.returns = returns;
@@ -49,9 +52,11 @@ struct DeclarationAST* allocNewFunction(const char* name, struct ArgAST* args,
   return ast;
 }
 
-struct DeclarationAST* allocNewVarDeclDecl(struct StmtAST* stmt) {
+struct DeclarationAST* allocNewVarDeclDecl(struct StmtAST* stmt,
+    bool isexternal) {
   struct DeclarationAST* ast = malloc(sizeof(*ast));
 
+  ast->isexternal = isexternal;
   ast->type = DECLARATION_VARIABLE;
   ast->as.vardecl = stmt;
 
@@ -59,13 +64,24 @@ struct DeclarationAST* allocNewVarDeclDecl(struct StmtAST* stmt) {
 }
 
 struct DeclarationAST* allocNewImpl(struct TypeAST* trait, struct TypeAST* type,
-    struct DeclarationList* body) {
+    struct DeclarationList* body, bool isexternal) {
   struct DeclarationAST* ast = malloc(sizeof(*ast));
 
+  ast->isexternal = isexternal;
   ast->type = DECLARATION_IMPL;
   ast->as.impl.trait = trait;
   ast->as.impl.type = type;
   ast->as.impl.body = body;
+
+  return ast;
+}
+
+struct DeclarationAST* allocNewInclude(const char* file) {
+  struct DeclarationAST* ast = malloc(sizeof(*ast));
+
+  ast->isexternal = false;
+  ast->type = DECLARATION_INCLUDE;
+  ast->name = file;
 
   return ast;
 }
@@ -100,6 +116,7 @@ void freeDeclarationAST(struct DeclarationAST* ast) {
       break;
     case DECLARATION_VARIABLE:
       freeStmtNode(ast->as.vardecl); break;
+    case DECLARATION_INCLUDE: break;
   }
 
   free(ast);
@@ -172,5 +189,8 @@ void printDeclarationAST(const struct DeclarationAST* ast, size_t indent) {
       printf("\n");
       printStmtAST(ast->as.vardecl, indent + 1);
       break;
+    case DECLARATION_INCLUDE:
+      printf("INCLUDE %s\n", ast->name); break;
   }
+  if(ast->isexternal) { PRINT_INDENT(indent + 1); printf("EXTERNAL\n"); }
 }

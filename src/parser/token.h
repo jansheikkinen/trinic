@@ -131,7 +131,9 @@ enum TokenType {
   TOKEN_END,
 
   TOKEN_INCLUDE,
-  TOKEN_PUB,
+  TOKEN_EXTERN,
+
+  TOKEN_AS,
 
   TOKEN_AND,
   TOKEN_OR,

@@ -15,6 +15,7 @@ enum DeclarationTypes {
   DECLARATION_IMPL,
   DECLARATION_FUNCTION,
   DECLARATION_VARIABLE,
+  DECLARATION_INCLUDE
 };
 
 // Includes struct, union, enum, sum, interface
@@ -42,6 +43,7 @@ struct ImplAST {
 struct DeclarationAST {
   enum DeclarationTypes type;
   const char* name;
+  bool isexternal;
   union {
     struct StructureAST structure;
     struct DeclarationList* interface;
@@ -53,19 +55,21 @@ struct DeclarationAST {
 };
 
 struct DeclarationAST* allocNewStruct(const char*, struct ArgAST*,
-    struct ArgAST*);
+    struct ArgAST*, bool);
 struct DeclarationAST* allocNewUnion(const char*, struct ArgAST*,
-    struct ArgAST*);
+    struct ArgAST*, bool);
 struct DeclarationAST* allocNewEnum(const char*, struct ArgAST*,
-    struct ArgAST*);
+    struct ArgAST*, bool);
 struct DeclarationAST* allocNewSum(const char*, struct ArgAST*,
-    struct ArgAST*);
-struct DeclarationAST* allocNewInterface(const char*, struct DeclarationList*);
+    struct ArgAST*, bool);
+struct DeclarationAST* allocNewInterface(const char*, struct DeclarationList*,
+    bool);
 struct DeclarationAST* allocNewImpl(struct TypeAST*, struct TypeAST*,
-    struct DeclarationList*);
-struct DeclarationAST* allocNewVarDeclDecl(struct StmtAST*);
+    struct DeclarationList*, bool);
+struct DeclarationAST* allocNewVarDeclDecl(struct StmtAST*, bool);
 struct DeclarationAST* allocNewFunction(const char*, struct ArgAST*,
-    struct TypeAST*, struct ArgAST*, struct ArgAST*, struct StmtList*);
+    struct TypeAST*, struct ArgAST*, struct ArgAST*, struct StmtList*, bool);
+struct DeclarationAST* allocNewInclude(const char*);
 
 void freeDeclarationAST(struct DeclarationAST*);
 

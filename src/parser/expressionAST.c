@@ -98,6 +98,19 @@ static struct ExprAST newArrayInit(struct ArgAST* args) {
   return expr;
 }
 
+static struct ExprAST newCast(struct ExprAST* expr, struct TypeAST* type) {
+  struct ExprAST ast;
+
+  struct CastExpression cast;
+  cast.expr = expr;
+  cast.type = type;
+
+  ast.type = EXPR_CAST;
+  ast.as.cast = cast;
+
+  return ast;
+}
+
 static struct ExprAST newUndefined(void) {
   struct ExprAST expr;
 
@@ -197,6 +210,15 @@ struct ExprAST* allocNewFunctionExpr(struct DeclarationAST* function) {
   return ptr;
 }
 
+struct ExprAST* allocNewCastExpr(struct ExprAST* expr, struct TypeAST* type) {
+  struct ExprAST* ptr = malloc(sizeof(*ptr));
+  if(ptr) *ptr = newCast(expr, type);
+
+  ptr->type = EXPR_CAST;
+
+  return ptr;
+}
+
 void printExprAST(const struct ExprAST* ast, size_t indent) {
   PRINT_INDENT(indent); printf("Expr ");
 
@@ -260,6 +282,11 @@ void printExprAST(const struct ExprAST* ast, size_t indent) {
       printf("FUNCTION\n");
       printDeclarationAST(ast->as.function.function, indent + 1);
       break;
+    case EXPR_CAST:
+      printf("CAST\n");
+      printExprAST(ast->as.cast.expr, indent + 1);
+      printTypeAST(ast->as.cast.type, indent + 1);
+      break;
   }
 }
 
@@ -297,6 +324,10 @@ void freeExprNode(struct ExprAST* expr) {
     case EXPR_FUNCTION:
       if(expr->as.function.function)
         freeDeclarationAST(expr->as.function.function);
+      break;
+    case EXPR_CAST:
+      freeExprNode(expr->as.cast.expr);
+      freeTypeAST(expr->as.cast.type);
       break;
   }
 

@@ -1,0 +1,3 @@
+// Extern
+
+extern struct TestStruct x, y: isize end
