@@ -263,7 +263,8 @@ void printExprAST(const struct ExprAST* ast, size_t indent) {
     case EXPR_CALL:
       printf("CALL\n");
       printExprAST(ast->as.call.callee, indent + 1);
-      printArgAST(ast->as.call.args, indent + 1); break;
+      if(ast->as.call.args) printArgAST(ast->as.call.args, indent + 1);
+      break;
     case EXPR_GET:
       printf("GET");
       if(ast->as.get.isPointer) printf(" PTR");
@@ -313,7 +314,8 @@ void freeExprNode(struct ExprAST* expr) {
       freeExprNode(expr->as.grouping.expression); break;
     case EXPR_CALL:
       freeExprNode(expr->as.call.callee);
-      freeArgAST(expr->as.call.args); break;
+      if(expr->as.call.args) freeArgAST(expr->as.call.args);
+      break;
     case EXPR_GET:
       freeExprNode(expr->as.get.expression); break;
     case EXPR_ARRAY_INDEX:

@@ -1,0 +1,56 @@
+// brainfuck.tc //
+
+// Just a simple brainfuck interpreter
+
+include "std.io";
+
+let CELLS: [UINT16_MAX]uint8 = undefined;
+let cellptr: mut uint16, ptr, depth: mut usize = 0;
+
+function currentToken(program: *struct String) -> char do
+  return(getchar(program, ptr));
+end
+
+function bracket(program: *struct String, ch: char,
+  condition: (void) -> void) -> void
+  where currentToken(program) != 0
+do
+  while condition() do
+    ptr += 1;
+
+    if currentToken(program) == ch do
+      if depth == 0 do
+        return;
+      else
+        depth -= 1;
+      end
+    end
+  end
+
+  panic(1, "Expected matching ']' after '['");
+end
+
+function interpret(program: struct String) -> void do
+  while ptr < program.size do
+    let cell: *uint8 = &CELLS[cellptr];
+
+    match currentToken(program) do
+      '+' => *cell += 1;
+      '-' => *cell -= 1;
+      '<' => cellptr -= 1;
+      '>' => cellptr += 1;
+      '.' => printf("%c", *cell as char);
+      ',' => getchar(STDIN);
+      '[' => bracket(program, ']',
+              function(void) -> void do return(ptr < program.size); end);
+      ']' => bracket(program, '[',
+              function(void) -> void do return(ptr > 0); end);
+    end
+  end
+end
+
+function main(argc: usize, argv: ..struct String) -> usize do
+  memset(CELLS, 0, UINT16_MAX);
+  interpret(tostring("-.[-.]"));
+  return(0);
+end

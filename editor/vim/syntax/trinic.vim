@@ -14,7 +14,8 @@ endif
 
 syn case match
 
-syn region  trinicString start="\"" end="\""
+syn region trinicString start="\"" end="\""
+syn region trinicChar   start="\'" end="\'"
 
 syn match trinicNumber "\<\d\+\>"
 syn match trinicNumber "\<\d\+\.\d*\>"
@@ -47,6 +48,7 @@ hi def link trinicType       Type
 hi def link trinicTodo       Todo
 hi def link trinicComment    Comment
 hi def link trinicString     String
+hi def link trinicChar       String
 hi def link trinicOperator   Operator
 hi def link trinicConstant   Constant
 hi def link trinicNumber     Number

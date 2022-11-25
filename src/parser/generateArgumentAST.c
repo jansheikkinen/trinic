@@ -381,11 +381,11 @@ struct ArgAST* generateMatchArms(struct ASTContext* ctx) {
   APPEND_ARRAYLIST(&ast->as.matcharms, arm);
 
   while(ctx->index < ctx->tokens->length) {
-    if(MATCH_TOKEN(ctx, TOKEN_COMMA)) {
-      ctx->index += 1;
+    if(MATCH_TOKEN(ctx, TOKEN_END)) return ast;
+    else {
       arm = generateMatchArm(ctx);
       APPEND_ARRAYLIST(&ast->as.matcharms, arm);
-    } else return ast;
+    }
   }
 
   if(ctx->index >= ctx->tokens->length) {

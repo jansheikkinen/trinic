@@ -2,12 +2,10 @@
 
 // This file's basically just used to test as many rules as possible at once
 
-// include "std";
+ include "std";
 
-// extern struct TestStructA x: int8 end
+extern struct TestStructA x: int8 end
 
-
-/*
 struct TestStructB x: int8, y: int16 end
 struct TestStructC(T, V) x: T, y: V end
 
@@ -38,12 +36,13 @@ let a, b: int8, c: []int8, d: [3]int8, e: *int8, f: [3]*int8, g: ..int8,
     p: (void) -> void, q: mut int8, r: mut *int8, s: *mut int8,
     t: mut *mut int8,
     z: int8 = undefined;
-*/
+
 function TestFunction(void) -> void do
   print; print(3); return; return(3); continue; continue(3); break; break(3);
 
   let a, b: int8, c: int16 = 1, 2, 3;
   a, b = 3; a += 4;
+  a.b = 3; a->b = 4;
 
   if a do x; y; end
   if a do x; else y; end
@@ -53,8 +52,8 @@ function TestFunction(void) -> void do
   while a do x; y; end
   for a in b do x; end
   match a do
-    1, 2 => y;,
-    3    => x;,
+    1, 2 => y;
+    3    => x;
     5    => do x; y; end
   end
 

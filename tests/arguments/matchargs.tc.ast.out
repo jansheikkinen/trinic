@@ -3,7 +3,7 @@ Parsing tests/arguments/matchargs.tc...
 
 ### LEXER ###
 Generating tokens from source...
-Generated 24 tokens
+Generated 23 tokens
 000:     FUNCTION,     (null), (003, 008)
 001:   IDENTIFIER,       main, (003, 013)
 002:            (,     (null), (003, 014)
@@ -19,15 +19,14 @@ Generated 24 tokens
 012:           =>,     (null), (005, 010)
 013:      INTEGER,          2, (005, 013)
 014:            ;,     (null), (005, 013)
-015:            ,,     (null), (005, 014)
-016:      INTEGER,          3, (006, 006)
-017:            ,,     (null), (006, 006)
-018:      INTEGER,          4, (006, 009)
-019:           =>,     (null), (006, 010)
-020:      INTEGER,          5, (006, 013)
-021:            ;,     (null), (006, 013)
-022:          END,     (null), (007, 005)
-023:          END,     (null), (008, 003)
+015:      INTEGER,          3, (006, 006)
+016:            ,,     (null), (006, 006)
+017:      INTEGER,          4, (006, 009)
+018:           =>,     (null), (006, 010)
+019:      INTEGER,          5, (006, 013)
+020:            ;,     (null), (006, 013)
+021:          END,     (null), (007, 005)
+022:          END,     (null), (008, 003)
 
 ### AST GENERATION ###
 Declaration FUNCTION  main

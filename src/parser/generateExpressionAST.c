@@ -86,7 +86,10 @@ static struct ExprAST* genCallNode(struct ASTContext* ctx) {
   while(ctx->index < ctx->tokens->length) {
     if(MATCH_TOKEN(ctx, TOKEN_LEFT_PAREN)) {
       ctx->index += 1;
-      struct ArgAST* args = generateExpressionArguments(ctx);
+
+      struct ArgAST* args = NULL;
+      if(!(MATCH_TOKEN(ctx, TOKEN_RIGHT_PAREN)))
+        args = generateExpressionArguments(ctx);
 
       if(MATCH_TOKEN(ctx, TOKEN_RIGHT_PAREN)) {
         ctx->index += 1;
