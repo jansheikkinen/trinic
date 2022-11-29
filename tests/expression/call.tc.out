@@ -1,0 +1,86 @@
+
+### LEXER ###
+000:     FUNCTION,     (null), (003, 008)
+001:   IDENTIFIER,       main, (003, 013)
+002:            (,     (null), (003, 014)
+003:         VOID,     (null), (003, 018)
+004:            ),     (null), (003, 019)
+005:           ->,     (null), (003, 021)
+006:         VOID,     (null), (003, 026)
+007:           DO,     (null), (003, 029)
+008:      INTEGER,          1, (004, 004)
+009:            ;,     (null), (004, 004)
+010:   IDENTIFIER,          a, (004, 006)
+011:            (,     (null), (004, 007)
+012:      INTEGER,          1, (004, 009)
+013:            ,,     (null), (004, 009)
+014:      INTEGER,          2, (004, 012)
+015:            ),     (null), (004, 012)
+016:            ;,     (null), (004, 013)
+017:   IDENTIFIER,          b, (004, 015)
+018:            .,     (null), (004, 016)
+019:   IDENTIFIER,          c, (004, 017)
+020:            ;,     (null), (004, 018)
+021:   IDENTIFIER,          d, (004, 020)
+022:           ->,     (null), (004, 021)
+023:   IDENTIFIER,          e, (004, 022)
+024:            ;,     (null), (004, 023)
+025:   IDENTIFIER,          f, (004, 025)
+026:            [,     (null), (004, 026)
+027:   IDENTIFIER,          g, (004, 027)
+028:            ],     (null), (004, 028)
+029:            ;,     (null), (004, 029)
+030:   IDENTIFIER,          a, (004, 031)
+031:            (,     (null), (004, 032)
+032:      INTEGER,          1, (004, 034)
+033:            ,,     (null), (004, 034)
+034:      INTEGER,          2, (004, 037)
+035:            ),     (null), (004, 037)
+036:            .,     (null), (004, 038)
+037:   IDENTIFIER,          b, (004, 039)
+038:           ->,     (null), (004, 040)
+039:   IDENTIFIER,          c, (004, 041)
+040:            [,     (null), (004, 042)
+041:   IDENTIFIER,          d, (004, 043)
+042:            ],     (null), (004, 044)
+043:            .,     (null), (004, 045)
+044:   IDENTIFIER,          e, (004, 046)
+045:            ;,     (null), (004, 047)
+046:          END,     (null), (005, 003)
+
+### AST GENERATION ###
+Declaration FUNCTION  main
+  Stmt EXPRESSION
+    Expr LITERAL
+      INT 1
+  Stmt EXPRESSION
+    Expr CALL
+      Expr VARIABLE a
+      Arg EXPR
+        Expr LITERAL
+          INT 1
+        Expr LITERAL
+          INT 2
+  Stmt EXPRESSION
+    Expr GET c
+      Expr VARIABLE b
+  Stmt EXPRESSION
+    Expr GET PTR e
+      Expr VARIABLE d
+  Stmt EXPRESSION
+    Expr ARRAY INDEX
+      Expr VARIABLE f
+      Expr VARIABLE g
+  Stmt EXPRESSION
+    Expr GET e
+      Expr ARRAY INDEX
+        Expr GET PTR c
+          Expr GET b
+            Expr CALL
+              Expr VARIABLE a
+              Arg EXPR
+                Expr LITERAL
+                  INT 1
+                Expr LITERAL
+                  INT 2
+        Expr VARIABLE d

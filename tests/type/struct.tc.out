@@ -1,0 +1,45 @@
+
+### LEXER ###
+000:     FUNCTION,     (null), (003, 008)
+001:   IDENTIFIER,       main, (003, 013)
+002:            (,     (null), (003, 014)
+003:         VOID,     (null), (003, 018)
+004:            ),     (null), (003, 019)
+005:           ->,     (null), (003, 021)
+006:         VOID,     (null), (003, 026)
+007:           DO,     (null), (003, 029)
+008:          LET,     (null), (004, 005)
+009:   IDENTIFIER,          a, (004, 007)
+010:            :,     (null), (004, 008)
+011:       STRUCT,     (null), (004, 015)
+012:   IDENTIFIER, TestStruct, (004, 026)
+013:            ,,     (null), (004, 027)
+014:   IDENTIFIER,          b, (004, 029)
+015:            :,     (null), (004, 030)
+016:       STRUCT,     (null), (004, 037)
+017:   IDENTIFIER, TesStructB, (004, 048)
+018:            (,     (null), (004, 049)
+019:         INT8,     (null), (004, 053)
+020:            ,,     (null), (004, 054)
+021:        INT16,     (null), (004, 060)
+022:            ),     (null), (004, 061)
+023:            =,     (null), (004, 063)
+024:    UNDEFINED,     (null), (004, 073)
+025:            ;,     (null), (004, 074)
+026:          END,     (null), (005, 003)
+
+### AST GENERATION ###
+Declaration FUNCTION  main
+  Stmt VARDECL
+    Arg IDENTIFIER
+      Identifier_Arg a
+        Type STRUCTURE TestStruct
+      Identifier_Arg b
+        Type STRUCTURE TesStructB
+          Arg SUMARGTYPE
+            Sum_Arg_Type 
+              Type TYPE INT8
+            Sum_Arg_Type 
+              Type TYPE INT16
+    Arg EXPR
+      Expr UNDEFINED

@@ -2,7 +2,6 @@
 
 #include <stdio.h>
 
-#include "../debug/debug.h"
 #include "../util/strutil.h"
 #include "tokeniser.h"
 #include "lexer.h"
@@ -239,10 +238,6 @@ static void lexKeyword(struct LexerContext* td) {
 // but, quite frankly, that's ugly and I'd rather modularise it for readability
 struct TokenArray* tokenise(const char* filename,
     const char* __restrict__ program) {
-#ifdef LEXER_DEBUG
-  printf("Generating tokens from source...\n");
-#endif
-
   struct LexerContext* td = malloc(sizeof(*td));;
   newTokeniser(td, program);
 
@@ -270,10 +265,6 @@ struct TokenArray* tokenise(const char* filename,
 
   struct TokenArray* tokens = td->tokens;
   free(td); // Isn't this beautiful?
-
-#ifdef LEXER_DEBUG
-  printf("Generated %ld tokens\n", tokens->length);
-#endif
 
   return tokens;
 }

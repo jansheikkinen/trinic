@@ -3,6 +3,6 @@
 
 #include "declarationAST.h"
 
-struct DeclarationList* parseProgram(const char* filename);
+struct DeclarationList* parseProgram(const char*, int);
 
 #endif

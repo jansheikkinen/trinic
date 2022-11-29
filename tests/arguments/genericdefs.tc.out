@@ -1,0 +1,129 @@
+
+### LEXER ###
+000:     FUNCTION,     (null), (003, 008)
+001:   IDENTIFIER,      testA, (003, 014)
+002:            (,     (null), (003, 015)
+003:   IDENTIFIER,          x, (003, 016)
+004:            :,     (null), (003, 017)
+005:   IDENTIFIER,          T, (003, 019)
+006:            ),     (null), (003, 020)
+007:           ->,     (null), (003, 022)
+008:   IDENTIFIER,          T, (003, 024)
+009:          FOR,     (null), (003, 028)
+010:   IDENTIFIER,          T, (003, 030)
+011:            :,     (null), (003, 031)
+012:        TRAIT,     (null), (003, 037)
+013:   IDENTIFIER,        Add, (003, 041)
+014:           DO,     (null), (003, 044)
+015:      INTEGER,          1, (003, 047)
+016:            ;,     (null), (003, 047)
+017:          END,     (null), (003, 051)
+018:     FUNCTION,     (null), (004, 008)
+019:   IDENTIFIER,      testB, (004, 014)
+020:            (,     (null), (004, 015)
+021:   IDENTIFIER,          x, (004, 016)
+022:            :,     (null), (004, 017)
+023:   IDENTIFIER,          T, (004, 019)
+024:            ,,     (null), (004, 020)
+025:   IDENTIFIER,          y, (004, 022)
+026:            :,     (null), (004, 023)
+027:   IDENTIFIER,          V, (004, 025)
+028:            ),     (null), (004, 026)
+029:           ->,     (null), (004, 028)
+030:   IDENTIFIER,          T, (004, 030)
+031:          FOR,     (null), (004, 034)
+032:   IDENTIFIER,          T, (004, 036)
+033:            :,     (null), (004, 037)
+034:        TRAIT,     (null), (004, 043)
+035:   IDENTIFIER,        Add, (004, 047)
+036:            |,     (null), (004, 049)
+037:   IDENTIFIER,          V, (004, 051)
+038:            :,     (null), (004, 052)
+039:        TRAIT,     (null), (004, 058)
+040:   IDENTIFIER,    Display, (004, 066)
+041:           DO,     (null), (004, 069)
+042:      INTEGER,          1, (004, 072)
+043:            ;,     (null), (004, 072)
+044:          END,     (null), (004, 076)
+045:     FUNCTION,     (null), (005, 008)
+046:   IDENTIFIER,      testC, (005, 014)
+047:            (,     (null), (005, 015)
+048:   IDENTIFIER,          x, (005, 016)
+049:            :,     (null), (005, 017)
+050:   IDENTIFIER,          T, (005, 019)
+051:            ,,     (null), (005, 020)
+052:   IDENTIFIER,          y, (005, 022)
+053:            :,     (null), (005, 023)
+054:   IDENTIFIER,          V, (005, 025)
+055:            ),     (null), (005, 026)
+056:           ->,     (null), (005, 028)
+057:   IDENTIFIER,          T, (005, 030)
+058:          FOR,     (null), (005, 034)
+059:   IDENTIFIER,          T, (005, 036)
+060:            +,     (null), (005, 038)
+061:   IDENTIFIER,          V, (005, 040)
+062:            :,     (null), (005, 041)
+063:        TRAIT,     (null), (005, 047)
+064:   IDENTIFIER,        Add, (005, 051)
+065:            +,     (null), (005, 053)
+066:        TRAIT,     (null), (005, 059)
+067:   IDENTIFIER,    Display, (005, 067)
+068:           DO,     (null), (005, 070)
+069:      INTEGER,          1, (005, 073)
+070:            ;,     (null), (005, 073)
+071:          END,     (null), (005, 077)
+
+### AST GENERATION ###
+Declaration FUNCTION  testA
+  Arg IDENTIFIER
+    Identifier_Arg x
+      Type IDENTIFIER T
+  Type IDENTIFIER T
+  Arg GENERIC_DEFS
+    Generic_Def
+      Arg GENERIC_DEFL
+        IDENTIFIER T
+      Arg GENERIC_DEFR
+        Type TRAIT Add
+  Stmt EXPRESSION
+    Expr LITERAL
+      INT 1
+Declaration FUNCTION  testB
+  Arg IDENTIFIER
+    Identifier_Arg x
+      Type IDENTIFIER T
+    Identifier_Arg y
+      Type IDENTIFIER V
+  Type IDENTIFIER T
+  Arg GENERIC_DEFS
+    Generic_Def
+      Arg GENERIC_DEFL
+        IDENTIFIER T
+      Arg GENERIC_DEFR
+        Type TRAIT Add
+    Generic_Def
+      Arg GENERIC_DEFL
+        IDENTIFIER V
+      Arg GENERIC_DEFR
+        Type TRAIT Display
+  Stmt EXPRESSION
+    Expr LITERAL
+      INT 1
+Declaration FUNCTION  testC
+  Arg IDENTIFIER
+    Identifier_Arg x
+      Type IDENTIFIER T
+    Identifier_Arg y
+      Type IDENTIFIER V
+  Type IDENTIFIER T
+  Arg GENERIC_DEFS
+    Generic_Def
+      Arg GENERIC_DEFL
+        IDENTIFIER T
+        IDENTIFIER V
+      Arg GENERIC_DEFR
+        Type TRAIT Add
+        Type TRAIT Display
+  Stmt EXPRESSION
+    Expr LITERAL
+      INT 1

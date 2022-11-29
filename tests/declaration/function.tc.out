@@ -1,0 +1,261 @@
+
+### LEXER ###
+000:     FUNCTION,     (null), (003, 008)
+001:            (,     (null), (003, 009)
+002:         VOID,     (null), (003, 013)
+003:            ),     (null), (003, 014)
+004:           ->,     (null), (003, 016)
+005:         VOID,     (null), (003, 021)
+006:           DO,     (null), (003, 024)
+007:      INTEGER,          1, (003, 027)
+008:            ;,     (null), (003, 027)
+009:          END,     (null), (003, 031)
+010:     FUNCTION,     (null), (004, 008)
+011:   IDENTIFIER,      testA, (004, 014)
+012:            (,     (null), (004, 015)
+013:         VOID,     (null), (004, 019)
+014:            ),     (null), (004, 020)
+015:           ->,     (null), (004, 022)
+016:         VOID,     (null), (004, 027)
+017:           DO,     (null), (004, 030)
+018:      INTEGER,          2, (004, 033)
+019:            ;,     (null), (004, 033)
+020:          END,     (null), (004, 037)
+021:     FUNCTION,     (null), (005, 008)
+022:   IDENTIFIER,      testB, (005, 014)
+023:            (,     (null), (005, 015)
+024:   IDENTIFIER,          x, (005, 016)
+025:            :,     (null), (005, 017)
+026:         INT8,     (null), (005, 022)
+027:            ),     (null), (005, 023)
+028:           ->,     (null), (005, 025)
+029:         VOID,     (null), (005, 030)
+030:           DO,     (null), (005, 033)
+031:      INTEGER,          3, (005, 036)
+032:            ;,     (null), (005, 036)
+033:          END,     (null), (005, 040)
+034:     FUNCTION,     (null), (006, 008)
+035:   IDENTIFIER,      testC, (006, 014)
+036:            (,     (null), (006, 015)
+037:         VOID,     (null), (006, 019)
+038:            ),     (null), (006, 020)
+039:           ->,     (null), (006, 022)
+040:         INT8,     (null), (006, 027)
+041:           DO,     (null), (006, 030)
+042:      INTEGER,          4, (006, 033)
+043:            ;,     (null), (006, 033)
+044:          END,     (null), (006, 037)
+045:     FUNCTION,     (null), (007, 008)
+046:   IDENTIFIER,      testD, (007, 014)
+047:            (,     (null), (007, 015)
+048:   IDENTIFIER,          x, (007, 016)
+049:            :,     (null), (007, 017)
+050:         INT8,     (null), (007, 022)
+051:            ),     (null), (007, 023)
+052:           ->,     (null), (007, 025)
+053:         INT8,     (null), (007, 030)
+054:        WHERE,     (null), (007, 036)
+055:   IDENTIFIER,          x, (007, 038)
+056:           !=,     (null), (007, 040)
+057:      INTEGER,         69, (007, 044)
+058:            ,,     (null), (007, 044)
+059:       RETURN,     (null), (007, 051)
+060:           ==,     (null), (007, 053)
+061:      INTEGER,        420, (007, 058)
+062:           DO,     (null), (007, 060)
+063:      INTEGER,          5, (007, 063)
+064:            ;,     (null), (007, 063)
+065:          END,     (null), (007, 067)
+066:     FUNCTION,     (null), (008, 008)
+067:   IDENTIFIER,      testE, (008, 014)
+068:            (,     (null), (008, 015)
+069:   IDENTIFIER,          x, (008, 016)
+070:            :,     (null), (008, 017)
+071:   IDENTIFIER,          T, (008, 019)
+072:            ),     (null), (008, 020)
+073:           ->,     (null), (008, 022)
+074:   IDENTIFIER,          T, (008, 024)
+075:          FOR,     (null), (008, 028)
+076:   IDENTIFIER,          T, (008, 030)
+077:            :,     (null), (008, 031)
+078:        TRAIT,     (null), (008, 037)
+079:   IDENTIFIER,        Add, (008, 041)
+080:           DO,     (null), (008, 044)
+081:      INTEGER,          6, (008, 047)
+082:            ;,     (null), (008, 047)
+083:          END,     (null), (008, 051)
+084:     FUNCTION,     (null), (009, 008)
+085:   IDENTIFIER,      testF, (009, 014)
+086:            (,     (null), (009, 015)
+087:   IDENTIFIER,          x, (009, 016)
+088:            :,     (null), (009, 017)
+089:   IDENTIFIER,          T, (009, 019)
+090:            ,,     (null), (009, 020)
+091:   IDENTIFIER,          y, (009, 022)
+092:            :,     (null), (009, 023)
+093:   IDENTIFIER,          V, (009, 025)
+094:            ),     (null), (009, 026)
+095:           ->,     (null), (009, 028)
+096:   IDENTIFIER,          T, (009, 030)
+097:          FOR,     (null), (009, 034)
+098:   IDENTIFIER,          T, (009, 036)
+099:            +,     (null), (009, 038)
+100:   IDENTIFIER,          V, (009, 040)
+101:            :,     (null), (009, 041)
+102:        TRAIT,     (null), (009, 047)
+103:   IDENTIFIER,        Add, (009, 051)
+104:            +,     (null), (009, 053)
+105:        TRAIT,     (null), (009, 059)
+106:   IDENTIFIER,    Display, (009, 067)
+107:           DO,     (null), (009, 070)
+108:      INTEGER,          7, (009, 073)
+109:            ;,     (null), (009, 073)
+110:          END,     (null), (009, 077)
+111:     FUNCTION,     (null), (010, 008)
+112:   IDENTIFIER,      testG, (010, 014)
+113:            (,     (null), (010, 015)
+114:   IDENTIFIER,          x, (010, 016)
+115:            :,     (null), (010, 017)
+116:   IDENTIFIER,          T, (010, 019)
+117:            ,,     (null), (010, 020)
+118:   IDENTIFIER,          y, (010, 022)
+119:            :,     (null), (010, 023)
+120:   IDENTIFIER,          V, (010, 025)
+121:            ),     (null), (010, 026)
+122:           ->,     (null), (010, 028)
+123:   IDENTIFIER,          T, (010, 030)
+124:        WHERE,     (null), (011, 007)
+125:   IDENTIFIER,          x, (011, 009)
+126:           !=,     (null), (011, 011)
+127:      INTEGER,          1, (011, 014)
+128:          FOR,     (null), (012, 005)
+129:   IDENTIFIER,          T, (012, 007)
+130:            :,     (null), (012, 008)
+131:        TRAIT,     (null), (012, 014)
+132:   IDENTIFIER,        Add, (012, 018)
+133:            |,     (null), (012, 020)
+134:   IDENTIFIER,          V, (012, 022)
+135:            :,     (null), (012, 023)
+136:        TRAIT,     (null), (012, 029)
+137:   IDENTIFIER,    Display, (012, 037)
+138:           DO,     (null), (013, 002)
+139:      INTEGER,          8, (013, 005)
+140:            ;,     (null), (013, 005)
+141:          END,     (null), (013, 009)
+142:     FUNCTION,     (null), (014, 008)
+143:   IDENTIFIER,      testH, (014, 014)
+144:            (,     (null), (014, 015)
+145:         VOID,     (null), (014, 019)
+146:            ),     (null), (014, 020)
+147:           ->,     (null), (014, 022)
+148:         VOID,     (null), (014, 027)
+149:           DO,     (null), (014, 030)
+150:      INTEGER,          9, (014, 033)
+151:            ;,     (null), (014, 033)
+152:      INTEGER,         10, (014, 037)
+153:            ;,     (null), (014, 037)
+154:          END,     (null), (014, 041)
+
+### AST GENERATION ###
+Declaration FUNCTION 
+  Stmt EXPRESSION
+    Expr LITERAL
+      INT 1
+Declaration FUNCTION  testA
+  Stmt EXPRESSION
+    Expr LITERAL
+      INT 2
+Declaration FUNCTION  testB
+  Arg IDENTIFIER
+    Identifier_Arg x
+      Type TYPE INT8
+  Stmt EXPRESSION
+    Expr LITERAL
+      INT 3
+Declaration FUNCTION  testC
+  Type TYPE INT8
+  Stmt EXPRESSION
+    Expr LITERAL
+      INT 4
+Declaration FUNCTION  testD
+  Arg IDENTIFIER
+    Identifier_Arg x
+      Type TYPE INT8
+  Type TYPE INT8
+  Arg EXPR
+    Expr BINARY !=
+      Expr VARIABLE x
+      Expr LITERAL
+        INT 69
+    Expr BINARY ==
+      Expr VARIABLE return
+      Expr LITERAL
+        INT 420
+  Stmt EXPRESSION
+    Expr LITERAL
+      INT 5
+Declaration FUNCTION  testE
+  Arg IDENTIFIER
+    Identifier_Arg x
+      Type IDENTIFIER T
+  Type IDENTIFIER T
+  Arg GENERIC_DEFS
+    Generic_Def
+      Arg GENERIC_DEFL
+        IDENTIFIER T
+      Arg GENERIC_DEFR
+        Type TRAIT Add
+  Stmt EXPRESSION
+    Expr LITERAL
+      INT 6
+Declaration FUNCTION  testF
+  Arg IDENTIFIER
+    Identifier_Arg x
+      Type IDENTIFIER T
+    Identifier_Arg y
+      Type IDENTIFIER V
+  Type IDENTIFIER T
+  Arg GENERIC_DEFS
+    Generic_Def
+      Arg GENERIC_DEFL
+        IDENTIFIER T
+        IDENTIFIER V
+      Arg GENERIC_DEFR
+        Type TRAIT Add
+        Type TRAIT Display
+  Stmt EXPRESSION
+    Expr LITERAL
+      INT 7
+Declaration FUNCTION  testG
+  Arg IDENTIFIER
+    Identifier_Arg x
+      Type IDENTIFIER T
+    Identifier_Arg y
+      Type IDENTIFIER V
+  Type IDENTIFIER T
+  Arg EXPR
+    Expr BINARY !=
+      Expr VARIABLE x
+      Expr LITERAL
+        INT 1
+  Arg GENERIC_DEFS
+    Generic_Def
+      Arg GENERIC_DEFL
+        IDENTIFIER T
+      Arg GENERIC_DEFR
+        Type TRAIT Add
+    Generic_Def
+      Arg GENERIC_DEFL
+        IDENTIFIER V
+      Arg GENERIC_DEFR
+        Type TRAIT Display
+  Stmt EXPRESSION
+    Expr LITERAL
+      INT 8
+Declaration FUNCTION  testH
+  Stmt EXPRESSION
+    Expr LITERAL
+      INT 9
+  Stmt EXPRESSION
+    Expr LITERAL
+      INT 10

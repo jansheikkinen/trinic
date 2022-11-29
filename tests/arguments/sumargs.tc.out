@@ -1,0 +1,39 @@
+
+### LEXER ###
+000:          SUM,     (null), (003, 003)
+001:   IDENTIFIER,    TestSum, (003, 011)
+002:   IDENTIFIER,          A, (004, 003)
+003:            (,     (null), (004, 004)
+004:   IDENTIFIER,          T, (004, 005)
+005:            ),     (null), (004, 006)
+006:            ,,     (null), (004, 007)
+007:   IDENTIFIER,          B, (005, 003)
+008:            (,     (null), (005, 004)
+009:   IDENTIFIER,          T, (005, 005)
+010:            ,,     (null), (005, 006)
+011:   IDENTIFIER,          V, (005, 008)
+012:            ),     (null), (005, 009)
+013:            ,,     (null), (005, 010)
+014:   IDENTIFIER,          C, (006, 003)
+015:            (,     (null), (006, 004)
+016:         INT8,     (null), (006, 008)
+017:            ),     (null), (006, 009)
+018:            ,,     (null), (006, 010)
+019:   IDENTIFIER,          Z, (007, 003)
+020:          END,     (null), (008, 003)
+
+### AST GENERATION ###
+Declaration SUM
+  Arg SUMARG
+    Sum_Arg A
+      Arg SUMARGTYPE
+        Sum_Arg_Type T
+    Sum_Arg B
+      Arg SUMARGTYPE
+        Sum_Arg_Type T
+        Sum_Arg_Type V
+    Sum_Arg C
+      Arg SUMARGTYPE
+        Sum_Arg_Type 
+          Type TYPE INT8
+    Sum_Arg Z

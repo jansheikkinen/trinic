@@ -1,0 +1,21 @@
+
+### LEXER ###
+000:         ENUM,     (null), (003, 004)
+001:   IDENTIFIER,   TestEnum, (003, 013)
+002:   IDENTIFIER,   ENUM_ONE, (004, 010)
+003:            ,,     (null), (004, 011)
+004:   IDENTIFIER,   ENUM_TWO, (005, 010)
+005:            =,     (null), (005, 012)
+006:      INTEGER,          2, (005, 015)
+007:            ,,     (null), (005, 015)
+008:   IDENTIFIER, ENUM_THREE, (006, 012)
+009:          END,     (null), (007, 003)
+
+### AST GENERATION ###
+Declaration ENUM
+  Arg ASSIGN
+    Assign_Arg ENUM_ONE
+    Assign_Arg ENUM_TWO
+      Expr LITERAL
+        INT 2
+    Assign_Arg ENUM_THREE

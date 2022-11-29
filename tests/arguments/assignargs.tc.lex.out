@@ -1,0 +1,16 @@
+
+### LEXER ###
+000:         ENUM,     (null), (003, 004)
+001:   IDENTIFIER,   TestEnum, (003, 013)
+002:   IDENTIFIER,        ONE, (004, 005)
+003:            =,     (null), (004, 007)
+004:      INTEGER,          1, (004, 010)
+005:            ,,     (null), (004, 010)
+006:   IDENTIFIER,        TWO, (005, 005)
+007:            ,,     (null), (005, 006)
+008:   IDENTIFIER,      THREE, (006, 007)
+009:            =,     (null), (006, 009)
+010:      INTEGER,          2, (006, 012)
+011:            ,,     (null), (006, 012)
+012:   IDENTIFIER,       FOUR, (007, 006)
+013:          END,     (null), (008, 003)

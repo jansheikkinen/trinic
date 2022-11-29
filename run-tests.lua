@@ -10,26 +10,39 @@ local description = "Run or update one of several types of tests"
 local binary = "build/tc"
 local testDir = "tests/"
 
-local testActions = { "update", "run" }
-local testGens = { "ast", "bytecode" }
-local testGen = nil
-
+local testTypes = { "run", "update" } -- TODO: "delete"
+local test = {
+  ast = {
+    name = "ast",
+    flags = "-da",
+    ext = ".ast.out",
+    desc = "run tests for generated AST"
+  },
+  lex = {
+    name = "lex",
+    flags = "-dl",
+    ext = ".lex.out",
+    desc = "run tests for generated tokens"
+  },
+  bytecode = {
+    name = "bytecode",
+    flags = "-db",
+    ext = ".bc.out",
+    desc = "run tests for bytecode output; unimplemented"
+  },
+  all = {
+    name = "all",
+    flags = "-dlab",
+    ext = ".out",
+    desc = "run all tests in one"
+  }
+}
 
 -- ### UTILITIES ### --
 
 -- C-like printing
 local function printf(fmt, ...)
   io.write(string.format(fmt, ...))
-end
-
--- Check if file exists
-local function fileExists(filename)
-  local file = io.open(filename, "r")
-
-  if file ~= nil then
-    file:close()
-    return true
-  else return false end
 end
 
 local COLATTR_RESET = 0
@@ -71,6 +84,12 @@ local function resetColor()
   setColor(COLATTR_RESET, COL_DEFAULT, COL_DEFAULT)
 end
 
+local function printfc(fmt, attr, fg, bg, ...)
+  setColor(attr, fg, bg)
+  printf(fmt, ...)
+  resetColor()
+end
+
 -- Get all files in a directory
 local function scandir(dir, ptrn)
   local i, t = 0, { }
@@ -84,6 +103,11 @@ local function scandir(dir, ptrn)
 
   pfile:close()
   return t
+end
+
+-- Get diff of two files
+local function diff(file1, file2)
+  os.execute("diff -uN --color " .. file1 .. " " .. file2)
 end
 
 -- Check if a file or directory exists in this path
@@ -112,12 +136,12 @@ end
 
 -- ### AST GENERATION ### --
 
-local function generateASTs()
+local function generateOutputs(flags)
   local filenames = scandir(testDir, "*.tc")
 
   local testOutputs = { }
   for _, filename in pairs(filenames) do
-    local pfile = io.popen(binary .. " " .. filename)
+    local pfile = io.popen(binary .. " " .. flags .. " " .. filename)
 
     testOutputs[filename] = pfile:read("*a")
 
@@ -127,9 +151,8 @@ local function generateASTs()
   return testOutputs
 end
 
-local function getExpectedOutput()
-  local ptrn = nil
-  if testGen == "ast" then ptrn = "*.tc.ast.out" end
+local function getExpectedOutput(ext)
+  local ptrn = "*.tc" .. ext
 
   local filenames = scandir(testDir, ptrn)
 
@@ -145,97 +168,104 @@ local function getExpectedOutput()
   return outputs
 end
 
+local function compareOutputs(testOut, expectOut)
+  if not testOut then
+    panic(1, "No test files")
+  elseif not expectOut then
+    panic(1, "No test output files")
+  elseif #testOut ~= #expectOut then
+    panic(1, "Differing number of test and test output files")
+  end
+end
+
 
 -- ### UPDATE TESTS ### --
 
-local function updateTests()
-  if testGen == "ast" then
-    printf("Updating AST tests...\n")
+local function updateTests(type)
+  printf("Updating %s tests...\n", type.name)
 
-    local testOutputs = generateASTs()
-    local expectedOutputs = getExpectedOutput()
+  local testOut = generateOutputs(type.flags)
+  local expectOut = getExpectedOutput(type.ext)
 
-    if not testOutputs then
-      panic(1, "No test files")
-    elseif not expectedOutputs then
-      panic(1, "No output files")
-    end
+  compareOutputs(testOut, expectOut)
 
-    local numUpdated, numFiles = 0, 0
-    for name, _ in pairs(testOutputs) do
-      if testOutputs[name] ~= expectedOutputs[name .. ".ast.out"] then
-        printf("Updating %s.ast.out\n", name)
-        local file = io.open(name .. ".ast.out", "w")
+  local numUpdated, numFiles = 0, 0
+  for name, _ in pairs(testOut) do
+    local filename = name .. type.ext
+    if testOut[name] ~= expectOut[filename] then
+      printf("View diff for %s? (y / N) ", name)
 
-        file:write(testOutputs[name])
+      if io.read() == "y" then
+        local tmp = io.open("/tmp/trinictest", "w")
+        tmp:write(testOut[name])
+        tmp:close()
 
+        diff(filename, "/tmp/trinictest")
+
+        os.remove("/tmp/trinictest")
+        printf("\n")
+      end
+
+      printf("Update %s with new output? (Y / n) ", name)
+
+      if io.read() ~= "n" then
+        printf("Updating %s\n", filename)
+
+        local file = io.open(filename, "w")
+        file:write(testOut[name])
         file:close()
+
         numUpdated = numUpdated + 1
       end
-      numFiles = numFiles + 1
     end
-
-    printf("Updated %d of %d test files\n", numUpdated, numFiles)
-  elseif testGen == "bytecode" then
-    printf("This hasn't been implemented yet!\n")
+    numFiles = numFiles + 1
   end
+
+  if numUpdated == 0 then printf("No files need updating\n")
+  else printf("Updated %d of %d test files\n", numUpdated, numFiles) end
 end
 
 
 -- ### RUN TESTS ### --
 
-local function runTests()
-  if testGen == "ast" then
-    printf("Running AST tests...\n")
+local function runTests(type)
+  printf("Running %s tests...\n", type.name)
 
-    local testOutputs = generateASTs()
-    local expectedOutputs = getExpectedOutput()
+  local testOut = generateOutputs(type.flags)
+  local expectOut = getExpectedOutput(type.ext)
 
-    if not testOutputs then
-      panic(1, "No test files")
-    elseif not expectedOutputs then
-      panic(1, "No test output files")
-    elseif #testOutputs ~= #expectedOutputs then
-      panic(1, "Differing number of test and test output files")
+  compareOutputs(testOut, expectOut)
+
+  local numOk, numFail = 0, 0
+  for name, _ in pairs(testOut) do
+    if testOut[name] == expectOut[name .. type.ext] then
+      numOk = numOk + 1
+      printf("[ ")
+      printfc("OK", COLATTR_RESET, COL_GREEN, COL_DEFAULT)
+      printf(" ] %s\n", name)
+    else
+      numFail = numFail + 1
+      printf("[")
+      printfc("FAIL", COLATTR_BRIGHT, COL_RED, COL_DEFAULT)
+      printf("] %s\n", name)
     end
-
-    local numOk, numFail = 0, 0
-    for name, _ in pairs(testOutputs) do
-      if testOutputs[name] == expectedOutputs[name .. ".ast.out"] then
-        numOk = numOk + 1
-        printf("[ ")
-        setColor(COLATTR_RESET, COL_GREEN, COL_DEFAULT)
-        printf("OK")
-        resetColor()
-        printf(" ] %s\n", name)
-      else
-        numFail = numFail + 1
-        printf("[")
-        setColor(COLATTR_BRIGHT, COL_RED, COL_DEFAULT)
-        printf("FAIL")
-        resetColor()
-        printf("] %s\n", name)
-      end
-    end
-
-    printf("%d succeeded, %d failed, %d total\n", numOk, numFail, numOk + numFail)
-  elseif testGen == "bytecode" then
-    printf("This hasn't been implemented yet!\n")
   end
+  printf("%d succeeded, %d failed, %d total\n", numOk, numFail, numOk + numFail)
 end
 
 
 -- ### MAIN ### --
 
 local function printUsage(name)
-  printf("USAGE: %s [update | run] [ast | bytecode]\n", name)
+  printf("USAGE: %s [update | run] [ast | lex | bytecode]\n", name)
   printf("%s\n", description)
   printf("OPTIONS:\n")
   printf("  update -- run tests and overwrite corresponding file\n")
   printf("  run -- run tests, comparing the output to corresponding files\n")
   printf("\n")
-  printf("  ast -- run tests for generated AST\n")
-  printf("  bytecode -- run tests for bytecode ouput; this does nothing yet\n")
+  for fname, fields in pairs(test) do
+    printf("  %s -- %s\n", fname, fields.desc)
+  end
 end
 
 local function main(argc, argv)
@@ -254,34 +284,32 @@ local function main(argc, argv)
   end
 
   -- Alias arguments
-  local testAction = argv[1]
-  local testGenIn = argv[2]
+  local testType = argv[1]
+  local testAction = argv[2]
 
-  -- Check if the test action is valid
-  local actionMatch = false
-  for _, action in pairs(testActions) do
-    if action == testAction then actionMatch = true; break end
+  -- Check if the test type is valid
+  local typeMatch = false
+  for _, type in pairs(testTypes) do
+    if type == testType then typeMatch = true; break end
   end
 
-  -- Check if the generation type is valid
-  local genMatch = false
-  for _, gen in pairs(testGens) do
-    if gen == testGenIn then
-      genMatch = true
+  -- Check if the generation action is valid
+  local actionMatch = false
+  for action, _ in pairs(test) do
+    if action == testAction then
+      actionMatch = true
       break
     end
   end
 
   -- Exit if either of the last checks failed
-  if not actionMatch or not genMatch then
+  if not typeMatch or not actionMatch then
     printUsage(argv[0])
     panic(1, "Invalid arguments")
   end
 
-  testGen = testGenIn
-
-  if testAction == "run" then runTests()
-  elseif testAction == "update" then updateTests() end
+  if testType == "run" then runTests(test[testAction])
+  elseif testType == "update" then updateTests(test[testAction]) end
 end
 
 main(#arg, arg)

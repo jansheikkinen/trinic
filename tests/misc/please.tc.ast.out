@@ -1,0 +1,16 @@
+
+### AST GENERATION ###
+Declaration FUNCTION  main
+  Stmt VARDECL
+    Arg IDENTIFIER
+      Identifier_Arg x
+        Type TYPE INT8
+    Arg EXPR
+      Expr ARRAY INIT
+        Arg EXPR
+          Expr LITERAL
+            INT 1
+          Expr LITERAL
+            INT 2
+          Expr LITERAL
+            INT 3

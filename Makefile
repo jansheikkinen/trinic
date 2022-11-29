@@ -15,7 +15,7 @@ dirs:
 	mkdir -p $(BUILD) src tests
 
 run: tc
-	$(BUILD)/tc build/test.tc
+	$(BUILD)/tc -dlab build/test.tc
 
 tc: $(OBJ)
 	$(CC) $(CFLAGS) $(INCLUDE) -o $(BUILD)/$@ $?

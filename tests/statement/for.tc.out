@@ -1,0 +1,56 @@
+
+### LEXER ###
+000:     FUNCTION,     (null), (003, 008)
+001:   IDENTIFIER,       main, (003, 013)
+002:            (,     (null), (003, 014)
+003:         VOID,     (null), (003, 018)
+004:            ),     (null), (003, 019)
+005:           ->,     (null), (003, 021)
+006:         VOID,     (null), (003, 026)
+007:           DO,     (null), (003, 029)
+008:          FOR,     (null), (004, 005)
+009:   IDENTIFIER,          x, (004, 007)
+010:           IN,     (null), (004, 010)
+011:   IDENTIFIER,          y, (004, 012)
+012:           DO,     (null), (004, 015)
+013:   IDENTIFIER,          z, (004, 017)
+014:            ;,     (null), (004, 018)
+015:          END,     (null), (004, 022)
+016:          FOR,     (null), (005, 005)
+017:   IDENTIFIER,          x, (005, 007)
+018:           IN,     (null), (005, 010)
+019:   IDENTIFIER,          y, (005, 012)
+020:           DO,     (null), (005, 015)
+021:   IDENTIFIER,          z, (005, 017)
+022:            ;,     (null), (005, 018)
+023:          FOR,     (null), (005, 022)
+024:   IDENTIFIER,          a, (005, 024)
+025:           IN,     (null), (005, 027)
+026:   IDENTIFIER,          b, (005, 029)
+027:           DO,     (null), (005, 032)
+028:   IDENTIFIER,          c, (005, 034)
+029:            ;,     (null), (005, 035)
+030:          END,     (null), (005, 039)
+031:          END,     (null), (005, 043)
+032:          END,     (null), (006, 003)
+
+### AST GENERATION ###
+Declaration FUNCTION  main
+  Stmt FOR
+    Arg IDENTIFIER
+      Identifier_Arg x
+    Expr VARIABLE y
+    Stmt EXPRESSION
+      Expr VARIABLE z
+  Stmt FOR
+    Arg IDENTIFIER
+      Identifier_Arg x
+    Expr VARIABLE y
+    Stmt EXPRESSION
+      Expr VARIABLE z
+    Stmt FOR
+      Arg IDENTIFIER
+        Identifier_Arg a
+      Expr VARIABLE b
+      Stmt EXPRESSION
+        Expr VARIABLE c

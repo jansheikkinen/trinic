@@ -1,0 +1,28 @@
+
+### LEXER ###
+000:     FUNCTION,     (null), (003, 008)
+001:   IDENTIFIER,       main, (003, 013)
+002:            (,     (null), (003, 014)
+003:         VOID,     (null), (003, 018)
+004:            ),     (null), (003, 019)
+005:           ->,     (null), (003, 021)
+006:         VOID,     (null), (003, 026)
+007:           DO,     (null), (003, 029)
+008:          LET,     (null), (004, 005)
+009:   IDENTIFIER,          a, (004, 007)
+010:            :,     (null), (004, 008)
+011:         ENUM,     (null), (004, 013)
+012:   IDENTIFIER,   TestEnum, (004, 022)
+013:            =,     (null), (004, 024)
+014:    UNDEFINED,     (null), (004, 034)
+015:            ;,     (null), (004, 035)
+016:          END,     (null), (005, 003)
+
+### AST GENERATION ###
+Declaration FUNCTION  main
+  Stmt VARDECL
+    Arg IDENTIFIER
+      Identifier_Arg a
+        Type ENUM TestEnum
+    Arg EXPR
+      Expr UNDEFINED

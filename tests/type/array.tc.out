@@ -1,0 +1,47 @@
+
+### LEXER ###
+000:     FUNCTION,     (null), (003, 008)
+001:   IDENTIFIER,       main, (003, 013)
+002:            (,     (null), (003, 014)
+003:         VOID,     (null), (003, 018)
+004:            ),     (null), (003, 019)
+005:           ->,     (null), (003, 021)
+006:         VOID,     (null), (003, 026)
+007:           DO,     (null), (003, 029)
+008:          LET,     (null), (004, 005)
+009:   IDENTIFIER,          a, (004, 007)
+010:            :,     (null), (004, 008)
+011:            [,     (null), (004, 010)
+012:            ],     (null), (004, 011)
+013:         INT8,     (null), (004, 015)
+014:            ,,     (null), (004, 016)
+015:   IDENTIFIER,          b, (004, 018)
+016:            :,     (null), (004, 019)
+017:            [,     (null), (004, 021)
+018:      INTEGER,          1, (004, 023)
+019:            +,     (null), (004, 024)
+020:      INTEGER,          2, (004, 027)
+021:            ],     (null), (004, 027)
+022:         INT8,     (null), (004, 031)
+023:            =,     (null), (004, 033)
+024:    UNDEFINED,     (null), (004, 043)
+025:            ;,     (null), (004, 044)
+026:          END,     (null), (005, 003)
+
+### AST GENERATION ###
+Declaration FUNCTION  main
+  Stmt VARDECL
+    Arg IDENTIFIER
+      Identifier_Arg a
+        Type ARRAY
+          Type TYPE INT8
+      Identifier_Arg b
+        Type ARRAY
+          Type TYPE INT8
+          Expr BINARY +
+            Expr LITERAL
+              INT 1
+            Expr LITERAL
+              INT 2
+    Arg EXPR
+      Expr UNDEFINED

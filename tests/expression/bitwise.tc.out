@@ -1,0 +1,44 @@
+
+### LEXER ###
+000:     FUNCTION,     (null), (003, 008)
+001:   IDENTIFIER,       main, (003, 013)
+002:            (,     (null), (003, 014)
+003:         VOID,     (null), (003, 018)
+004:            ),     (null), (003, 019)
+005:           ->,     (null), (003, 021)
+006:         VOID,     (null), (003, 026)
+007:           DO,     (null), (003, 029)
+008:      INTEGER,          1, (004, 004)
+009:            &,     (null), (004, 005)
+010:      INTEGER,          2, (004, 008)
+011:            |,     (null), (004, 009)
+012:      INTEGER,          3, (004, 012)
+013:            ^,     (null), (004, 013)
+014:      INTEGER,          4, (004, 016)
+015:           <<,     (null), (004, 017)
+016:      INTEGER,          5, (004, 020)
+017:           >>,     (null), (004, 021)
+018:      INTEGER,          6, (004, 024)
+019:            ;,     (null), (004, 024)
+020:          END,     (null), (005, 003)
+
+### AST GENERATION ###
+Declaration FUNCTION  main
+  Stmt EXPRESSION
+    Expr BINARY >>
+      Expr BINARY <<
+        Expr BINARY ^
+          Expr BINARY |
+            Expr BINARY &
+              Expr LITERAL
+                INT 1
+              Expr LITERAL
+                INT 2
+            Expr LITERAL
+              INT 3
+          Expr LITERAL
+            INT 4
+        Expr LITERAL
+          INT 5
+      Expr LITERAL
+        INT 6

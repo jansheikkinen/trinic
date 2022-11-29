@@ -1,15 +1,3 @@
-## PARSER ##
-Parsing tests/declaration/include.tc...
-
-### LEXER ###
-Generating tokens from source...
-Generated 6 tokens
-000:      INCLUDE,     (null), (003, 007)
-001:       STRING,        std, (003, 012)
-002:            ;,     (null), (003, 013)
-003:      INCLUDE,     (null), (004, 007)
-004:       STRING,      balls, (004, 014)
-005:            ;,     (null), (004, 015)
 
 ### AST GENERATION ###
 Declaration INCLUDE std

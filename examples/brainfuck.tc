@@ -27,7 +27,7 @@ do
     end
   end
 
-  panic(1, "Expected matching ']' after '['");
+  panic(1, "Expected matching bracket");
 end
 
 function interpret(program: struct String) -> void do

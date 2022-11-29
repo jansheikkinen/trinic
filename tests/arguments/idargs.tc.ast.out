@@ -1,28 +1,3 @@
-## PARSER ##
-Parsing tests/arguments/idargs.tc...
-
-### LEXER ###
-Generating tokens from source...
-Generated 19 tokens
-000:     FUNCTION,     (null), (003, 008)
-001:   IDENTIFIER,       main, (003, 013)
-002:            (,     (null), (003, 014)
-003:   IDENTIFIER,          x, (003, 015)
-004:            :,     (null), (003, 016)
-005:         INT8,     (null), (003, 021)
-006:            ,,     (null), (003, 022)
-007:   IDENTIFIER,          y, (003, 024)
-008:            ,,     (null), (003, 025)
-009:   IDENTIFIER,          z, (003, 027)
-010:            :,     (null), (003, 028)
-011:        INT16,     (null), (003, 034)
-012:            ),     (null), (003, 035)
-013:           ->,     (null), (003, 037)
-014:         VOID,     (null), (003, 042)
-015:           DO,     (null), (003, 045)
-016:      INTEGER,          1, (003, 048)
-017:            ;,     (null), (003, 048)
-018:          END,     (null), (003, 052)
 
 ### AST GENERATION ###
 Declaration FUNCTION  main

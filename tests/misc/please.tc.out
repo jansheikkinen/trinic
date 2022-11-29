@@ -1,9 +1,5 @@
-## PARSER ##
-Parsing tests/please.tc...
 
 ### LEXER ###
-Generating tokens from source...
-Generated 22 tokens
 000:     FUNCTION,     (null), (003, 014)
 001:   IDENTIFIER,       main, (003, 019)
 002:            (,     (null), (003, 020)
